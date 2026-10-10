@@ -139,3 +139,18 @@ def test_prompt_finds_the_packaged_template(entry_point, env, fixture_db, tmp_pa
     assert text.startswith("# Things 3 System Audit")
     assert "{{" not in text
     assert stat.S_IMODE((out / "tidyline_payload.json").stat().st_mode) == 0o600
+
+
+def test_decode(entry_point, env, fixture_db, tmp_path):
+    prompt_dir = tmp_path / "prompt"
+    made = run(entry_point, env, "--db", str(fixture_db), "prompt", "--out",
+               str(prompt_dir))  # fmt: skip
+    assert made.returncode == 0, made.stderr
+    payload = json.loads((prompt_dir / "tidyline_payload.json").read_text("utf-8"))
+    label = payload["areas"][0]["title"]
+    answer = tmp_path / "answer.md"
+    answer.write_text(f"Keep **{label}** as it is.\n", encoding="utf-8")
+    result = run(entry_point, env, "--db", str(fixture_db), "decode", str(answer))
+    assert result.returncode == 0, result.stderr
+    assert result.stdout == "Keep **Household** as it is.\n"
+    assert "1 labels replaced" in result.stderr

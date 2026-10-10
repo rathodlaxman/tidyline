@@ -132,6 +132,22 @@ def make_labels(
     return labels
 
 
+_CODE = "[a-z2-7]"
+_FULL_CODE_LENGTH = 52  # base32 of a sha256 digest, without padding
+# A whole label as make_labels writes it: kind, one space, the short code, and
+# for a collision "-" plus the longer code. Used by `decode` to find labels. A
+# letter or digit next to it means it is part of a longer word; punctuation and
+# markdown marks, including "_", do not.
+LABEL_PATTERN = re.compile(
+    r"(?<![^\W_])(?:"
+    + "|".join(sorted(KIND_LABELS.values(), key=len, reverse=True))
+    + rf") {_CODE}{{{LABEL_LENGTH}}}"
+    + rf"(?:-(?:{_CODE}{{{_FULL_CODE_LENGTH - LABEL_LENGTH}}}"
+    + rf"|{_CODE}{{{COLLISION_SUFFIX_LENGTH}}}))?"
+    + r"(?![^\W_])"
+)
+
+
 # --- the export ----
 
 

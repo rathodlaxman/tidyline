@@ -22,6 +22,7 @@ from tidyline.db.schema import (
     tested_versions_text,
 )
 from tidyline.db.snapshot import SnapshotError, open_snapshot
+from tidyline.decode import decode_text, label_map
 from tidyline.llm.prompt import (
     KEPT,
     PAYLOAD_FILE,
@@ -171,6 +172,20 @@ def build_parser() -> argparse.ArgumentParser:
     prompt.add_argument(
         "--copy", action="store_true", help="put the prompt on the clipboard (pbcopy)"
     )
+    decode = commands.add_parser(
+        "decode",
+        help="replace strict labels in an LLM answer with your real titles",
+    )
+    decode.add_argument("answer_file", metavar="ANSWER_FILE", help="the answer text")
+    decode.add_argument(
+        "--db",
+        metavar="PATH",
+        default=argparse.SUPPRESS,
+        help="path to the Things database",
+    )
+    decode.add_argument(
+        "--out", metavar="FILE", help="write the decoded text here (must not exist)"
+    )
     return parser
 
 
@@ -187,6 +202,8 @@ def main(argv: list[str] | None = None) -> int:
         return check(args)
     if args.command == "prompt":
         return prompt(args)
+    if args.command == "decode":
+        return decode(args)
     parser.print_help()
     return 0
 
@@ -493,6 +510,76 @@ def prompt(args: argparse.Namespace) -> int:
     if problem:
         print(f"error: {problem}", file=sys.stderr)
     return code
+
+
+MAX_ANSWER_BYTES = 5 * 1024 * 1024
+
+
+def decode(args: argparse.Namespace) -> int:
+    answer = Path(args.answer_file).expanduser()
+    try:
+        size = answer.stat().st_size
+        if not answer.is_file():
+            raise IsADirectoryError(f"{answer} is not a file")
+        if size > MAX_ANSWER_BYTES:
+            print(
+                f"error: {answer} is {size} bytes; decode reads at most 5 MB. "
+                "Save only the answer text in the file.",
+                file=sys.stderr,
+            )
+            return EXIT_USAGE
+        text = answer.read_bytes().decode("utf-8")
+    except UnicodeDecodeError:
+        print(
+            f"error: {answer} is not valid UTF-8 text. Save the answer as plain "
+            "UTF-8 text and try again.",
+            file=sys.stderr,
+        )
+        return EXIT_USAGE
+    except OSError as error:
+        print(
+            f"error: could not read {answer} ({error.strerror or error}). Check the "
+            "path, or save the answer to a text file first.",
+            file=sys.stderr,
+        )
+        return EXIT_USAGE
+
+    out = None
+    if args.out is not None:
+        out = _prepare_out(args.out)
+        if out is None:
+            return EXIT_USAGE
+
+    if not text.strip():
+        decoded, summary = text, "The answer file is empty; nothing was replaced."
+    else:
+        loaded = _load(args)
+        if loaded is None:
+            return EXIT_FAILURE
+        result = decode_text(text, label_map(loaded[0]))
+        decoded = result.text
+        summary = (
+            f"Decoded: {result.replaced} labels replaced ({result.distinct} distinct)."
+        )
+        if result.unmatched:
+            summary += (
+                f" {len(result.unmatched)} distinct label-like strings matched "
+                "nothing in this database and were left as they are."
+            )
+
+    if out is None:
+        print(decoded, end="")
+    else:
+        if not _write_out(out, decoded):
+            return EXIT_FAILURE
+        print(f"Wrote the decoded answer to {out}")
+    print(summary, file=sys.stderr)
+    print(
+        "warning: the decoded text contains real titles from your Things database. "
+        "It is personal data; keep it private.",
+        file=sys.stderr,
+    )
+    return EXIT_OK
 
 
 def _prompt_preview(result, args, context, written, copied) -> str:

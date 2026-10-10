@@ -206,6 +206,12 @@ Every key is present at every level. `notes` is null at `light` and `strict`; `c
 
 The URL-scheme auth token is never read or exported at any level.
 
+Known limits of `decode`:
+- Labels exist only in `strict` output. `light` output keeps real titles and needs no decoding.
+- `decode` needs the same database the prompt was made from. A label whose item was deleted since, or that comes from another database, stays unchanged and is counted as unmatched. A kind word followed by a six-character lowercase word (for example "Project review") looks like a label and is also counted as unmatched.
+- Only whole labels are replaced: a letter or digit next to a label means it is part of a longer word. Replacement is one pass, so a title that looks like a label is never replaced again.
+- Titles go in exactly as stored, without escaping. A title containing `|` splits a markdown table cell; `*` or a backtick can start emphasis or code.
+
 ## 8. Architecture
 
 ```
@@ -246,7 +252,7 @@ The core returns data and never prints. The CLI only parses options and calls th
 | `export` | JSON export | `--out`, `--anonymise {none,light,strict}` |
 | `recurrence` | Live and leftover recurring tasks | `--raw` |
 | `prompt` | Level 0: anonymised payload plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--out DIR`, `--copy` |
-| `decode` | Replace strict labels (`Task k3f9az`) in an LLM answer with the real titles from the current database. Reads the answer from a file; writes to stdout or `--out`. | `ANSWER_FILE`, `--out` |
+| `decode` | Replace strict labels (`Task k3f9az`) in an LLM answer with the real titles from the current database. Reads the answer from a UTF-8 file of at most 5 MB; writes the decoded text to stdout, or to `--out` (mode 0600, never overwrites). A summary (labels replaced, distinct, unmatched; never titles) and a personal-data warning go to stderr. | `ANSWER_FILE`, `--out FILE`, `--db` |
 | `ask` | v0.4: levels 1 and 2, after preview and confirmation | `--provider`, `--model`, `--yes` |
 
 Global: `--db PATH`, `--version`, `--verbose`.
