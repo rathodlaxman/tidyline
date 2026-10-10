@@ -41,6 +41,7 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-10 | `read.py` is a **hybrid**: things.py (trashed=None, status=None) supplies identity and structure of to-dos, projects, headings, areas and tags. One read-only SQL pass over the same snapshot supplies what things.py lacks: packed dates, suppression date, raw timestamps, `startBucket`, `rt1_*`, tag UUIDs, checklist items, template rows, ordering. Rows are matched by UUID. If the two sources disagree, a warning is recorded and the row is skipped. Verified on the maintainer's database: 0 warnings. |
 | 2026-10-10 | v0.2 choices: title-hygiene patterns come from a repeatable `--pattern REGEX` option on `check` (no config file, no new dependency); new warning check "open to-dos inside a trashed project", with those to-dos excluded from all other checks; `strict` anonymisation labels are derived from the id alone (kind plus a short hash code, for example `Task k3f9az`), so a label never changes when other items are added, removed or reordered. (Corrected 2026-10-10: numbering by sorted id was first chosen but shifts whenever an item is added.) |
 | 2026-10-10 | Exit codes: runtime failures (database not found or unreadable, output not writable) exit 3 on every command and an unusable `--out` path found up front exits 2, so `check` can use 1 for "warnings found". `check` accepts `--db` after the command like `doctor`, `export` and `report`. Finding messages never contain titles or user pattern text. Duplicate normalisation replaces punctuation with a space instead of deleting it. |
+| 2026-10-10 | `prompt` and `decode` (settled 2026-10-10): `prompt` always prints a preview (level, counts, what is removed, the context text if given) and writes `tidyline_payload.json` and `tidyline_prompt.md` into `--out DIR`; `--copy` puts the prompt text on the clipboard (macOS `pbcopy`, no dependency); with neither option nothing is written. `--context FILE` fills the three context fields of the template; the area list is filled from the anonymised area labels; unfilled placeholders stay visible and the preview warns. Only the anonymised payload and the filled template leave the tool; the text report is never included because it lists recurring task titles. The packaged template (`llm/audit_prompt.md`) is adapted from the maintainer's own template: one attached payload file, a short data note, and a level-dependent Part 5. At `strict` titles are hidden, so Part 5 (task wording) is replaced by an instruction to skip it; `light` keeps scrubbed titles and supports Part 5. New command `decode` maps labels back to titles using the current database, possible because labels derive from ids. |
 | 2026-10-10 | JSON export 7.4 open points settled: all rows included with flags (open, completed, cancelled, trashed); coded fields written as a name plus the raw code (`status` and `status_code`, `start` and `start_code`); `completion_date` is `stopDate` as ISO 8601 with UTC offset for completed and cancelled alike; areas, projects and headings use the same shape as tasks. Export file is created with mode 0600, an existing path is never overwritten, and `light` and `strict` are refused until v0.2. |
 
 ## 4. Tested environment
@@ -244,7 +245,8 @@ The core returns data and never prints. The CLI only parses options and calls th
 | `check` | Health checks only; exit code 1 if any warning | `--only`, `--json` |
 | `export` | JSON export | `--out`, `--anonymise {none,light,strict}` |
 | `recurrence` | Live and leftover recurring tasks | `--raw` |
-| `prompt` | Level 0: anonymised payload plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--copy` |
+| `prompt` | Level 0: anonymised payload plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--out DIR`, `--copy` |
+| `decode` | Replace strict labels (`Task k3f9az`) in an LLM answer with the real titles from the current database. Reads the answer from a file; writes to stdout or `--out`. | `ANSWER_FILE`, `--out` |
 | `ask` | v0.4: levels 1 and 2, after preview and confirmation | `--provider`, `--model`, `--yes` |
 
 Global: `--db PATH`, `--version`, `--verbose`.
@@ -262,7 +264,7 @@ Done when:
 
 ### v0.2: audit and first public release (PyPI)
 
-Scope: all checks in 7.3, `check`, `recurrence`, anonymisation, `prompt`.
+Scope: all checks in 7.3, `check`, `recurrence`, anonymisation, `prompt`, `decode`.
 
 Done when:
 - `pipx install tidyline` and `uv tool install tidyline` work on a clean Mac.
