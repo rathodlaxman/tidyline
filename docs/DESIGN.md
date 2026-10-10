@@ -111,19 +111,25 @@ Templates are hidden rows with `rt1_recurrenceRule` (a binary plist). Each visib
 | `tp` | 0 fixed schedule, 1 repeats after completion |
 | `of` | Offsets: `wd` weekday (0 Sunday to 6 Saturday), `dy` day of month (from zero; -1 is the last day), `mo` month (from zero) |
 
-Output examples: `Daily`, `Weekly on Sun`, `Every 2 weeks on Sun`, `Monthly on day 15`, `Monthly on last day`, `Yearly on Feb 28`, `Yearly on Aug 1 (after completion)`.
+Output examples: `Daily`, `Weekly on Sun`, `Every 2 weeks on Sun`, `Monthly on day 15`, `Every 3 months on day 1`, `Monthly on last day`, `Every 3 months on the last Sun`, `Yearly on Mar 10`, `1 year after completion`, `3 weeks after completion`.
+
+Repeat-after-completion rules (`tp` = 1) are described only by interval and unit, because Things shows only "Repeat 1 year after the previous to-do has been completed". Real rules of this kind still carry `of` values (for a yearly one, a day and a month); those are ignored in the description and kept in the raw rule.
 
 - A rule is described only when the fields that tidyline interprets are understood: `fu` is a known unit, and the `of` entries use known key sets. Otherwise the output is `recurring (rule not recognised)`. The raw rule is always kept in the export.
 - Observed on a real database (40 rules): every rule also carries `ia` (float), `rc` (int), `rrv` (int), `sr` (float), `ts` (int) and, in 36 of 40, `ed` (float). None of these makes a rule "not recognised"; all stay in the raw rule. Any other top-level key is listed as an unfamiliar field, without changing the description.
 - `rrv` was 4 in all 40 rules. tidyline understands rule version 4 only; any other value gives `recurring (rule not recognised)`.
 - `ed`: 35 of 36 present values are far in the future (at or above 6.0e10), which looks like "never ends". One rule has an ordinary value, which looks like an end date. A rule with an ordinary `ed` is described with `(has an end date)`; the date is not converted. A missing `ed` means no end date.
-- `rc` was non-zero in 4 rules and `ts` was non-zero (always negative) in 9. Meanings unverified; kept in the raw rule and listed as notes.
+- `rc` is the repeat limit. Verified on two rules from the app's Edit Repeat dialog: `rc` 50 shows "Ends after 50 times" and `rc` 3 shows "Ends after 3 times". `rc` 0 means no limit. It was non-zero in 4 of 40 rules (values 3, 12, 28, 50).
+- `ts` is the deadline lead time. Verified on one rule: `ts` -3 shows "Add deadlines and start 3 days earlier" (each instance gets a deadline on its scheduled date and starts 3 days before). It was negative in 9 of 40 rules (-2, -3, -7, -14, -22, -27). A positive `ts` has not been seen. `ts` 0 is ambiguous: it was seen where the dialog had "Add deadlines" unticked, but "Add deadlines" with 0 days earlier may also be stored as 0.
+- Description suffix, one parenthetical with parts in this order: `ends after N times` (rc > 0), `has an end date` (ordinary ed), `starts N days before deadline` (ts < 0). Example: `Every 3 months on day 1 (ends after 3 times; starts 3 days before deadline)`. A non-integer `rc` or `ts`, a negative `rc` or a positive `ts` becomes a note and does not change the text.
 - Observed `of` shapes by unit:
   - day: `[{dy: 0}]` (7 of 7 rules). Ignored.
   - week: `[{wd}]`, with wd 0, 5 and 6 seen.
   - month: `[{dy}]` (dy 0, 4, 5, 13, 14 seen) or ordinal weekday `[{wd, wdo}]` (2 rules, both wd 0; wdo 1 and -1 seen). `dy` = -1 (last day) was not seen in this database.
   - year: `[{dy, mo}]`.
-- `wdo` is read as: 1 to 4 = first to fourth, -1 = last. Confirm against the two real tasks before relying on it.
+- Checked against what Things shows for real tasks (2026-10-10): weekly on Sunday = `wd` 0; day 15 = `dy` 14; day 6 = `dy` 5; day 1 = `dy` 0; March 10 = `mo` 2, `dy` 9; January 28 reported for a yearly rule; "every 3 months on the last Sunday" = `wd` 0, `wdo` -1, fa 3.
+- Not verified: `wdo` 1 to 4 as first to fourth (only -1 was confirmed; the other ordinal rule in the database is in the trash), and `dy` -1 as the last day of the month.
+- Each parsed rule carries a `confidence`: `verified` when every convention it uses was seen on a real database, `assumed` when it uses `dy` -1 or a `wdo` other than -1, and `unrecognised` otherwise.
 - Templates whose project is in the trash are listed as **leftovers**, not as live recurring tasks.
 - Templates under a heading report the heading's project.
 - A template is a row with `rt1_recurrenceRule` set and `trashed = 0` (as in the earlier personal script). Its project is the `project` column, or the heading's project when `heading` is set.
@@ -280,7 +286,7 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 - Whether macOS shows a privacy prompt when Terminal reads the Group Container while Things is running.
 - That the backup API copy works while Things is writing.
 - Meaning of `wdo` values other than 1 and -1, and of `dy` = -1 (last day).
-- Meaning of `rc` and `ts`, and whether either changes what the rule does (a repeat count, a lead time).
+- Whether `ts` 0 can mean a deadline on the same day, and whether `ed` ordinary values correspond to "ends on date" in the dialog.
 - Whether an evening task can carry a past date or sit in a Someday project.
 - Done 2026-10-10: template row shape; keys real rules carry; daily offsets; `startBucket` = 1 for This Evening (7.1, 7.2).
 - Verify with counts-only queries against the maintainer's own database, run by hand and never committed. Output contains numbers and key names, no titles.
