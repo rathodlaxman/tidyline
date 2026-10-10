@@ -36,8 +36,8 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-10 | Anonymisation default depends on level: local Ollama `light`, cloud API `strict`. Always overridable, always previewed. |
 | 2026-10-10 | HTML report: single offline file, follows system light/dark, native `<details>` for folding, one small optional inline script for search/filter, print stylesheet. No CDN, no web fonts. |
 | 2026-10-10 | Repo starts private and goes public when v0.1 works. |
-| Open | Runtime dependencies beyond things.py (CLI framework, HTML templating). |
-| Open | Default anonymisation for level 0 (prompt export). |
+| 2026-10-10 | Runtime dependencies: things.py only through v0.2. CLI built on the standard library argparse. HTML templating decided at v0.3. |
+| 2026-10-10 | Default anonymisation for `prompt` (level 0): strict. `--anonymise light` is available for a fuller audit. |
 
 ## 4. Tested environment
 
@@ -193,7 +193,7 @@ The core returns data and never prints. The CLI only parses options and calls th
 | `check` | Health checks only; exit code 1 if any warning | `--only`, `--json` |
 | `export` | JSON export | `--out`, `--anonymise {none,light,strict}` |
 | `recurrence` | Live and leftover recurring tasks | `--raw` |
-| `prompt` | Level 0: anonymised payload plus filled audit prompt, with preview | `--anonymise`, `--context FILE`, `--copy` |
+| `prompt` | Level 0: anonymised payload plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--copy` |
 | `ask` | v0.4: levels 1 and 2, after preview and confirmation | `--provider`, `--model`, `--yes` |
 
 Global: `--db PATH`, `--version`, `--verbose`.
