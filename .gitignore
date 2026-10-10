@@ -233,3 +233,13 @@ tidyline_export*.json
 tidyline_report*.html
 exports/
 .env
+
+# Outputs of tidyline commands (also keep them outside the repository)
+things-export*.json
+tidyline_payload.json
+tidyline_prompt.md
+audit-files/
+answer*.md
+decoded*.md
+*.thingsdatabase
+tidyline-out/

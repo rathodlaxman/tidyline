@@ -45,7 +45,7 @@ What it does not do:
 From source:
 
 ```
-git clone <url-of-this-repository> tidyline
+git clone https://github.com/rathodlaxman/tidyline.git
 cd tidyline
 uv sync
 uv run tidyline --version
@@ -61,16 +61,19 @@ terminal app, then quit and reopen the terminal.
 
 ## Quick start
 
-Run these from the folder you cloned.
+Run these from the folder you cloned. Write outputs outside any git folder, so
+they cannot be committed by accident. The examples use `~/tidyline-out/`, which
+must exist first:
 
 ```
+mkdir -p -m 700 ~/tidyline-out
 uv run tidyline doctor
 uv run tidyline report
 uv run tidyline check
 uv run tidyline recurrence
-uv run tidyline export --out things-export.json
-uv run tidyline prompt --out audit-files
-uv run tidyline decode answer.md --out answer-decoded.md
+uv run tidyline export --out ~/tidyline-out/export.json
+uv run tidyline prompt --out ~/tidyline-out/prompt
+uv run tidyline decode ~/tidyline-out/answer.md --out ~/tidyline-out/answer-decoded.md
 ```
 
 - `doctor` finds the database and checks permissions, the schema and versions.
@@ -116,7 +119,7 @@ tidyline never sends your data anywhere. `prompt` prepares two files, and you
 decide whether to attach or paste them into an assistant yourself.
 
 ```
-uv run tidyline prompt --context my-context.txt --out audit-files
+uv run tidyline prompt --context my-context.txt --out ~/tidyline-out/prompt
 ```
 
 - The default is `--anonymise strict`. There is no `none` option for `prompt`.
@@ -139,7 +142,7 @@ want task wording reviewed, and accept that `light` leaves titles in place.
 To turn the answer back into real titles, save it to a file and run:
 
 ```
-uv run tidyline decode answer.md
+uv run tidyline decode ~/tidyline-out/answer.md
 ```
 
 `decode` recomputes each label from the current database, so it needs no
@@ -161,7 +164,7 @@ only.
 | `open_in_trashed_project` | warning | Open to-dos inside a trashed project. The other checks leave these out. |
 | `unfiled_open` | warning | Open to-dos with no area and no project, outside the Inbox. |
 | `title_hygiene` | warning | A stray `·` at either end, leading or trailing spaces, doubled spaces, and matches of your own `--pattern` regular expressions. |
-| `possible_duplicates` | warning | Open to-dos whose titles match after Unicode normalisation, case folding and punctuation removal. |
+| `possible_duplicates` | warning | Open to-dos whose titles match after Unicode normalisation, case folding, apostrophes removed and other punctuation treated as spaces. |
 | `dated_in_someday_project` | warning | To-dos with a start date inside a Someday project. They will never surface. |
 | `active_project_no_open_tasks` | warning | Active projects with no open to-dos and no live repeating template. |
 | `recurrence_not_recognised` | warning | Repeating templates whose rule tidyline cannot read or does not recognise. |
