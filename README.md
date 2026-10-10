@@ -192,7 +192,7 @@ reported as not recognised. It is never guessed.
 Before reading, tidyline checks that the tables and columns it needs exist. If
 they do not, it stops with a message that names what is missing, the versions
 it was tested with, and what to do next. See
-[docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for what has been tested and
+[docs/COMPATIBILITY.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/COMPATIBILITY.md) for what has been tested and
 what has not.
 
 Not yet built: the HTML report and the opt-in model integration.
@@ -213,11 +213,11 @@ report is ever committed. Network sockets are blocked while the tests run.
 Golden files under `tests/fixtures/` are regenerated with
 `TIDYLINE_UPDATE_GOLDEN=1 uv run pytest`. Review the diff before committing.
 
-The design and the decisions behind it are in [docs/DESIGN.md](docs/DESIGN.md).
-How repeat rules are read is in [docs/RECURRENCE.md](docs/RECURRENCE.md).
+The design and the decisions behind it are in [docs/DESIGN.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/DESIGN.md).
+How repeat rules are read is in [docs/RECURRENCE.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/RECURRENCE.md).
 
 ## Licence
 
-MIT. See [LICENSE](LICENSE). tidyline depends on
+MIT. See [LICENSE](https://github.com/rathodlaxman/tidyline/blob/main/LICENSE). tidyline depends on
 [things.py](https://github.com/thingsapi/things.py), which is licensed under
 Apache 2.0.

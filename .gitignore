@@ -243,3 +243,7 @@ answer*.md
 decoded*.md
 *.thingsdatabase
 tidyline-out/
+
+# Patch leftovers
+*.orig
+*.rej
