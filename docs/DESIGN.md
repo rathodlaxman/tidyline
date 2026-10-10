@@ -87,12 +87,18 @@ Resolved in this order. "Today" means the local date at run time.
 1. `start` is Inbox: **Inbox**
 2. The parent project is Someday: **Someday** (everything inside a Someday project is parked)
 3. Has a start date later than today: **Upcoming**
-4. Has a start date of today or earlier: **Today**, or **This Evening** if the evening flag is set
+4. Has a start date of today or earlier: **This Evening** if `startBucket` = 1, otherwise **Today**
 5. No start date, deadline today or earlier, deadline not suppressed: **Today**
 6. `start` is Someday: **Someday**
 7. Otherwise: **Anytime**
 
-This fixes the earlier personal script, which labelled every dated task Upcoming, including tasks in Today. Rule 5 and the evening flag must be checked against the real database in v0.1.
+This fixes the earlier personal script, which labelled every dated task Upcoming, including tasks in Today.
+
+Checked against the maintainer's database on 2026-10-10 (counts only):
+- Rule 4 holds. All 12 open dated tasks with a start date of today or earlier have `start` = 1 (Anytime). Things stores Today tasks this way.
+- Rule 3 holds. All 8 open tasks with `start` = 2 and a start date have future dates.
+- This Evening: one throwaway task set to This Evening in the app showed `start` = 1, `startBucket` = 1 and a start date of today. All other open tasks had `startBucket` = 0. Not yet seen: an evening task with a past date, or one inside a Someday project.
+- Rule 5 is untested on real data: the database had no open task with an overdue deadline and no start date. It comes from things.py's prediction logic and is covered only by the fixture.
 
 ### 7.2 Recurrence
 
@@ -107,12 +113,24 @@ Templates are hidden rows with `rt1_recurrenceRule` (a binary plist). Each visib
 
 Output examples: `Daily`, `Weekly on Sun`, `Every 2 weeks on Sun`, `Monthly on day 15`, `Monthly on last day`, `Yearly on Feb 28`, `Yearly on Aug 1 (after completion)`.
 
-- Unknown keys or values produce `recurring (rule not recognised)`. The raw rule is always kept in the export.
+- A rule is described only when the fields that tidyline interprets are understood: `fu` is a known unit, and the `of` entries use known key sets. Otherwise the output is `recurring (rule not recognised)`. The raw rule is always kept in the export.
+- Observed on a real database (40 rules): every rule also carries `ia` (float), `rc` (int), `rrv` (int), `sr` (float), `ts` (int) and, in 36 of 40, `ed` (float). None of these makes a rule "not recognised"; all stay in the raw rule. Any other top-level key is listed as an unfamiliar field, without changing the description.
+- `rrv` was 4 in all 40 rules. tidyline understands rule version 4 only; any other value gives `recurring (rule not recognised)`.
+- `ed`: 35 of 36 present values are far in the future (at or above 6.0e10), which looks like "never ends". One rule has an ordinary value, which looks like an end date. A rule with an ordinary `ed` is described with `(has an end date)`; the date is not converted. A missing `ed` means no end date.
+- `rc` was non-zero in 4 rules and `ts` was non-zero (always negative) in 9. Meanings unverified; kept in the raw rule and listed as notes.
+- Observed `of` shapes by unit:
+  - day: `[{dy: 0}]` (7 of 7 rules). Ignored.
+  - week: `[{wd}]`, with wd 0, 5 and 6 seen.
+  - month: `[{dy}]` (dy 0, 4, 5, 13, 14 seen) or ordinal weekday `[{wd, wdo}]` (2 rules, both wd 0; wdo 1 and -1 seen). `dy` = -1 (last day) was not seen in this database.
+  - year: `[{dy, mo}]`.
+- `wdo` is read as: 1 to 4 = first to fourth, -1 = last. Confirm against the two real tasks before relying on it.
 - Templates whose project is in the trash are listed as **leftovers**, not as live recurring tasks.
 - Templates under a heading report the heading's project.
 - A template is a row with `rt1_recurrenceRule` set and `trashed = 0` (as in the earlier personal script). Its project is the `project` column, or the heading's project when `heading` is set.
 - Templates carry `rt1_instanceCreationPaused`. A paused template is reported as `(paused)`.
-- Fixture assumption, not yet verified: template rows have type 0, status 0, start 2 and no start date. Real rules may carry keys beyond `fu`, `fa`, `tp`, `of`; they must not be ignored silently (see "Unknown keys" above).
+- Verified on a real database: template rows have type 0, status 0, start 2 and no start date. Templates with `trashed` = 1 exist (4 of 40) and are ignored; they are not leftovers.
+- Templates do not each have an open instance. In the checked database, 36 live templates had only 5 open instances (Things creates instances shortly before they are due), plus 136 completed instances. The recurrence list is built from templates; instances are optional extra information.
+- The paused flag was 0 on every template, so `(paused)` is covered only by the fixture.
 
 ### 7.3 Health checks (v0.2)
 
@@ -261,7 +279,8 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 - Whether overdue-deadline tasks without a start date should count as Today (rule 5).
 - Whether macOS shows a privacy prompt when Terminal reads the Group Container while Things is running.
 - That the backup API copy works while Things is writing.
-- Row shape of real template rows (type, status, trashed, start, start date, paused flag).
-- Which `startBucket` values exist, and how they relate to `start` and start date.
-- Which keys real recurrence rules carry beyond `fu`, `fa`, `tp`, `of`.
+- Meaning of `wdo` values other than 1 and -1, and of `dy` = -1 (last day).
+- Meaning of `rc` and `ts`, and whether either changes what the rule does (a repeat count, a lead time).
+- Whether an evening task can carry a past date or sit in a Someday project.
+- Done 2026-10-10: template row shape; keys real rules carry; daily offsets; `startBucket` = 1 for This Evening (7.1, 7.2).
 - Verify with counts-only queries against the maintainer's own database, run by hand and never committed. Output contains numbers and key names, no titles.
