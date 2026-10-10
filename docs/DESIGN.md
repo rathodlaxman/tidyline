@@ -38,6 +38,8 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-10 | Repo starts private and goes public when v0.1 works. |
 | 2026-10-10 | Runtime dependencies: **things.py only** through v0.2. CLI built on the standard library `argparse`. HTML templating decided at v0.3. |
 | 2026-10-10 | Default anonymisation for `prompt` (level 0): **strict**. `--anonymise light` is available for a fuller audit. |
+| 2026-10-10 | `read.py` is a **hybrid**: things.py (trashed=None, status=None) supplies identity and structure of to-dos, projects, headings, areas and tags. One read-only SQL pass over the same snapshot supplies what things.py lacks: packed dates, suppression date, raw timestamps, `startBucket`, `rt1_*`, tag UUIDs, checklist items, template rows, ordering. Rows are matched by UUID. If the two sources disagree, a warning is recorded and the row is skipped. Verified on the maintainer's database: 0 warnings. |
+| 2026-10-10 | JSON export 7.4 open points settled: all rows included with flags (open, completed, cancelled, trashed); coded fields written as a name plus the raw code (`status` and `status_code`, `start` and `start_code`); `completion_date` is `stopDate` as ISO 8601 with UTC offset for completed and cancelled alike; areas, projects and headings use the same shape as tasks. Export file is created with mode 0600, an existing path is never overwritten, and `light` and `strict` are refused until v0.2. |
 
 ## 4. Tested environment
 
@@ -288,5 +290,9 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 - Meaning of `wdo` values other than 1 and -1, and of `dy` = -1 (last day).
 - Whether `ts` 0 can mean a deadline on the same day, and whether `ed` ordinary values correspond to "ends on date" in the dialog.
 - Whether an evening task can carry a past date or sit in a Someday project.
+- Rule 5 also applies to Someday tasks (7.1 order): a Someday task with no start date and an overdue deadline is Today. Not seen on real data.
+- A task inside a trashed or closed project is classified from its own fields (status ignores closed parents). Candidate health check for v0.2.
+- Real database read check, 2026-10-10 (counts only): 36 live templates all recognised, 2 leftover templates, 0 warnings, effective status counts sum to the open to-do total.
+- In the export, a task's `area` is its own column and is not inherited from its project. Decide in v0.2 whether consumers need an inherited area.
 - Done 2026-10-10: template row shape; keys real rules carry; daily offsets; `startBucket` = 1 for This Evening (7.1, 7.2).
 - Verify with counts-only queries against the maintainer's own database, run by hand and never committed. Output contains numbers and key names, no titles.
