@@ -119,12 +119,12 @@ def test_second_export_to_the_same_file_is_refused(
     assert run(entry_point, env, *args).returncode == 0
     before = out.read_bytes()
     again = run(entry_point, env, *args)
-    assert again.returncode == 1
+    assert again.returncode == 2
     assert "already exists" in again.stderr
     assert out.read_bytes() == before
 
 
 def test_missing_database_is_a_clear_failure(entry_point, env, tmp_path):
     result = run(entry_point, env, "--db", str(tmp_path / "none.sqlite"), "doctor")
-    assert result.returncode == 1
+    assert result.returncode == 3
     assert "error:" in result.stderr

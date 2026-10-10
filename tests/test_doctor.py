@@ -76,27 +76,27 @@ def test_untested_versions_warn_but_exit_zero(
     assert "warning: macOS version 99.0 is untested." in err
 
 
-def test_no_database_found_exits_one(tested_env, capsys):
+def test_no_database_found_exits_three(tested_env, capsys):
     code, out, err = run(capsys, "doctor")
-    assert code == 1
+    assert code == 3
     assert fields(out)["Database"] == "not found"
     assert "THINGSDB" in err
     assert "--db" in err
 
 
-def test_missing_db_path_exits_one(tested_env, capsys):
+def test_missing_db_path_exits_three(tested_env, capsys):
     code, _, err = run(capsys, "--db", str(tested_env / "nope.sqlite"), "doctor")
-    assert code == 1
+    assert code == 3
     assert "nope.sqlite" in err
 
 
-def test_missing_column_exits_one_with_versions(tested_env, fixture_db, capsys):
+def test_missing_column_exits_three_with_versions(tested_env, fixture_db, capsys):
     conn = sqlite3.connect(fixture_db)
     conn.execute("ALTER TABLE TMTask RENAME COLUMN rt1_recurrenceRule TO renamed")
     conn.commit()
     conn.close()
     code, out, err = run(capsys, "--db", str(fixture_db), "doctor")
-    assert code == 1
+    assert code == 3
     assert fields(out)["Schema"] == "failed"
     assert "rt1_recurrenceRule" in err
     assert "database version 29" in err
@@ -112,7 +112,7 @@ def test_permission_problem_explains_full_disk_access(
         code, out, err = run(capsys, "--db", str(fixture_db), "doctor")
     finally:
         fixture_db.chmod(0o600)
-    assert code == 1
+    assert code == 3
     assert fields(out)["Snapshot copy"] == "failed"
     assert "Full Disk Access" in err
     assert "System Settings > Privacy & Security" in err
@@ -125,6 +125,6 @@ def test_permission_error_while_locating(tested_env, monkeypatch, capsys):
 
     monkeypatch.setattr(cli, "locate_database", deny)
     code, out, err = run(capsys, "doctor")
-    assert code == 1
+    assert code == 3
     assert "permission denied" in fields(out)["Database"]
     assert "Full Disk Access" in err

@@ -304,7 +304,7 @@ def test_cli_file_mode_is_0600(fixture_db, tmp_path, no_real_app):
 def test_cli_refuses_to_overwrite(fixture_db, tmp_path, capsys, no_real_app):
     out = tmp_path / "export.json"
     out.write_text("keep me", encoding="utf-8")
-    assert run_export(fixture_db, out) == 1
+    assert run_export(fixture_db, out) == 2
     assert out.read_text(encoding="utf-8") == "keep me"
     err = capsys.readouterr().err
     assert "already exists" in err
@@ -314,7 +314,7 @@ def test_cli_refuses_to_overwrite(fixture_db, tmp_path, capsys, no_real_app):
 def test_cli_refuses_a_dangling_symlink(fixture_db, tmp_path, no_real_app):
     out = tmp_path / "link.json"
     out.symlink_to(tmp_path / "nowhere.json")
-    assert run_export(fixture_db, out) == 1
+    assert run_export(fixture_db, out) == 2
     assert not (tmp_path / "nowhere.json").exists()
 
 
@@ -334,7 +334,7 @@ def test_cli_stdout_is_not_supported(fixture_db, capsys, no_real_app):
 
 
 def test_cli_missing_folder(fixture_db, tmp_path, capsys, no_real_app):
-    assert run_export(fixture_db, tmp_path / "no" / "export.json") == 1
+    assert run_export(fixture_db, tmp_path / "no" / "export.json") == 2
     assert "does not exist" in capsys.readouterr().err
 
 
@@ -349,7 +349,7 @@ def test_cli_missing_database(tmp_path, capsys, no_real_app):
     code = cli.main(
         ["--db", str(tmp_path / "none.sqlite"), "export", "--out", str(tmp_path / "x")]
     )
-    assert code == 1
+    assert code == 3
     assert not (tmp_path / "x").exists()
 
 
@@ -397,3 +397,15 @@ def test_no_token_or_settings_in_the_export(fixture_db, tmp_path, no_real_app):
             keys = [k for k in keys if k not in raw_keys]
     found = [k for k in keys if any(part in k for part in FORBIDDEN_KEY_PARTS)]
     assert found == []
+
+
+def test_cli_write_failure_exits_3(
+    fixture_db, tmp_path, capsys, monkeypatch, no_real_app
+):
+    def fail(path, text):
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(cli, "_write_private", fail)
+    assert run_export(fixture_db, tmp_path / "export.json") == 3
+    err = capsys.readouterr().err
+    assert "could not write" in err and "No space left on device" in err

@@ -21,12 +21,25 @@ from tidyline.render.check_out import check_json
 
 
 def test_registry_order_and_modules():
+    # the order of the DESIGN.md 7.3 table
     assert CHECK_IDS == (
         "open_in_trashed_project",
         "unfiled_open",
         "title_hygiene",
         "possible_duplicates",
+        "dated_in_someday_project",
+        "active_project_no_open_tasks",
+        "recurrence_not_recognised",
+        "leftover_templates",
+        "someday_in_active_project",
+        "outside_heading",
     )
+    severities = {c: m.SEVERITY for c, m in CHECKS.items()}
+    assert [c for c, s in severities.items() if s == "info"] == [
+        "leftover_templates",
+        "someday_in_active_project",
+        "outside_heading",
+    ]
     for check_id, module in CHECKS.items():
         assert module.CHECK_ID == check_id
         assert module.SEVERITY in ("warning", "info")

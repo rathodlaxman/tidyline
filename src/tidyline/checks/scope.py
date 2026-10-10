@@ -43,5 +43,10 @@ class Scope:
         """Open to-dos the app shows: not trashed, not in a trashed container."""
         return [t for t in self.open_todos() if self.trashed_container(t) is None]
 
+    @staticmethod
+    def is_open(task: Task) -> bool:
+        """Not completed or cancelled, and not trashed."""
+        return not task.is_closed and not task.trashed
+
     def open_projects(self) -> list[Task]:
-        return [p for p in self.snapshot.projects if not p.is_closed and not p.trashed]
+        return [p for p in self.snapshot.projects if self.is_open(p)]

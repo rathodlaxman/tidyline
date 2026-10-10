@@ -338,7 +338,7 @@ def test_out_never_has_colour_on_a_terminal(
 def test_out_refuses_to_overwrite(fixture_db, tmp_path, capsys, no_real_app):
     out = tmp_path / "report.txt"
     out.write_text("keep me", encoding="utf-8")
-    assert run_report(fixture_db, "--out", str(out)) == 1
+    assert run_report(fixture_db, "--out", str(out)) == 2
     assert out.read_text(encoding="utf-8") == "keep me"
     err = capsys.readouterr().err
     assert "already exists" in err
@@ -351,12 +351,12 @@ def test_out_dash_is_rejected(fixture_db, capsys, no_real_app):
 
 
 def test_out_missing_folder(fixture_db, tmp_path, capsys, no_real_app):
-    assert run_report(fixture_db, "--out", str(tmp_path / "no" / "r.txt")) == 1
+    assert run_report(fixture_db, "--out", str(tmp_path / "no" / "r.txt")) == 2
     assert "does not exist" in capsys.readouterr().err
 
 
 def test_missing_database(tmp_path, capsys, no_real_app):
-    assert cli.main(["--db", str(tmp_path / "none.sqlite"), "report"]) == 1
+    assert cli.main(["--db", str(tmp_path / "none.sqlite"), "report"]) == 3
     assert "error:" in capsys.readouterr().err
 
 
@@ -369,3 +369,14 @@ def test_help_lists_report(capsys):
     out = capsys.readouterr().out
     for option in ("--html", "--out", "--include-completed", "--no-color"):
         assert option in out
+
+
+def test_out_write_failure_exits_3(
+    fixture_db, tmp_path, capsys, monkeypatch, no_real_app
+):
+    def fail(path, text):
+        raise OSError(13, "Permission denied")
+
+    monkeypatch.setattr(cli, "_write_private", fail)
+    assert run_report(fixture_db, "--out", str(tmp_path / "r.txt")) == 3
+    assert "could not write" in capsys.readouterr().err

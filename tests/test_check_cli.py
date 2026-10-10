@@ -1,6 +1,7 @@
 """`tidyline check`, against the synthetic fixture only."""
 
 import json
+import re
 
 import pytest
 from checks_helpers import U, edit
@@ -21,10 +22,10 @@ def run(fixture_db, *args):
 def test_text_output_groups_by_check_and_shows_titles(fixture_db, capsys):
     assert run(fixture_db) == 1
     out = capsys.readouterr().out
-    assert out.startswith("tidyline check: 4 checks, 7 findings (7 warnings, 0 info)")
-    headers = [
-        line.split(" (")[0] for line in out.splitlines() if " (warning): " in line
-    ]
+    assert out.startswith(
+        "tidyline check: 10 checks, 17 findings (14 warnings, 3 info)"
+    )
+    headers = re.findall(r"^(\w+) \((?:warning|info)\): \d+$", out, re.M)
     assert headers == list(CHECK_IDS)
     assert '      to-do    "Pay the electricity bill"' in out
     assert '      to-do    "Reconcile  receipts ·"' in out  # whitespace kept
@@ -38,7 +39,7 @@ def test_json_output_has_ids_and_no_titles(fixture_db, capsys):
     assert list(data) == ["check_schema_version", "checks", "summary", "findings"]
     assert data["check_schema_version"] == "1"
     assert data["checks"] == list(CHECK_IDS)
-    assert data["summary"] == {"warning": 7, "info": 0}
+    assert data["summary"] == {"warning": 14, "info": 3}
     duplicate = [f for f in data["findings"] if f["check"] == "possible_duplicates"]
     assert duplicate == [
         {
@@ -112,7 +113,7 @@ def test_control_characters_in_titles_are_replaced(fixture_db, capsys):
 
 
 def test_missing_database(tmp_path, capsys):
-    assert cli.main(["--db", str(tmp_path / "none.sqlite"), "check"]) == 1
+    assert cli.main(["--db", str(tmp_path / "none.sqlite"), "check"]) == 3
     assert "error:" in capsys.readouterr().err
 
 
@@ -123,6 +124,45 @@ def test_help_lists_check_and_its_options(capsys):
     with pytest.raises(SystemExit):
         cli.main(["check", "--help"])
     out = capsys.readouterr().out
-    for option in ("--only", "--pattern", "--json"):
+    for option in ("--db", "--only", "--pattern", "--json"):
         assert option in out
-    assert "--db" not in out  # no extra options on check
+
+
+def test_db_after_the_command(fixture_db, capsys):
+    assert cli.main(["check", "--db", str(fixture_db), "--json"]) == 1
+    assert json.loads(capsys.readouterr().out)["check_schema_version"] == "1"
+
+
+def test_unreadable_database_exits_3(fixture_db, capsys):
+    import sqlite3
+
+    conn = sqlite3.connect(fixture_db)
+    conn.execute("ALTER TABLE TMTask DROP COLUMN startBucket")
+    conn.commit()
+    conn.close()
+    assert run(fixture_db) == 3
+    err = capsys.readouterr().err
+    assert "startBucket" in err and "tidyline doctor" in err
+
+
+def test_info_only_exits_0(fixture_db, capsys):
+    only = ["leftover_templates", "someday_in_active_project", "outside_heading"]
+    assert run(fixture_db, "--only", *only) == 0
+    out = capsys.readouterr().out
+    assert out.startswith("tidyline check: 3 checks, 3 findings (0 warnings, 3 info)")
+    assert "leftover_templates (info): 1" in out
+    assert '      template "Send the newsletter"' in out
+    assert run(fixture_db, "--only", *only, "--json") == 0
+    data = json.loads(capsys.readouterr().out)
+    assert data["summary"] == {"warning": 0, "info": 3}
+    assert {f["severity"] for f in data["findings"]} == {"info"}
+
+
+def test_outside_heading_json_refs(fixture_db, capsys):
+    run(fixture_db, "--only", "outside_heading", "--json")
+    (finding,) = json.loads(capsys.readouterr().out)["findings"]
+    assert finding["refs"] == [
+        {"kind": "project", "id": U("proj_garden")},
+        {"kind": "task", "id": U("t_level")},
+        {"kind": "task", "id": U("t_door")},
+    ]

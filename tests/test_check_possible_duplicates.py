@@ -18,8 +18,11 @@ def test_near_titles_are_not_grouped(fixture_db):
 
 
 def test_normalise():
-    # punctuation is removed, not replaced, so a hyphen joins the words
-    assert normalise("electricity-bill") == "electricitybill"
+    # punctuation becomes a space; apostrophes are removed
+    assert normalise("electricity-bill") == normalise("electricity bill")
+    assert normalise("Don't") == normalise("Dont") == "dont"
+    assert normalise("Don\u2019t") == "dont"
+    assert normalise("a/b") == "a b"
     assert normalise("Pay the electricity bill") == normalise(
         "pay the electricity bill."
     )
@@ -69,3 +72,14 @@ def test_out_of_scope_to_dos_are_not_compared(fixture_db):
     set_title(fixture_db, "t_done", "Pay the electricity bill")
     set_title(fixture_db, "t_in_trashed_project", "Pay the electricity bill")
     assert ids(findings(fixture_db, CHECK)) == [(U("t_dup_a"), U("t_dup_b"))]
+
+
+def test_hyphen_and_apostrophe_variants_are_grouped(fixture_db):
+    set_title(fixture_db, "t_council", "pay the electricity-bill")
+    set_title(fixture_db, "t_lease", "Don't forget the keys")
+    set_title(fixture_db, "t_cables", "Dont forget the keys")
+    found = ids(findings(fixture_db, CHECK))
+    assert (U("t_dup_a"), U("t_dup_b"), U("t_council")) in found
+    assert len(found) == 2
+    keys = next(g for g in found if U("t_lease") in g)
+    assert set(keys) == {U("t_lease"), U("t_cables")}

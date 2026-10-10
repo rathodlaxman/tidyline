@@ -1,9 +1,10 @@
 """Open to-dos whose titles match after normalisation.
 
-Titles are compared after Unicode NFKC, casefold, removing every punctuation
-character (category P*) and collapsing whitespace. Only in-scope open to-dos
-are compared. A title that normalises to nothing is never grouped, and a group
-made only of instances of one recurring template is not flagged.
+Titles are compared after Unicode NFKC, casefold, removing apostrophes (ASCII
+' and the right single quote U+2019), replacing every other punctuation
+character (category P*) with a space, and collapsing whitespace. Only in-scope
+open to-dos are compared. A title that normalises to nothing is never grouped,
+and a group made only of instances of one recurring template is not flagged.
 """
 
 from __future__ import annotations
@@ -19,9 +20,19 @@ CHECK_ID = "possible_duplicates"
 SEVERITY = "warning"
 
 
+APOSTROPHES = frozenset("'\u2019")
+
+
 def normalise(title: str) -> str:
     text = unicodedata.normalize("NFKC", title).casefold()
-    text = "".join(c for c in text if not unicodedata.category(c).startswith("P"))
+    text = "".join(
+        ""
+        if c in APOSTROPHES
+        else " "
+        if unicodedata.category(c).startswith("P")
+        else c
+        for c in text
+    )
     return " ".join(text.split())
 
 

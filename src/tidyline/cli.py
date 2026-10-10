@@ -26,6 +26,12 @@ from tidyline.render.check_out import check_json, check_text
 from tidyline.render.json_out import build_export
 from tidyline.render.text import ReportOptions, render_report
 
+# Exit codes (DESIGN.md 7.3): 1 is reserved for `check` finding a warning.
+EXIT_OK = 0
+EXIT_WARNINGS = 1
+EXIT_USAGE = 2
+EXIT_FAILURE = 3  # the database could not be found or read; a write failed
+
 THINGS_INFO_PLIST = Path("/Applications/Things3.app/Contents/Info.plist")
 
 TERMINAL_APPS = {
@@ -101,6 +107,12 @@ def build_parser() -> argparse.ArgumentParser:
         "check", help="run the health checks; exit code 1 if any warning"
     )
     check.add_argument(
+        "--db",
+        metavar="PATH",
+        default=argparse.SUPPRESS,
+        help="path to the Things database",
+    )
+    check.add_argument(
         "--only",
         metavar="ID",
         nargs="+",
@@ -147,11 +159,11 @@ def doctor(args: argparse.Namespace) -> int:
     except DatabaseNotFoundError as error:
         show("Database:", "not found")
         print(f"error: {error}", file=sys.stderr)
-        return 1
+        return EXIT_FAILURE
     except PermissionError as error:
         show("Database:", "cannot look (permission denied)")
         print(f"error: {_permission_help(error)}", file=sys.stderr)
-        return 1
+        return EXIT_FAILURE
     show("Database:", _tilde(source))
 
     macos = _macos_version()
@@ -169,11 +181,11 @@ def doctor(args: argparse.Namespace) -> int:
             print(f"hint: {_permission_help(error)}", file=sys.stderr)
         if args.verbose and error.__cause__:
             print(f"cause: {error.__cause__!r}", file=sys.stderr)
-        return 1
+        return EXIT_FAILURE
     except SchemaError as error:
         show("Schema:", "failed")
         print(f"error: {error}", file=sys.stderr)
-        return 1
+        return EXIT_FAILURE
 
     show("Schema:", "ok")
     show("Database version:", str(report.database_version))
@@ -197,20 +209,20 @@ def export(args: argparse.Namespace) -> int:
             "keep the file private.",
             file=sys.stderr,
         )
-        return 2
+        return EXIT_USAGE
     if args.out == "-":
         print(
             "error: writing to standard output (--out -) is not supported in v0.1. "
             "Give a file path, for example --out things-export.json.",
             file=sys.stderr,
         )
-        return 2
+        return EXIT_USAGE
     out = _prepare_out(args.out)
     if out is None:
-        return 1
+        return EXIT_USAGE
     loaded = _load(args)
     if loaded is None:
-        return 1
+        return EXIT_FAILURE
     snapshot, report, macos, things = loaded
 
     data = build_export(
@@ -227,7 +239,7 @@ def export(args: argparse.Namespace) -> int:
     )
     text = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
     if not _write_out(out, text):
-        return 1
+        return EXIT_FAILURE
 
     print(
         f"Exported {len(data['tasks'])} tasks, {len(data['projects'])} projects and "
@@ -254,7 +266,7 @@ def report(args: argparse.Namespace) -> int:
             "`tidyline report` for the text report.",
             file=sys.stderr,
         )
-        return 2
+        return EXIT_USAGE
     out = None
     if args.out is not None:
         if args.out == "-":
@@ -263,13 +275,13 @@ def report(args: argparse.Namespace) -> int:
                 "report in the terminal, or give a file path.",
                 file=sys.stderr,
             )
-            return 2
+            return EXIT_USAGE
         out = _prepare_out(args.out)
         if out is None:
-            return 1
+            return EXIT_USAGE
     loaded = _load(args)
     if loaded is None:
-        return 1
+        return EXIT_FAILURE
     snapshot, schema_report, macos, things = loaded
 
     color = (
@@ -294,7 +306,7 @@ def report(args: argparse.Namespace) -> int:
         print(text, end="")
         return 0
     if not _write_out(out, text):
-        return 1
+        return EXIT_FAILURE
     print(f"Wrote the report to {out}")
     print(
         "note: this file contains the titles of your recurring tasks. Keep it "
@@ -315,10 +327,10 @@ def check(args: argparse.Namespace) -> int:
                 f"({error}). Fix it, or quote it so the shell leaves it alone.",
                 file=sys.stderr,
             )
-            return 2
+            return EXIT_USAGE
     loaded = _load(args)
     if loaded is None:
-        return 1
+        return EXIT_FAILURE
     snapshot = loaded[0]
     checks = [c for c in CHECK_IDS if args.only is None or c in args.only]
     findings = run_checks(
@@ -331,7 +343,9 @@ def check(args: argparse.Namespace) -> int:
         print(json.dumps(check_json(findings, checks), indent=2, ensure_ascii=False))
     else:
         print(check_text(findings, checks, snapshot, args.pattern), end="")
-    return 1 if any(f.severity == "warning" for f in findings) else 0
+    if any(f.severity == "warning" for f in findings):
+        return EXIT_WARNINGS
+    return EXIT_OK
 
 
 def _prepare_out(argument: str) -> Path | None:

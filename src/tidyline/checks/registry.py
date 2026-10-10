@@ -6,14 +6,21 @@ import datetime as dt
 from collections.abc import Iterable
 
 from tidyline.checks import (
+    active_project_no_open_tasks,
+    dated_in_someday_project,
+    leftover_templates,
     open_in_trashed_project,
+    outside_heading,
     possible_duplicates,
+    recurrence_not_recognised,
+    someday_in_active_project,
     title_hygiene,
     unfiled_open,
 )
 from tidyline.checks.finding import CheckOptions, Finding
 from tidyline.model import Snapshot
 
+# Report order: the order of the DESIGN.md 7.3 table.
 CHECKS = {
     module.CHECK_ID: module
     for module in (
@@ -21,6 +28,12 @@ CHECKS = {
         unfiled_open,
         title_hygiene,
         possible_duplicates,
+        dated_in_someday_project,
+        active_project_no_open_tasks,
+        recurrence_not_recognised,
+        leftover_templates,
+        someday_in_active_project,
+        outside_heading,
     )
 }
 CHECK_IDS = tuple(CHECKS)
