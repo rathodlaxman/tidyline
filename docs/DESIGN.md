@@ -36,8 +36,8 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-10 | Anonymisation default depends on level: local Ollama `light`, cloud API `strict`. Always overridable, always previewed. |
 | 2026-10-10 | HTML report: single offline file, follows system light/dark, native `<details>` for folding, one small optional inline script for search/filter, print stylesheet. No CDN, no web fonts. |
 | 2026-10-10 | Repo starts private and goes public when v0.1 works. |
-| 2026-10-10 | Runtime dependencies: things.py only through v0.2. CLI built on the standard library argparse. HTML templating decided at v0.3. |
-| 2026-10-10 | Default anonymisation for `prompt` (level 0): strict. `--anonymise light` is available for a fuller audit. |
+| 2026-10-10 | Runtime dependencies: **things.py only** through v0.2. CLI built on the standard library `argparse`. HTML templating decided at v0.3. |
+| 2026-10-10 | Default anonymisation for `prompt` (level 0): **strict**. `--anonymise light` is available for a fuller audit. |
 
 ## 4. Tested environment
 
@@ -63,6 +63,8 @@ Recurrence offset conventions (section 7) were verified against this one databas
 - Dates are stored as packed integers: `year << 16 | month << 12 | day << 7`.
 - It does not expose This Evening. That needs raw SQL (believed to be the `startBucket` column; to be verified in v0.1).
 - `complete()` and `show()` send `things:///` URLs to the app. tidyline must never call them.
+- Importing things.py runs a glob over `~/Library/Group Containers/...` at import time to find a default path. It opens no database, but it does list another app's container, which may trigger the macOS privacy prompt. Rules: import things.py lazily (inside `read.py`, after the snapshot exists), never use its default path, always pass `filepath=`. `--version`, `--help` and the permission-error handling in `doctor` must work without importing it.
+- `today()` and `upcoming()` ignore the parent project's status. A task with a past start date inside a Someday project appears in `today()`, but the app keeps it hidden. They also read the real clock inside SQL. Rule: tidyline never calls `today()` or `upcoming()`. `status.py` computes effective status itself from raw fields, with `today` passed in as an argument.
 
 ## 6. Reading the database safely
 
@@ -108,6 +110,9 @@ Output examples: `Daily`, `Weekly on Sun`, `Every 2 weeks on Sun`, `Monthly on d
 - Unknown keys or values produce `recurring (rule not recognised)`. The raw rule is always kept in the export.
 - Templates whose project is in the trash are listed as **leftovers**, not as live recurring tasks.
 - Templates under a heading report the heading's project.
+- A template is a row with `rt1_recurrenceRule` set and `trashed = 0` (as in the earlier personal script). Its project is the `project` column, or the heading's project when `heading` is set.
+- Templates carry `rt1_instanceCreationPaused`. A paused template is reported as `(paused)`.
+- Fixture assumption, not yet verified: template rows have type 0, status 0, start 2 and no start date. Real rules may carry keys beyond `fu`, `fa`, `tp`, `of`; they must not be ignored silently (see "Unknown keys" above).
 
 ### 7.3 Health checks (v0.2)
 
@@ -256,3 +261,7 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 - Whether overdue-deadline tasks without a start date should count as Today (rule 5).
 - Whether macOS shows a privacy prompt when Terminal reads the Group Container while Things is running.
 - That the backup API copy works while Things is writing.
+- Row shape of real template rows (type, status, trashed, start, start date, paused flag).
+- Which `startBucket` values exist, and how they relate to `start` and start date.
+- Which keys real recurrence rules carry beyond `fu`, `fa`, `tp`, `of`.
+- Verify with counts-only queries against the maintainer's own database, run by hand and never committed. Output contains numbers and key names, no titles.
