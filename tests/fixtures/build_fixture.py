@@ -543,7 +543,9 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
         todo("t_dup_a", "Pay the electricity bill", project="proj_admin_home")
         todo("t_dup_b", "pay the electricity bill.", project="proj_admin_studio")
         todo("t_council", "Check council tax bill", project="proj_admin_home")
-        todo("t_receipts", "Reconcile receipts", project="proj_admin_studio")
+        # Untidy titles for title_hygiene: a doubled space and a stray middle dot;
+        # a leading space on t_portfolio below.
+        todo("t_receipts", "Reconcile  receipts \u00b7", project="proj_admin_studio")
 
         # Project with headings -----------------------------------------
         todo(
@@ -589,7 +591,7 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
 
         # Area-level and unfiled tasks ----------------------------------
         todo("t_lease", "Renew the lease", area="area_home")
-        todo("t_portfolio", "Update portfolio site", area="area_studio")
+        todo("t_portfolio", " Update portfolio site", area="area_studio")
         todo("t_cables", "Sort the loose cables")
         # Needs NFKC: a full-width B, an fi ligature and a decomposed accent
         todo("t_card", "\uff22uy a \ufb01rst-birthday card for Zoe\u0301")

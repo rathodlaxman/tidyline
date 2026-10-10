@@ -6,11 +6,13 @@ import json
 import os
 import platform
 import plistlib
+import re
 import subprocess
 import sys
 from pathlib import Path
 
 from tidyline import __version__
+from tidyline.checks import CHECK_IDS, CheckOptions, run_checks
 from tidyline.db.locate import DatabaseNotFoundError, locate_database
 from tidyline.db.schema import (
     SchemaError,
@@ -20,6 +22,7 @@ from tidyline.db.schema import (
 )
 from tidyline.db.snapshot import SnapshotError, open_snapshot
 from tidyline.read import ReadError, read_snapshot
+from tidyline.render.check_out import check_json, check_text
 from tidyline.render.json_out import build_export
 from tidyline.render.text import ReportOptions, render_report
 
@@ -94,6 +97,28 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument(
         "--no-color", action="store_true", help="never use colour (plain text)"
     )
+    check = commands.add_parser(
+        "check", help="run the health checks; exit code 1 if any warning"
+    )
+    check.add_argument(
+        "--only",
+        metavar="ID",
+        nargs="+",
+        action="extend",
+        choices=CHECK_IDS,
+        help=f"run only these checks: {', '.join(CHECK_IDS)}",
+    )
+    check.add_argument(
+        "--pattern",
+        metavar="REGEX",
+        nargs="+",
+        action="extend",
+        default=[],
+        help="flag titles matching these regular expressions (title_hygiene)",
+    )
+    check.add_argument(
+        "--json", action="store_true", help="print findings as JSON, ids only"
+    )
     return parser
 
 
@@ -106,6 +131,8 @@ def main(argv: list[str] | None = None) -> int:
         return export(args)
     if args.command == "report":
         return report(args)
+    if args.command == "check":
+        return check(args)
     parser.print_help()
     return 0
 
@@ -275,6 +302,36 @@ def report(args: argparse.Namespace) -> int:
         file=sys.stderr,
     )
     return 0
+
+
+def check(args: argparse.Namespace) -> int:
+    patterns = []
+    for number, text in enumerate(args.pattern, start=1):
+        try:
+            patterns.append(re.compile(text))
+        except re.error as error:
+            print(
+                f"error: --pattern {number} is not a valid regular expression "
+                f"({error}). Fix it, or quote it so the shell leaves it alone.",
+                file=sys.stderr,
+            )
+            return 2
+    loaded = _load(args)
+    if loaded is None:
+        return 1
+    snapshot = loaded[0]
+    checks = [c for c in CHECK_IDS if args.only is None or c in args.only]
+    findings = run_checks(
+        snapshot,
+        dt.date.today(),
+        only=checks,
+        options=CheckOptions(patterns=tuple(patterns)),
+    )
+    if args.json:
+        print(json.dumps(check_json(findings, checks), indent=2, ensure_ascii=False))
+    else:
+        print(check_text(findings, checks, snapshot, args.pattern), end="")
+    return 1 if any(f.severity == "warning" for f in findings) else 0
 
 
 def _prepare_out(argument: str) -> Path | None:
