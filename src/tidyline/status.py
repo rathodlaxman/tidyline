@@ -57,7 +57,7 @@ def effective_status(task: Task, parent_project: Task | None, today: dt.date) ->
     if (
         task.deadline is not None
         and task.deadline <= today
-        and task.deadline_suppression_date is None
+        and not task.deadline_suppressed
     ):
         return Status.TODAY
     # 7.1 rule 6: Someday.

@@ -52,6 +52,7 @@ REQUIRED_COLUMNS: dict[str, tuple[str, ...]] = {
         "userModificationDate",
         "index",
         "todayIndex",
+        "startBucket",
         "area",
         "project",
         "heading",

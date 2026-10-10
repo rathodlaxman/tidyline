@@ -66,9 +66,9 @@ class Task:
     heading row carries the project. A recurring template has `recurrence` set;
     its visible instances have `recurrence_template_uuid` set instead.
 
-    Dates are None when the column is NULL. `read.py` must not let a non-NULL
-    value that fails to unpack pass as NULL: for `start_date` and
-    `deadline_suppression_date` that would change the effective status.
+    Dates are None when the column is NULL or does not decode; the `raw_*`
+    fields keep the packed integers as stored, so the two cases stay apart.
+    `read.py` adds a Snapshot warning for every value that does not decode.
     """
 
     uuid: str
@@ -93,6 +93,17 @@ class Task:
     modified: dt.datetime | None = None
     stopped: dt.datetime | None = None
     index: int = 0
+    raw_start_date: int | None = None
+    raw_deadline: int | None = None
+    raw_deadline_suppression_date: int | None = None
+
+    @property
+    def deadline_suppressed(self) -> bool:
+        """True when the column is set, even if its value does not decode."""
+        return (
+            self.deadline_suppression_date is not None
+            or self.raw_deadline_suppression_date is not None
+        )
 
     @property
     def is_closed(self) -> bool:
@@ -105,7 +116,41 @@ class Task:
 
 @dataclass(frozen=True)
 class Snapshot:
+    """Everything read from one database copy.
+
+    `tasks` holds every to-do, project, heading and live recurring template,
+    including closed and trashed rows; filtering happens later. Trashed
+    templates are left out (DESIGN.md 7.2). `leftover_template_uuids` lists the
+    templates whose project is trashed or missing. `warnings` describe values
+    that could not be read; they never contain titles or notes.
+    """
+
     areas: tuple[Area, ...] = ()
     tags: tuple[Tag, ...] = ()
     tasks: tuple[Task, ...] = ()
     checklist_items: tuple[ChecklistItem, ...] = ()
+    leftover_template_uuids: tuple[str, ...] = ()
+    warnings: tuple[str, ...] = ()
+
+    @property
+    def projects(self) -> tuple[Task, ...]:
+        return tuple(t for t in self.tasks if t.kind is TaskKind.PROJECT)
+
+    @property
+    def headings(self) -> tuple[Task, ...]:
+        return tuple(t for t in self.tasks if t.kind is TaskKind.HEADING)
+
+    @property
+    def todos(self) -> tuple[Task, ...]:
+        """To-dos, excluding recurring templates."""
+        return tuple(
+            t for t in self.tasks if t.kind is TaskKind.TODO and not t.is_template
+        )
+
+    @property
+    def templates(self) -> tuple[Task, ...]:
+        return tuple(t for t in self.tasks if t.is_template)
+
+    @property
+    def instances(self) -> tuple[Task, ...]:
+        return tuple(t for t in self.tasks if t.recurrence_template_uuid is not None)

@@ -1,6 +1,7 @@
 import datetime as dt
 import os
 import sqlite3
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,28 @@ from fixtures import build_fixture as bf
 
 REAL_LIBRARY = str(Path.home() / "Library")
 FIXED_TODAY = dt.date(2026, 10, 10)
+
+
+def _import_things_with_an_empty_home():
+    """Import things.py once with HOME pointing at an empty directory.
+
+    Importing things.py globs ~/Library/Group Containers to find a default
+    path (DESIGN.md 5). Tests must not list the real directory, so the first
+    import happens here, before any test module imports it.
+    """
+    saved = os.environ.get("HOME")
+    with tempfile.TemporaryDirectory() as empty:
+        os.environ["HOME"] = empty
+        try:
+            import things  # noqa: F401
+        finally:
+            if saved is None:
+                del os.environ["HOME"]
+            else:
+                os.environ["HOME"] = saved
+
+
+_import_things_with_an_empty_home()
 
 
 @pytest.fixture(autouse=True)
