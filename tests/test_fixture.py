@@ -119,6 +119,7 @@ def test_today_contents(database):
         "Water the ferns",
         "Renew library card",
         "Take out the recycling",
+        "Read a chapter tonight",
         "Book wheel class",
         "Send the invoice",
     }
@@ -171,37 +172,174 @@ def test_non_english_titles(database):
     assert "請求書の写真を整理する" in titles
 
 
-def test_recurrence_rules_decode(built):
-    path, ids = built
+def template_blobs(path):
     conn = sqlite3.connect(path)
     try:
-        rows = conn.execute(
-            "SELECT uuid, rt1_recurrenceRule FROM TMTask "
-            "WHERE rt1_recurrenceRule IS NOT NULL"
-        ).fetchall()
-        instances = dict(
+        return dict(
             conn.execute(
-                "SELECT rt1_repeatingTemplate, title FROM TMTask "
-                "WHERE rt1_repeatingTemplate IS NOT NULL"
+                "SELECT uuid, rt1_recurrenceRule FROM TMTask "
+                "WHERE rt1_recurrenceRule IS NOT NULL"
             ).fetchall()
         )
     finally:
         conn.close()
-    by_uuid = {uuid: blob for uuid, blob in rows}
-    assert len(by_uuid) == len(bf.RECURRENCE_RULES) == 9
-    for key, rule in bf.RECURRENCE_RULES.items():
-        blob = by_uuid[bf.make_uuid(key)]
+
+
+def decoded(path, key):
+    return plistlib.loads(template_blobs(path)[bf.make_uuid(key)])
+
+
+def test_recurrence_rules_decode(built):
+    path, _ = built
+    blobs = template_blobs(path)
+    rules = bf.recurrence_rules(FIXED_TODAY)
+    assert len(blobs) == len(rules) + 1 == 26
+    for key, rule in rules.items():
+        blob = blobs[bf.make_uuid(key)]
         assert blob.startswith(b"bplist00")
-        decoded = plistlib.loads(blob)
-        assert decoded == rule
-        assert decoded["fu"] in (16, 256, 8, 4)
-        assert decoded["tp"] in (0, 1)
-    assert plistlib.loads(by_uuid[ids["tpl_monthly_last"]])["of"] == [{"dy": -1}]
-    assert plistlib.loads(by_uuid[ids["tpl_after_completion"]])["tp"] == 1
-    assert "zz" in plistlib.loads(by_uuid[ids["tpl_unrecognised"]])
-    assert set(instances) == {
-        bf.make_uuid(k) for k in bf.RECURRENCE_RULES if k != "tpl_leftover"
+        assert plistlib.loads(blob) == rule
+        assert isinstance(rule["ia"], float)
+        assert isinstance(rule["sr"], float)
+        for name in ("rc", "rrv", "ts"):
+            assert isinstance(rule[name], int)
+
+
+def test_every_rule_carries_the_real_extra_keys(built):
+    path, _ = built
+    for key, rule in bf.recurrence_rules(FIXED_TODAY).items():
+        expected = {"fu", "fa", "tp", "of", "ia", "sr", "rc", "rrv", "ts"}
+        if key != "tpl_no_ed":
+            expected.add("ed")
+        if key == "tpl_extra_key":
+            expected.add("zz")
+        assert set(rule) == expected, key
+
+
+def test_offset_shapes(built):
+    path, _ = built
+    expected = {
+        "tpl_daily": (16, 1, [{"dy": 0}]),
+        "tpl_weekly_sun": (256, 1, [{"wd": 0}]),
+        "tpl_weekly_fri": (256, 1, [{"wd": 5}]),
+        "tpl_weekly_sat": (256, 1, [{"wd": 6}]),
+        "tpl_biweekly_sun": (256, 2, [{"wd": 0}]),
+        "tpl_monthly_first": (8, 1, [{"dy": 0}]),
+        "tpl_monthly_15": (8, 1, [{"dy": 14}]),
+        "tpl_monthly_last": (8, 1, [{"dy": -1}]),
+        "tpl_every3_months": (8, 3, [{"dy": 4}]),
+        "tpl_every6_months": (8, 6, [{"dy": 13}]),
+        "tpl_monthly_first_sun": (8, 1, [{"wd": 0, "wdo": 1}]),
+        "tpl_monthly_last_sun": (8, 1, [{"wd": 0, "wdo": -1}]),
+        "tpl_yearly_feb28": (4, 1, [{"dy": 27, "mo": 1}]),
+        "tpl_yearly_jan1": (4, 1, [{"dy": 0, "mo": 0}]),
     }
+    for key, (fu, fa, offsets) in expected.items():
+        rule = decoded(path, key)
+        assert (rule["fu"], rule["fa"], rule["of"]) == (fu, fa, offsets), key
+        assert rule["tp"] == 0
+    assert decoded(path, "tpl_after_completion")["tp"] == 1
+
+
+def test_rule_variants(built):
+    path, _ = built
+    assert "ed" not in decoded(path, "tpl_no_ed")
+    assert decoded(path, "tpl_daily")["ed"] == bf.NEVER_ENDS
+    end = decoded(path, "tpl_end_date")["ed"]
+    assert end < 6.0e10
+    expected_end = dt.datetime.combine(
+        FIXED_TODAY + dt.timedelta(days=90), dt.time(0), tzinfo=dt.timezone.utc
+    )
+    assert end == expected_end.timestamp()
+    assert decoded(path, "tpl_repeat_count")["rc"] == 12
+    assert decoded(path, "tpl_lead_time")["ts"] == -7
+    assert decoded(path, "tpl_rrv5")["rrv"] == 5
+    assert decoded(path, "tpl_unknown_unit")["fu"] == 999
+    assert decoded(path, "tpl_extra_key")["zz"] == 1
+    # Ordinary rules use rrv 4 and the never-ends sentinel for ed.
+    assert decoded(path, "tpl_weekly_sun")["rrv"] == 4
+
+
+def test_one_rule_is_not_a_valid_plist(built):
+    path, _ = built
+    blob = template_blobs(path)[bf.make_uuid(bf.INVALID_RULE_KEY)]
+    with pytest.raises(ValueError):
+        plistlib.loads(blob)
+
+
+def test_dates_depend_on_today_for_the_end_date():
+    later = dt.date(2030, 1, 31)
+    assert (
+        bf.recurrence_rules(later)["tpl_end_date"]["ed"]
+        != (bf.recurrence_rules(FIXED_TODAY)["tpl_end_date"]["ed"])
+    )
+    assert bf.recurrence_rules(later)["tpl_end_date"]["ed"] < 6.0e10
+
+
+def test_template_rows(built):
+    path, _ = built
+    conn = sqlite3.connect(path)
+    try:
+        rows = {
+            uuid: (paused, trashed, project, status)
+            for uuid, paused, trashed, project, status in conn.execute(
+                "SELECT uuid, rt1_instanceCreationPaused, trashed, project, status "
+                "FROM TMTask WHERE rt1_recurrenceRule IS NOT NULL"
+            )
+        }
+        paused_keys = [
+            key
+            for key in [*bf.recurrence_rules(FIXED_TODAY), bf.INVALID_RULE_KEY]
+            if rows[bf.make_uuid(key)][0] == 1
+        ]
+    finally:
+        conn.close()
+    assert paused_keys == ["tpl_paused"]
+    paused, trashed, project, _ = rows[bf.make_uuid("tpl_trashed")]
+    assert trashed == 1 and project is None and paused == 0  # not a leftover
+    leftover = rows[bf.make_uuid("tpl_leftover")]
+    assert leftover[1] == 0 and leftover[2] == bf.make_uuid("proj_trashed")
+    assert all(row[3] == 0 for row in rows.values())
+
+
+def test_instances_three_open_two_completed(built):
+    path, _ = built
+    conn = sqlite3.connect(path)
+    try:
+        rows = conn.execute(
+            "SELECT rt1_repeatingTemplate, status FROM TMTask "
+            "WHERE rt1_repeatingTemplate IS NOT NULL"
+        ).fetchall()
+    finally:
+        conn.close()
+    open_templates = {t for t, status in rows if status == 0}
+    done_templates = {t for t, status in rows if status == 3}
+    assert open_templates == {
+        bf.make_uuid(k) for k in ("tpl_daily", "tpl_weekly_sun", "tpl_monthly_15")
+    }
+    assert done_templates == {
+        bf.make_uuid(k) for k in ("tpl_biweekly_sun", "tpl_yearly_feb28")
+    }
+    assert len(rows) == 5
+
+
+def test_this_evening_task_and_start_bucket(built, database):
+    path, _ = built
+    conn = sqlite3.connect(path)
+    try:
+        buckets = dict(
+            conn.execute("SELECT title, startBucket FROM TMTask WHERE startBucket != 0")
+        )
+        (row,) = conn.execute(
+            "SELECT start, startBucket, startDate FROM TMTask WHERE title = ?",
+            ("Read a chapter tonight",),
+        ).fetchall()
+    finally:
+        conn.close()
+    assert buckets == {"Read a chapter tonight": 1}
+    assert row == (1, 1, bf.pack_date(FIXED_TODAY))
+    # things.py ignores startBucket, so the task is in today() like any dated task
+    titles = {task["title"] for task in things.today(database=database)}
+    assert "Read a chapter tonight" in titles
 
 
 def test_leftover_template_is_in_trashed_project(built):

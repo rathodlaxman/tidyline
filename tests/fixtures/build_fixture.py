@@ -5,51 +5,60 @@ Everything here is invented. The database is built from tests/fixtures/schema.sq
 computed from the ``today`` argument, so the output is identical for the same
 ``today``.
 
-ASSUMPTIONS (column meanings that are not documented and that I could not
-confirm from things.py or the schema; revisit them when the real database is
-compared in step 8):
+VERIFIED against a real database (DESIGN.md 7.1, 7.2 and 11; recorded there
+without personal values):
 
- 1. TMTask.type: 0 to-do, 1 project, 2 heading (from things.py).
- 2. TMTask.status: 0 open, 2 cancelled, 3 completed (from things.py).
- 3. TMTask.start: 0 Inbox, 1 Anytime, 2 Someday (from things.py). Upcoming is
-    Someday with a future startDate (from things.py `upcoming()`).
- 4. A to-do under a heading has `heading` set and `project` NULL; the heading
-    row carries the `project` (from the things.py comment and joins).
- 5. A to-do directly in a project has `project` set and `heading` NULL. A
-    project or to-do in an area has `area` set; unfiled rows have all three
+ V1. Template row shape. This builder still gives templates type 0, status 0,
+     start 2 and no startDate; I have not re-checked that wording against the
+     design doc beyond its "verified" note.
+ V2. Real recurrence rules also carry ia (float), sr (float), rc (int),
+     rrv (int, 4), ts (int) and usually ed (float). Every rule here has them.
+ V3. Daily rules use of = [{"dy": 0}]. Weekly rules use wd 0, 5 and 6. Monthly
+     rules use dy 0, 4, 13, 14 and the ordinal form [{"wd", "wdo"}]. Yearly rules
+     use [{"dy", "mo"}]. Offsets are zero-based.
+ V4. This Evening is an open to-do with start 1, startBucket 1 and a start date
+     of today. Every other row has startBucket 0. things.py ignores startBucket,
+     so such a task still appears in things.today().
+
+UNVERIFIED (invented or assumed; revisit against real data):
+
+ U1. dy = -1 (last day of the month) has never been seen in real data.
+ U2. wdo: 1 to 4 = first to fourth, -1 = last. Only 1 and -1 were seen.
+ U3. ed: a value at or above 6.0e10 means "never ends"; 64092211200.0 is used
+     as that sentinel and its unit is unknown. A missing ed means no end date.
+     An ordinary ed is treated as an end date, built here as Unix seconds.
+ U4. rt1_instanceCreationPaused = 1 means paused (0 otherwise).
+ U5. rc and ts have unknown meaning; the values 12 and -7 are invented.
+ U6. An evening task with a past date, or inside a Someday project, is not
+     covered because it has not been seen.
+ U7. The "not a valid plist" blob and the unknown unit fu = 999 are invented
+     error cases, as is the extra key `zz`.
+
+TAKEN FROM things.py source or the schema, not independently verified:
+
+ 1. TMTask.type: 0 to-do, 1 project, 2 heading. TMTask.status: 0 open,
+    2 cancelled, 3 completed. TMTask.start: 0 Inbox, 1 Anytime, 2 Someday.
+    Upcoming is Someday with a future startDate (`upcoming()`).
+ 2. A to-do under a heading has `heading` set and `project` NULL; the heading
+    row carries the `project`. A to-do directly in a project has `project` set
+    and `heading` NULL. In an area, `area` is set; unfiled rows have all three
     NULL.
- 6. Open projects and headings use status 0 and trashed 0. A Someday project is
+ 3. Open projects and headings use status 0 and trashed 0. A Someday project is
     a project with start = 2.
- 7. A to-do inside a trashed project is not itself trashed (trashed = 0); only
-    its context is. things.py documents this case.
- 8. Recurring template rows (the hidden ones) have rt1_recurrenceRule set,
-    type 0, status 0, trashed 0, start 2 and no startDate. things.py hides
-    them only because rt1_recurrenceRule is not NULL; the other values are my
-    guess. A leftover template is one whose `project` is a trashed project.
- 9. Visible instances have rt1_recurrenceRule NULL and rt1_repeatingTemplate set
+ 4. A to-do inside a trashed project has trashed = 0; only its context is
+    trashed. A leftover template is one whose `project` is a trashed project; a
+    deleted recurring task is a template with trashed = 1 and is not a leftover.
+ 5. Visible instances have rt1_recurrenceRule NULL and rt1_repeatingTemplate set
     to the template uuid. rt1_instanceCreationStartDate and
-    rt1_nextInstanceStartDate on templates are packed dates; the values are
-    invented.
-10. Recurrence plist: a top-level dict with fu, fa, tp and `of`, where `of` is
-    a list holding ONE dict of offsets (wd, dy, mo). I assume an empty dict
-    for a daily rule. Offsets are zero-based as in DESIGN.md 7.2, so "day 15"
-    is dy = 14 and "Feb 28" is mo = 1, dy = 27. Real rules carry more keys
-    that DESIGN.md does not document; none are invented here. The
-    "unrecognised" rule adds one made-up top-level key, `zz`.
-11. deadlineSuppressionDate is a packed date when the deadline is suppressed
+    rt1_nextInstanceStartDate on templates are packed dates with invented values.
+ 6. deadlineSuppressionDate is a packed date when the deadline is suppressed
     (things.py only tests for NULL / not NULL).
-12. Timestamps (creationDate, userModificationDate, stopDate) are Unix seconds
-    in UTC (from things.py). They are built from `today` at 09:00 UTC.
-13. Counter columns (untrashedLeafActionsCount, checklistItemsCount, ...) and
-    cachedTags are left NULL; the real app maintains them and things.py does
-    not read them.
-14. Tags live in TMTag and link through TMTaskTag(tasks, tags). Checklist
-    status uses the same 0 / 2 / 3 codes as tasks (from things.py).
-15. This Evening is NOT in the fixture. The schema has `startBucket` but
-    nothing in the schema or things.py says what its values mean (DESIGN.md 11
-    lists this as still to verify).
-16. TMSettings is left empty, so no URL-scheme auth token exists in the fixture.
-17. The `sqlite_sequence` CREATE statement in schema.sql is skipped because
+ 7. Timestamps are Unix seconds in UTC, built from `today` at 09:00 UTC.
+ 8. Counter columns and cachedTags are left NULL; things.py does not read them.
+ 9. Tags link through TMTaskTag(tasks, tags). Checklist status uses the same
+    0 / 2 / 3 codes as tasks.
+10. TMSettings is left empty, so no URL-scheme auth token exists in the fixture.
+11. The `sqlite_sequence` CREATE statement in schema.sql is skipped because
     SQLite creates that table itself for AUTOINCREMENT columns.
 """
 
@@ -65,30 +74,255 @@ from pathlib import Path
 SCHEMA_PATH = Path(__file__).with_name("schema.sql")
 DATABASE_VERSION = 29
 
+NEVER_ENDS = 64092211200.0  # unverified sentinel for "no end date" (U3)
+END_DATE = "END_DATE"  # placeholder replaced by a date computed from `today`
+DROP_ED = "DROP_ED"  # placeholder: leave the ed key out
+
 # fu: 16 day, 256 week, 8 month, 4 year. tp: 0 fixed, 1 after completion.
-RECURRENCE_RULES: dict[str, dict] = {
-    "tpl_daily": {"fu": 16, "fa": 1, "tp": 0, "of": [{}]},
-    "tpl_weekly_sun": {"fu": 256, "fa": 1, "tp": 0, "of": [{"wd": 0}]},
-    "tpl_biweekly_sun": {"fu": 256, "fa": 2, "tp": 0, "of": [{"wd": 0}]},
-    "tpl_monthly_15": {"fu": 8, "fa": 1, "tp": 0, "of": [{"dy": 14}]},
-    "tpl_monthly_last": {"fu": 8, "fa": 1, "tp": 0, "of": [{"dy": -1}]},
-    "tpl_yearly_feb28": {"fu": 4, "fa": 1, "tp": 0, "of": [{"mo": 1, "dy": 27}]},
-    "tpl_after_completion": {"fu": 4, "fa": 1, "tp": 1, "of": [{"mo": 7, "dy": 0}]},
-    "tpl_unrecognised": {"fu": 256, "fa": 1, "tp": 0, "of": [{"wd": 0}], "zz": 1},
-    "tpl_leftover": {"fu": 8, "fa": 1, "tp": 0, "of": [{"dy": 0}]},
-}
+# (key, title, area, fu, fa, tp, of, overrides). A key beginning "tpl_" is a
+# template row; every one of them gets a rule blob.
+RULE_SPECS = (
+    ("tpl_daily", "Take out the recycling", "area_home", 16, 1, 0, [{"dy": 0}], {}),
+    ("tpl_weekly_sun", "Plan the week ahead", "area_home", 256, 1, 0, [{"wd": 0}], {}),
+    (
+        "tpl_weekly_fri",
+        "Water the balcony herbs",
+        "area_home",
+        256,
+        1,
+        0,
+        [{"wd": 5}],
+        {},
+    ),
+    (
+        "tpl_weekly_sat",
+        "Check the tyre pressure",
+        "area_studio",
+        256,
+        1,
+        0,
+        [{"wd": 6}],
+        {},
+    ),
+    ("tpl_biweekly_sun", "Wash the bedding", "area_home", 256, 2, 0, [{"wd": 0}], {}),
+    (
+        "tpl_monthly_first",
+        "Review the budget sheet",
+        "area_studio",
+        8,
+        1,
+        0,
+        [{"dy": 0}],
+        {},
+    ),
+    ("tpl_monthly_15", "Pay the rent", "area_home", 8, 1, 0, [{"dy": 14}], {}),
+    # dy = -1 has not been seen in real data (U1)
+    (
+        "tpl_monthly_last",
+        "Back up the laptop",
+        "area_studio",
+        8,
+        1,
+        0,
+        [{"dy": -1}],
+        {},
+    ),
+    ("tpl_every3_months", "Clean the oven", "area_home", 8, 3, 0, [{"dy": 4}], {}),
+    (
+        "tpl_every6_months",
+        "Service the bicycle",
+        "area_home",
+        8,
+        6,
+        0,
+        [{"dy": 13}],
+        {},
+    ),
+    (
+        "tpl_monthly_first_sun",
+        "Call the family",
+        "area_home",
+        8,
+        1,
+        0,
+        [{"wd": 0, "wdo": 1}],
+        {},
+    ),
+    (
+        "tpl_monthly_last_sun",
+        "Tidy the workshop",
+        "area_studio",
+        8,
+        1,
+        0,
+        [{"wd": 0, "wdo": -1}],
+        {},
+    ),
+    (
+        "tpl_yearly_feb28",
+        "Renew the domain name",
+        "area_studio",
+        4,
+        1,
+        0,
+        [{"dy": 27, "mo": 1}],
+        {},
+    ),
+    (
+        "tpl_yearly_jan1",
+        "Set the year's goals",
+        "area_home",
+        4,
+        1,
+        0,
+        [{"dy": 0, "mo": 0}],
+        {},
+    ),
+    (
+        "tpl_after_completion",
+        "Descale the kettle",
+        "area_home",
+        4,
+        1,
+        1,
+        [{"dy": 0, "mo": 7}],
+        {},
+    ),
+    # Rule variants
+    (
+        "tpl_no_ed",
+        "Rotate the pantry stock",
+        "area_home",
+        256,
+        1,
+        0,
+        [{"wd": 0}],
+        {"ed": DROP_ED},
+    ),
+    (
+        "tpl_end_date",
+        "Send the course invoice",
+        "area_studio",
+        8,
+        1,
+        0,
+        [{"dy": 0}],
+        {"ed": END_DATE},
+    ),
+    (
+        "tpl_repeat_count",
+        "Practise the scales",
+        "area_studio",
+        256,
+        1,
+        0,
+        [{"wd": 6}],
+        {"rc": 12},
+    ),
+    (
+        "tpl_lead_time",
+        "Order printer ink",
+        "area_studio",
+        8,
+        1,
+        0,
+        [{"dy": 13}],
+        {"ts": -7},
+    ),
+    (
+        "tpl_rrv5",
+        "Check the smoke alarms",
+        "area_home",
+        8,
+        1,
+        0,
+        [{"dy": 0}],
+        {"rrv": 5},
+    ),
+    (
+        "tpl_unknown_unit",
+        "Empty the dehumidifier",
+        "area_home",
+        999,
+        1,
+        0,
+        [{"dy": 0}],
+        {},
+    ),
+    (
+        "tpl_extra_key",
+        "Review the garden plan",
+        "area_home",
+        256,
+        1,
+        0,
+        [{"wd": 0}],
+        {"zz": 1},
+    ),
+    # Template row variants
+    ("tpl_paused", "Mow the lawn", "area_home", 256, 1, 0, [{"wd": 6}], {}),
+    ("tpl_trashed", "Defrost the freezer", "area_home", 8, 1, 0, [{"dy": 13}], {}),
+    ("tpl_leftover", "Send the newsletter", None, 8, 1, 0, [{"dy": 0}], {}),
+)
+INVALID_RULE_KEY = "tpl_invalid_plist"
+INVALID_RULE_BLOB = b"this is not a plist"
+INVALID_RULE_TITLE = "Rinse the compost caddy"
+
+# Templates that have a visible instance, and the instance's start date offset.
+OPEN_INSTANCES = {"tpl_daily": 0, "tpl_weekly_sun": None, "tpl_monthly_15": None}
+COMPLETED_INSTANCES = ("tpl_biweekly_sun", "tpl_yearly_feb28")
 
 # Hand-derived from the rows below; the tests compare things.py against these.
 # `today` is things.today(): Anytime with a start date, Someday with a past
-# start date, and undated tasks with an unsuppressed overdue deadline.
+# start date, and undated tasks with an unsuppressed overdue deadline. It
+# includes the This Evening task, because things.py ignores startBucket.
 FIXTURE_EXPECTATIONS = {
     "areas": 2,
     "projects": 5,  # open projects: not completed, not trashed
-    "open_todos": 33,  # open, untrashed, not templates, context not trashed
+    # open, untrashed, not templates, context not trashed:
+    # 25 ordinary tasks + 3 open instances + 1 This Evening task
+    "open_todos": 29,
     "inbox": 1,
     "upcoming": 3,
-    "today": 5,
+    # Water the ferns, Renew library card, Take out the recycling (instance),
+    # Read a chapter tonight (This Evening), Book wheel class, Send the invoice
+    "today": 6,
 }
+
+
+def recurrence_rules(today: dt.date) -> dict[str, dict]:
+    """The decoded rule for every template that has a valid plist, by key."""
+    end = dt.datetime.combine(
+        today + dt.timedelta(days=90), dt.time(0), tzinfo=dt.timezone.utc
+    ).timestamp()
+    rules = {}
+    for number, (key, _t, _a, fu, fa, tp, offsets, overrides) in enumerate(RULE_SPECS):
+        rule = {
+            "fu": fu,
+            "fa": fa,
+            "tp": tp,
+            "of": offsets,
+            "ia": 700000000.0 + 86400.0 * number,  # invented
+            "sr": 700000000.0 + 86400.0 * number + 3600.0,  # invented
+            "rc": 0,
+            "rrv": 4,
+            "ts": 0,
+            "ed": NEVER_ENDS,
+        }
+        for name, value in overrides.items():
+            if value == DROP_ED:
+                del rule[name]
+            else:
+                rule[name] = float(end) if value == END_DATE else value
+        rules[key] = rule
+    return rules
+
+
+def rule_blobs(today: dt.date) -> dict[str, bytes]:
+    """The raw rt1_recurrenceRule bytes for every template, including the bad one."""
+    blobs = {key: rule_bytes(rule) for key, rule in recurrence_rules(today).items()}
+    blobs[INVALID_RULE_KEY] = INVALID_RULE_BLOB
+    return blobs
 
 
 def pack_date(day: dt.date) -> int:
@@ -193,6 +427,7 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
                 "start": 1,
                 "index": next_index(),
                 "todayIndex": 0,
+                "startBucket": 0,
             }
             for name in ("area", "project", "heading", "rt1_repeatingTemplate"):
                 if fields.get(name):
@@ -253,6 +488,13 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
         # Inbox, Today, Upcoming, deadlines -----------------------------
         todo("t_inbox", "Call the plumber", start=0)
         todo("t_today", "Water the ferns", area="area_home", startDate=day(0))
+        todo(
+            "t_evening",
+            "Read a chapter tonight",
+            area="area_home",
+            startDate=day(0),
+            startBucket=1,  # This Evening; things.py ignores this column
+        )
         todo(
             "t_yesterday",
             "Renew library card",
@@ -364,42 +606,45 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
         todo("t_photos_done", "Sort 2019 folder", project="proj_photos", status=3)
 
         # Recurring templates (hidden) and visible instances --------------
-        templates = (
-            ("tpl_daily", "Take out the recycling", "area_home", day(0)),
-            ("tpl_weekly_sun", "Plan the week ahead", "area_home", None),
-            ("tpl_biweekly_sun", "Wash the bedding", "area_home", None),
-            ("tpl_monthly_15", "Pay the rent", "area_home", None),
-            ("tpl_monthly_last", "Back up the laptop", "area_studio", None),
-            ("tpl_yearly_feb28", "Renew the domain name", "area_studio", None),
-            ("tpl_after_completion", "Descale the kettle", "area_home", None),
-            ("tpl_unrecognised", "Review the garden plan", "area_home", None),
-        )
-        for key, title, area, instance_date in templates:
+        blobs = rule_blobs(today)
+        template_rows = [(key, title, area) for key, title, area, *_ in RULE_SPECS]
+        template_rows.append((INVALID_RULE_KEY, INVALID_RULE_TITLE, "area_home"))
+        for key, title, area in template_rows:
+            extras = {}
+            if key == "tpl_paused":
+                extras["rt1_instanceCreationPaused"] = 1
+            if key == "tpl_trashed":
+                extras["trashed"] = 1  # a deleted recurring task, not a leftover
+            if key == "tpl_leftover":
+                extras["project"] = "proj_trashed"
+            row = {
+                "start": 2,
+                "rt1_recurrenceRule": blobs[key],
+                "rt1_instanceCreationStartDate": day(-60),
+                "rt1_nextInstanceStartDate": day(7),
+                "rt1_instanceCreationPaused": 0,
+                "rt1_instanceCreationCount": 3,
+            }
+            if area:
+                row["area"] = area
+            row.update(extras)
+            todo(key, title, **row)
+
+        titles = {key: title for key, title, _ in template_rows}
+        areas = {key: area for key, _, area in template_rows}
+        for key, offset in OPEN_INSTANCES.items():
+            instance = {"area": areas[key], "rt1_repeatingTemplate": key}
+            if offset is not None:
+                instance["startDate"] = day(offset)
+            todo(f"{key}:instance", titles[key], **instance)
+        for key in COMPLETED_INSTANCES:
             todo(
-                key,
-                title,
-                area=area,
-                start=2,
-                rt1_recurrenceRule=rule_bytes(RECURRENCE_RULES[key]),
-                rt1_instanceCreationStartDate=day(-60),
-                rt1_nextInstanceStartDate=day(7),
-                rt1_instanceCreationPaused=0,
-                rt1_instanceCreationCount=3,
+                f"{key}:instance",
+                titles[key],
+                area=areas[key],
+                rt1_repeatingTemplate=key,
+                status=3,
             )
-            instance = {"area": area, "rt1_repeatingTemplate": key}
-            if instance_date is not None:
-                instance["startDate"] = instance_date
-            todo(f"{key}:instance", title, **instance)
-        todo(
-            "tpl_leftover",
-            "Send the newsletter",
-            project="proj_trashed",
-            start=2,
-            rt1_recurrenceRule=rule_bytes(RECURRENCE_RULES["tpl_leftover"]),
-            rt1_instanceCreationStartDate=day(-90),
-            rt1_instanceCreationPaused=0,
-            rt1_instanceCreationCount=1,
-        )
 
         conn.commit()
     finally:
@@ -408,7 +653,8 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
     return {
         key: make_uuid(key)
         for key in (
-            *RECURRENCE_RULES,
+            *(spec[0] for spec in RULE_SPECS),
+            INVALID_RULE_KEY,
             "area_home",
             "area_studio",
             "proj_admin_home",
