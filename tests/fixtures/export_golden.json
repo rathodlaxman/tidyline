@@ -1,0 +1,2186 @@
+{
+  "export_schema_version": "1",
+  "tool": {
+    "name": "tidyline",
+    "version": "test"
+  },
+  "exported_at": "2026-10-10T12:00:00+00:00",
+  "environment": {
+    "macos": "27.0.1",
+    "arch": "arm64",
+    "things_version": "3.24.1",
+    "database_version": 29
+  },
+  "anonymisation": "none",
+  "areas": [
+    {
+      "id": "XMqwV40z8xUqayA9xX8JT9",
+      "title": "Household"
+    },
+    {
+      "id": "KZqSAW21AoCBbypXyjZVXT",
+      "title": "Side Studio"
+    }
+  ],
+  "projects": [
+    {
+      "id": "bsTNY9syUV7Horu9Fq6AlR",
+      "title": "Admin",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "wGxl93z5ycOyNFS8vtRwfl",
+      "title": "Admin",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "bsybxkoEhUxPaev3t6mXI8",
+      "title": "Garden Shed Rebuild",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "9yR288KiUB7u3di4DEOxiG",
+      "title": "Learn Pottery",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "NhgBlLAwIJbdVbl28DOtjl",
+      "title": "Photo Archive Cleanup",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "0BRXWMOqSXexzIxvtDFVPA",
+      "title": "Old Newsletter",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": true,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "3LznkhEhglYinIb9KGZEGK",
+      "title": "Spring Move",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-08-31T09:00:00+00:00",
+      "tags": []
+    }
+  ],
+  "headings": [
+    {
+      "id": "Mlhg0a4075JPnMtPKnHsF6",
+      "title": "Planning",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Garden Shed Rebuild"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "yJ90Hrd7EnrwooQ0ebTeoV",
+      "title": "Build",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Garden Shed Rebuild"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    }
+  ],
+  "tasks": [
+    {
+      "id": "STLVXiQn9bqyg7g7RZ6zrY",
+      "title": "Call the plumber",
+      "notes": null,
+      "area": null,
+      "project": null,
+      "heading": null,
+      "effective_status": "inbox",
+      "start": "inbox",
+      "start_code": 0,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "wVvljVFHpIWniNyVPyXkeQ",
+      "title": "Water the ferns",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "today",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": "2026-10-10",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "k2OpyrjPS4NaggjxUTWGPn",
+      "title": "Read a chapter tonight",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "this_evening",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": "2026-10-10",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "zi9evA2iFtjaaj4aVVC3VR",
+      "title": "Renew library card",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsTNY9syUV7Horu9Fq6AlR",
+        "title": "Admin"
+      },
+      "heading": null,
+      "effective_status": "today",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": "2026-10-09",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "hEK8x3Hx2T8ZBlB1mjQZir",
+      "title": "Book dentist visit",
+      "notes": "Ask about the evening slots. Bring the insurance card.",
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "upcoming",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": "2026-10-17",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [
+        {
+          "id": "udmFgQreMG7BuwPcqBAQHV",
+          "title": "Find the insurance card",
+          "status": "completed",
+          "status_code": 3
+        },
+        {
+          "id": "F3GAw8ze4ttzHMutSE45uM",
+          "title": "Check opening hours",
+          "status": "open",
+          "status_code": 0
+        },
+        {
+          "id": "5nZgpdOkdl9H4lDCk1Iwku",
+          "title": "Pick a date",
+          "status": "open",
+          "status_code": 0
+        }
+      ],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "sBz54JbHf6Y5o2g3aeN5fO",
+      "title": "Send the invoice",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "wGxl93z5ycOyNFS8vtRwfl",
+        "title": "Admin"
+      },
+      "heading": null,
+      "effective_status": "today",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": "2026-10-05",
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "jUQaUleiMpTwGMRTfj9OdP",
+      "title": "File the warranty claim",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "wGxl93z5ycOyNFS8vtRwfl",
+        "title": "Admin"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": "2026-10-07",
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "g0DPKtjqKZjO1ixGZEdL50",
+      "title": "Pay the electricity bill",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsTNY9syUV7Horu9Fq6AlR",
+        "title": "Admin"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "ZUqPSvwiEqNPAgOl8aJ7hb",
+      "title": "pay the electricity bill.",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "wGxl93z5ycOyNFS8vtRwfl",
+        "title": "Admin"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "6H08pYDsfxcG7P60bmVpZn",
+      "title": "Check council tax bill",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsTNY9syUV7Horu9Fq6AlR",
+        "title": "Admin"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "P6MTeEdg1286r2kS4dRb1c",
+      "title": "Reconcile receipts",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "wGxl93z5ycOyNFS8vtRwfl",
+        "title": "Admin"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "GhQJovIClW5mMaZ6lTbvd4",
+      "title": "Measure the plot",
+      "notes": "Use the 5 m tape; write sizes on the back of the plan.",
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Garden Shed Rebuild"
+      },
+      "heading": {
+        "id": "Mlhg0a4075JPnMtPKnHsF6",
+        "title": "Planning"
+      },
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [
+        {
+          "id": "JMThOdCqrpzRvpQoElkpQZ",
+          "title": "errand"
+        },
+        {
+          "id": "Kxi31m2NykZ9I5ETLkIA1c",
+          "title": "waiting"
+        }
+      ],
+      "checklist": [
+        {
+          "id": "JsREkwooQF539nHVTaTGQw",
+          "title": "Front edge",
+          "status": "open",
+          "status_code": 0
+        },
+        {
+          "id": "iHIgrg7rolhKR8uvPEWOS1",
+          "title": "Back edge",
+          "status": "open",
+          "status_code": 0
+        }
+      ],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "GiGOWffcNJ3kkTA4lEf5tx",
+      "title": "Price out timber",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Garden Shed Rebuild"
+      },
+      "heading": {
+        "id": "Mlhg0a4075JPnMtPKnHsF6",
+        "title": "Planning"
+      },
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "1crys6LN5aV8Fy3JaDU0Ph",
+      "title": "Order bolts",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Garden Shed Rebuild"
+      },
+      "heading": {
+        "id": "yJ90Hrd7EnrwooQ0ebTeoV",
+        "title": "Build"
+      },
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "nsVHJeF98uPHOUsn0Iv71n",
+      "title": "Buy a spirit level",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Garden Shed Rebuild"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "jE3aYQX7qCTbzCQhZayNls",
+      "title": "Paint the shed door",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Garden Shed Rebuild"
+      },
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "lQqQdAL0SA4H89Abmii4Pl",
+      "title": "Buy clay",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "9yR288KiUB7u3di4DEOxiG",
+        "title": "Learn Pottery"
+      },
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": "2026-10-22",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "5XraJeptMddzC5lcAHYl4D",
+      "title": "Choose a glaze palette",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "9yR288KiUB7u3di4DEOxiG",
+        "title": "Learn Pottery"
+      },
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": "2026-11-09",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "GOf1XnpvNOodYovFzguhqV",
+      "title": "Book wheel class",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "9yR288KiUB7u3di4DEOxiG",
+        "title": "Learn Pottery"
+      },
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": "2026-09-30",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "lB04kFqq3uaVWIWqyKdQdW",
+      "title": "Renew the lease",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "c2o7D7yVhG2lVWRuTCAQGi",
+      "title": "Update portfolio site",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "6DD9igNV0EzWp4vcmIz5bw",
+      "title": "Sort the loose cables",
+      "notes": null,
+      "area": null,
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "QzRqxLaN7PzullK0nMl52G",
+      "title": "Buy birthday card",
+      "notes": null,
+      "area": null,
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "PR23twfsajRlp1Dbd9nkSy",
+      "title": "Comprar pimentón y azafrán",
+      "notes": "Mercado del sábado: ¿hay también cúrcuma?",
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [
+        {
+          "id": "JMThOdCqrpzRvpQoElkpQZ",
+          "title": "errand"
+        }
+      ],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "UyyYfHNVv4ztufiMln1T2A",
+      "title": "Müll rausbringen und Gelbe Säcke holen",
+      "notes": null,
+      "area": null,
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "5gGatSXVSVnM3eV6Zl8c1Q",
+      "title": "請求書の写真を整理する",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "ZoI5C0fI2kpdkdd8i1GoMJ",
+      "title": "Hang the curtains",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "W2ClbUfKYdITzRMX5ZH2mC",
+      "title": "Replace the doorbell",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "cancelled",
+      "status_code": 2,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "Y3ETTqnZE5h9dFDofPBZiu",
+      "title": "Throw away the old paint",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": true,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "I0M9dXG5x35F71zvT51f8I",
+      "title": "Draft newsletter issue 3",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "0BRXWMOqSXexzIxvtDFVPA",
+        "title": "Old Newsletter"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "WYXwlgPSBotgDxFB2efa8s",
+      "title": "Pack the kitchen",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "3LznkhEhglYinIb9KGZEGK",
+        "title": "Spring Move"
+      },
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "Gg8VHTtszA7c1FPEDom5Jv",
+      "title": "Sort 2019 folder",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "NhgBlLAwIJbdVbl28DOtjl",
+        "title": "Photo Archive Cleanup"
+      },
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": [],
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "gjF4cbNLr0b0t6lnlSyT25",
+      "title": "Take out the recycling",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "today",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": "2026-10-10",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": {
+        "id": "or7HRAP4vxlO4UQgiEmteF",
+        "title": "Take out the recycling"
+      },
+      "recurrence": {
+        "text": "Daily",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 16,
+          "ia": 700000000.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700003600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    },
+    {
+      "id": "nMmSPFMLBIpsIAaIIBcc9c",
+      "title": "Plan the week ahead",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": {
+        "id": "BG2mpmtNbQk2aaOwGmUskn",
+        "title": "Plan the week ahead"
+      },
+      "recurrence": {
+        "text": "Weekly on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 700086400.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700090000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    },
+    {
+      "id": "Xwn85g8JzXV22bpZ5CKJwm",
+      "title": "Pay the rent",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": [],
+      "recurring_template": {
+        "id": "FoRqmnIQCGgFN631SESUiF",
+        "title": "Pay the rent"
+      },
+      "recurrence": {
+        "text": "Monthly on day 15",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700518400.0,
+          "of": [
+            {
+              "dy": 14
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700522000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    },
+    {
+      "id": "ItHKyzrJ0jCOXtCGdgbmEk",
+      "title": "Wash the bedding",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": [],
+      "recurring_template": {
+        "id": "tXAtXxFUa5R5UW5huJzPPU",
+        "title": "Wash the bedding"
+      },
+      "recurrence": {
+        "text": "Every 2 weeks on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 2,
+          "fu": 256,
+          "ia": 700345600.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700349200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    },
+    {
+      "id": "I9CGWSnUglFV0DDo81k6YP",
+      "title": "Renew the domain name",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": [],
+      "recurring_template": {
+        "id": "R6Vl3qvYXYDiTJsm11V7h1",
+        "title": "Renew the domain name"
+      },
+      "recurrence": {
+        "text": "Yearly on Feb 28",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 4,
+          "ia": 701036800.0,
+          "of": [
+            {
+              "dy": 27,
+              "mo": 1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701040400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    }
+  ],
+  "recurring_templates": [
+    {
+      "id": "or7HRAP4vxlO4UQgiEmteF",
+      "title": "Take out the recycling",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Daily",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 16,
+          "ia": 700000000.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700003600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "gjF4cbNLr0b0t6lnlSyT25"
+      ]
+    },
+    {
+      "id": "BG2mpmtNbQk2aaOwGmUskn",
+      "title": "Plan the week ahead",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 700086400.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700090000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "nMmSPFMLBIpsIAaIIBcc9c"
+      ]
+    },
+    {
+      "id": "P1zmNccnxYxmZaxglkwpIj",
+      "title": "Water the balcony herbs",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Fri",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 700172800.0,
+          "of": [
+            {
+              "wd": 5
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700176400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "q0zoQ02iat6g5a95pX9h9q",
+      "title": "Check the tyre pressure",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sat",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 700259200.0,
+          "of": [
+            {
+              "wd": 6
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700262800.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "tXAtXxFUa5R5UW5huJzPPU",
+      "title": "Wash the bedding",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Every 2 weeks on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 2,
+          "fu": 256,
+          "ia": 700345600.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700349200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "ItHKyzrJ0jCOXtCGdgbmEk"
+      ]
+    },
+    {
+      "id": "i6nkGJfVuDHpvzSSeOb6pZ",
+      "title": "Review the budget sheet",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 1",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700432000.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700435600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "FoRqmnIQCGgFN631SESUiF",
+      "title": "Pay the rent",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 15",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700518400.0,
+          "of": [
+            {
+              "dy": 14
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700522000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "Xwn85g8JzXV22bpZ5CKJwm"
+      ]
+    },
+    {
+      "id": "yQXL6BTdzWCUauIqhDGyYc",
+      "title": "Back up the laptop",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on last day",
+        "confidence": "assumed",
+        "notes": [
+          "assumed convention: dy -1 read as the last day of the month (not seen on a real database)"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700604800.0,
+          "of": [
+            {
+              "dy": -1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700608400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "GQ3Q1K7HPbJ0CCKhdmHWtS",
+      "title": "Clean the oven",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Every 3 months on day 5",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 3,
+          "fu": 8,
+          "ia": 700691200.0,
+          "of": [
+            {
+              "dy": 4
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700694800.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "O9ykYlkRlc5RpEvWehYDRT",
+      "title": "Service the bicycle",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Every 6 months on day 14",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 6,
+          "fu": 8,
+          "ia": 700777600.0,
+          "of": [
+            {
+              "dy": 13
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700781200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "qkeJAcVzwadEWtUrJi2trJ",
+      "title": "Call the family",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on the first Sun",
+        "confidence": "assumed",
+        "notes": [
+          "assumed convention: wdo 1 read as 'first' (only wdo -1 has been checked against the app)"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700864000.0,
+          "of": [
+            {
+              "wd": 0,
+              "wdo": 1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700867600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "DA496wF4q4SXHzpHnkL4XW",
+      "title": "Tidy the workshop",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on the last Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700950400.0,
+          "of": [
+            {
+              "wd": 0,
+              "wdo": -1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700954000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "R6Vl3qvYXYDiTJsm11V7h1",
+      "title": "Renew the domain name",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Yearly on Feb 28",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 4,
+          "ia": 701036800.0,
+          "of": [
+            {
+              "dy": 27,
+              "mo": 1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701040400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "I9CGWSnUglFV0DDo81k6YP"
+      ]
+    },
+    {
+      "id": "dUDoOrLVDnx8Y0YFGl9IYl",
+      "title": "Set the year's goals",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Yearly on Jan 1",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 4,
+          "ia": 701123200.0,
+          "of": [
+            {
+              "dy": 0,
+              "mo": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701126800.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "Pr5Z37f60agCDYVwBE9FFH",
+      "title": "Descale the kettle",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "1 year after completion",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 4,
+          "ia": 701209600.0,
+          "of": [
+            {
+              "dy": 0,
+              "mo": 7
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701213200.0,
+          "tp": 1,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "CaGrfuagOFp01XYuvxCtHS",
+      "title": "Rotate the pantry stock",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "fa": 1,
+          "fu": 256,
+          "ia": 701296000.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701299600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "FoQyOS7wh3uREmAyYaCKNQ",
+      "title": "Send the course invoice",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 1 (has an end date)",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 1799366400.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 701382400.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701386000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "5h7tkgOraTqYzsskeKWR7E",
+      "title": "Practise the scales",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sat (ends after 12 times)",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 701468800.0,
+          "of": [
+            {
+              "wd": 6
+            }
+          ],
+          "rc": 12,
+          "rrv": 4,
+          "sr": 701472400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "1U9SOeR2fkDVElwr8tC3KR",
+      "title": "Order printer ink",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Side Studio"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 14 (starts 7 days before deadline)",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 701555200.0,
+          "of": [
+            {
+              "dy": 13
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701558800.0,
+          "tp": 0,
+          "ts": -7
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "8q0yNzsj6oL9mRcwcyWUcr",
+      "title": "Check the smoke alarms",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "recurring (rule not recognised)",
+        "confidence": "unrecognised",
+        "notes": [
+          "unknown rule version: rrv=5"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 701641600.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 5,
+          "sr": 701645200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "6VY1SqExqdZd4fPDxQUr7M",
+      "title": "Empty the dehumidifier",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "recurring (rule not recognised)",
+        "confidence": "unrecognised",
+        "notes": [
+          "unknown unit: fu=999"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 999,
+          "ia": 701728000.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701731600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "YHPeigapCU2XvXkcefxQ0d",
+      "title": "Review the garden plan",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sun",
+        "confidence": "verified",
+        "notes": [
+          "unfamiliar field: zz"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 701814400.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701818000.0,
+          "tp": 0,
+          "ts": 0,
+          "zz": 1
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "XaNHL3veD7qPq3WQ2NBb1n",
+      "title": "Mow the lawn",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": true,
+      "recurrence": {
+        "text": "Weekly on Sat",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 701900800.0,
+          "of": [
+            {
+              "wd": 6
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701904400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "IsnkJqXPRItebiHgwu78zz",
+      "title": "Send the newsletter",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "0BRXWMOqSXexzIxvtDFVPA",
+        "title": "Old Newsletter"
+      },
+      "heading": null,
+      "leftover": true,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 1",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 702073600.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 702077200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "b3kjygLUBU65JN8vPLpgn0",
+      "title": "Rinse the compost caddy",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Household"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "recurring (rule unreadable)",
+        "confidence": "unrecognised",
+        "notes": [
+          "not a readable plist (InvalidFileException: Invalid file)"
+        ],
+        "raw": {
+          "_decode_error": "not a readable plist (InvalidFileException: Invalid file)",
+          "_hex_prefix": "74686973206973206e6f74206120706c"
+        }
+      },
+      "tags": [],
+      "instances": []
+    }
+  ],
+  "findings": [],
+  "warnings": []
+}
