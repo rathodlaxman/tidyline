@@ -1,0 +1,224 @@
+"""Plain-text report (DESIGN.md 9, v0.1). Returns a string; never prints.
+
+Counts only, except for recurring and leftover templates, which are listed
+with their titles. Health-check findings arrive in v0.2, so that section is a
+marked placeholder.
+"""
+
+from __future__ import annotations
+
+import datetime as dt
+import unicodedata
+from collections import Counter
+from collections.abc import Mapping
+from dataclasses import dataclass
+from typing import Any
+
+from tidyline.model import (
+    STATUS_CANCELLED,
+    STATUS_COMPLETED,
+    Snapshot,
+    Task,
+    TaskKind,
+)
+from tidyline.status import Status, effective_status
+
+MAX_WARNING_LINES = 20
+RECENT_DAYS = 30
+STATUS_ORDER = (
+    (Status.INBOX, "Inbox"),
+    (Status.TODAY, "Today"),
+    (Status.THIS_EVENING, "This Evening"),
+    (Status.UPCOMING, "Upcoming"),
+    (Status.ANYTIME, "Anytime"),
+    (Status.SOMEDAY, "Someday"),
+)
+BOLD, RESET = "\x1b[1m", "\x1b[0m"
+
+
+@dataclass(frozen=True)
+class ReportOptions:
+    include_completed: bool = False
+    color: bool = False  # headings in bold; off unless the caller turns it on
+
+
+def render_report(
+    snapshot: Snapshot,
+    *,
+    today: dt.date,
+    tool_version: str,
+    environment: Mapping[str, Any],
+    options: ReportOptions | None = None,
+) -> str:
+    """The report as text. `environment` has macos, things_version,
+    database_version and tested (a bool)."""
+    options = options or ReportOptions()
+    out = _Writer(options.color)
+    _header(out, today, tool_version, environment)
+    _counts(out, snapshot, today, options)
+    _recurrence(out, snapshot)
+    _warnings(out, snapshot)
+    out.heading("Health checks")
+    out.line("Health checks arrive in v0.2.")
+    return out.text()
+
+
+class _Writer:
+    def __init__(self, color: bool):
+        self.color = color
+        self.lines: list[str] = []
+
+    def heading(self, title: str) -> None:
+        if self.lines:
+            self.lines.append("")
+        self.lines.append(f"{BOLD}{title}{RESET}" if self.color else title)
+        self.lines.append("-" * len(title))
+
+    def line(self, text: str = "") -> None:
+        self.lines.append(text)
+
+    def row(self, label: str, value: object, indent: int = 0) -> None:
+        self.lines.append(f"{' ' * indent}{label:<{30 - indent}}{value}")
+
+    def text(self) -> str:
+        return "\n".join(self.lines) + "\n"
+
+
+def _header(out, today, tool_version, environment) -> None:
+    out.heading("tidyline report")
+    out.row("Date", today.isoformat())
+    out.row("tidyline", tool_version)
+    out.row("Database version", environment.get("database_version") or "unknown")
+    out.row("Things app", environment.get("things_version") or "unknown")
+    out.row("macOS", environment.get("macos") or "unknown")
+    out.row(
+        "Tested versions",
+        "yes" if environment.get("tested") else "no (run `tidyline doctor`)",
+    )
+
+
+def _counts(out, snapshot: Snapshot, today: dt.date, options: ReportOptions) -> None:
+    tasks = {task.uuid: task for task in snapshot.tasks}
+
+    def project_of(task: Task) -> Task | None:
+        owner = task.project_uuid
+        if owner is None and task.heading_uuid is not None:
+            heading = tasks.get(task.heading_uuid)
+            owner = heading.project_uuid if heading else None
+        project = tasks.get(owner) if owner else None
+        return project if project and project.kind is TaskKind.PROJECT else None
+
+    by_status: Counter[Status] = Counter()
+    in_trashed_project = completed = cancelled = trashed = 0
+    completed_recent = completed_old = completed_undated = 0
+    cutoff = today - dt.timedelta(days=RECENT_DAYS)
+    for todo in snapshot.todos:
+        if todo.trashed:
+            trashed += 1
+            continue
+        parent = project_of(todo)
+        state = effective_status(todo, parent, today)
+        if state is Status.CLOSED:
+            if todo.status == STATUS_COMPLETED:
+                completed += 1
+                if todo.stopped is None:
+                    completed_undated += 1
+                elif todo.stopped.date() >= cutoff:
+                    completed_recent += 1
+                else:
+                    completed_old += 1
+            elif todo.status == STATUS_CANCELLED:
+                cancelled += 1
+        elif parent is not None and parent.trashed:
+            in_trashed_project += 1  # hidden in the app; not an open to-do
+        else:
+            by_status[state] += 1
+
+    projects = snapshot.projects
+    out.heading("Counts")
+    out.row("Areas", len(snapshot.areas))
+    out.row("Projects (open)", sum(1 for p in projects if _is_live(p)))
+    out.row("Open to-dos", sum(by_status.values()))
+    for state, label in STATUS_ORDER:
+        out.row(label, by_status[state], indent=2)
+    out.row("Open, in a trashed project", in_trashed_project)
+    out.row("Completed to-dos", completed)
+    out.row("Cancelled to-dos", cancelled)
+    out.row("Trashed to-dos", trashed)
+
+    if options.include_completed:
+        out.line()
+        out.line("Closed items")
+        out.row(f"Completed in last {RECENT_DAYS} days", completed_recent, indent=2)
+        out.row("Completed earlier", completed_old, indent=2)
+        out.row("Completed, no date", completed_undated, indent=2)
+        out.row(
+            "Completed projects",
+            sum(1 for p in projects if not p.trashed and p.status == STATUS_COMPLETED),
+            indent=2,
+        )
+        out.row(
+            "Cancelled projects",
+            sum(1 for p in projects if not p.trashed and p.status == STATUS_CANCELLED),
+            indent=2,
+        )
+        out.row("Trashed projects", sum(1 for p in projects if p.trashed), indent=2)
+
+
+def _is_live(task: Task) -> bool:
+    return not task.trashed and not task.is_closed
+
+
+def _recurrence(out, snapshot: Snapshot) -> None:
+    leftovers = set(snapshot.leftover_template_uuids)
+    templates = sorted(snapshot.templates, key=lambda t: (t.index, t.uuid))
+    live = [t for t in templates if t.uuid not in leftovers]
+    left = [t for t in templates if t.uuid in leftovers]
+    rules = [t.recurrence for t in templates]
+    out.heading("Recurring templates")
+    out.row("Recognised", sum(1 for r in rules if r.recognised))
+    out.row("Not recognised", sum(1 for r in rules if not r.recognised))
+    out.row("Assumed conventions", sum(1 for r in rules if r.confidence == "assumed"))
+
+    out.line()
+    out.line(f"Live ({len(live)})")
+    for template in live:
+        out.line(_template_line(template))
+    if not live:
+        out.line("  none")
+    out.line()
+    out.line(f"Leftover: project is trashed or missing ({len(left)})")
+    for template in left:
+        out.line(_template_line(template))
+    if not left:
+        out.line("  none")
+
+
+def _template_line(template: Task) -> str:
+    rule = template.recurrence
+    paused = " (paused)" if template.recurrence_paused else ""
+    return f"  - {_clean(template.title)}: {rule.text}{paused} [{rule.confidence}]"
+
+
+def _warnings(out, snapshot: Snapshot) -> None:
+    out.heading("Read warnings")
+    if not snapshot.warnings:
+        out.line("None.")
+        return
+    out.line(f"{len(snapshot.warnings)} values could not be read cleanly:")
+    for warning in snapshot.warnings[:MAX_WARNING_LINES]:
+        out.line(f"  - {_clean(warning)}")
+    extra = len(snapshot.warnings) - MAX_WARNING_LINES
+    if extra > 0:
+        out.line(f"  ... and {extra} more")
+
+
+def _clean(text: str) -> str:
+    """Make a title safe for a terminal: no control characters, one line."""
+    if not text:
+        return "(untitled)"
+    chars = [
+        " " if ch in "\r\n\t" else "?" if unicodedata.category(ch) == "Cc" else ch
+        for ch in text
+    ]
+    return "".join(chars).strip() or "(untitled)"
