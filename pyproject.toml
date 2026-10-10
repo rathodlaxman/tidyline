@@ -1,11 +1,33 @@
 [project]
 name = "tidyline"
-version = "0.1.0"
-description = "Offline, read-only health audit for a Things 3 database (unofficial)"
+version = "0.2.0"
+description = "Offline, read-only audit of a Things 3 database on macOS."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
+authors = [{ name = "Laxman Rathod" }]
+keywords = ["things", "things3", "gtd", "audit", "cli", "macos", "offline"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Utilities",
+]
 dependencies = [
     "things-py>=1.0.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/rathodlaxman/tidyline"
+Source = "https://github.com/rathodlaxman/tidyline"
+Issues = "https://github.com/rathodlaxman/tidyline/issues"
 
 [project.scripts]
 tidyline = "tidyline.cli:main"
