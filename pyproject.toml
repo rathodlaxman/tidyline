@@ -1,0 +1,33 @@
+[project]
+name = "tidyline"
+version = "0.1.0"
+description = "Offline, read-only health audit for a Things 3 database (unofficial)"
+requires-python = ">=3.10"
+dependencies = [
+    "things-py>=1.0.1",
+]
+
+[project.scripts]
+tidyline = "tidyline.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-socket>=0.8.1",
+    "ruff>=0.17.0",
+]
+
+[tool.pytest.ini_options]
+addopts = "--disable-socket"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
