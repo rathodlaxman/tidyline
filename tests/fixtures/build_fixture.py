@@ -446,8 +446,8 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
         def project(key, title, **fields):
             task_row(key, title, 1, **fields)
 
-        def heading(key, title, project_key):
-            task_row(key, title, 2, project=project_key)
+        def heading(key, title, project_key, **fields):
+            task_row(key, title, 2, project=project_key, **fields)
 
         def todo(key, title, *, tags=(), checklist=(), **fields):
             if fields.get("status") in (2, 3):
@@ -492,6 +492,9 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
             status=3,
             stopDate=stamp(40),
         )
+        # A completed heading inside a completed project; its only child is
+        # completed too (t_in_done_project, below).
+        heading("head_done", "Boxes", "proj_done", status=3, stopDate=stamp(40))
 
         # Inbox, Today, Upcoming, deadlines -----------------------------
         todo("t_inbox", "Call the plumber", start=0)
@@ -588,7 +591,8 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
         todo("t_lease", "Renew the lease", area="area_home")
         todo("t_portfolio", "Update portfolio site", area="area_studio")
         todo("t_cables", "Sort the loose cables")
-        todo("t_card", "Buy birthday card")
+        # Needs NFKC: a full-width B, an fi ligature and a decomposed accent
+        todo("t_card", "\uff22uy a \ufb01rst-birthday card for Zoe\u0301")
 
         # Non-English titles --------------------------------------------
         todo(
@@ -610,7 +614,7 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
             "Draft newsletter issue 3",
             project="proj_trashed",
         )
-        todo("t_in_done_project", "Pack the kitchen", project="proj_done", status=3)
+        todo("t_in_done_project", "Pack the kitchen", heading="head_done", status=3)
         todo("t_photos_done", "Sort 2019 folder", project="proj_photos", status=3)
 
         # Recurring templates (hidden) and visible instances --------------

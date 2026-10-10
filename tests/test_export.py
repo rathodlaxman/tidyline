@@ -113,7 +113,7 @@ def test_top_level_keys(exported):
 def test_counts(exported):
     assert len(exported["areas"]) == 2
     assert len(exported["projects"]) == 7
-    assert len(exported["headings"]) == 2
+    assert len(exported["headings"]) == 3
     assert len(exported["tasks"]) == 37  # every to-do, open or not; no templates
     assert len(exported["recurring_templates"]) == 25  # trashed one ignored
 

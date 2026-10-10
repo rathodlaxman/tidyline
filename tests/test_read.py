@@ -51,7 +51,7 @@ def test_counts_match_the_fixture(snapshot):
     assert len(snapshot.tags) == 2
     # Admin x2, Garden, Pottery, Photos, trashed Newsletter, done Spring Move
     assert len(snapshot.projects) == 7
-    assert len(snapshot.headings) == 2
+    assert len(snapshot.headings) == 3
     assert len(snapshot.checklist_items) == 5
     # 26 rows carry a rule; the trashed template is ignored
     assert len(snapshot.templates) == 25
