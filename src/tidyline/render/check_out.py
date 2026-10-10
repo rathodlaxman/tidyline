@@ -24,20 +24,25 @@ KIND_LABELS = {
 USER_PATTERN = re.compile(r"matches user pattern (\d+)")
 
 
+def findings_json(findings: Sequence[Finding]) -> list[dict[str, Any]]:
+    """Finding objects as `check --json` and the export print them: ids only."""
+    return [
+        {
+            "check": f.check,
+            "severity": f.severity,
+            "message": f.message,
+            "refs": [{"kind": r.kind, "id": r.id} for r in f.refs],
+        }
+        for f in findings
+    ]
+
+
 def check_json(findings: Sequence[Finding], checks: Sequence[str]) -> dict[str, Any]:
     return {
         "check_schema_version": CHECK_SCHEMA_VERSION,
         "checks": list(checks),
         "summary": _summary(findings),
-        "findings": [
-            {
-                "check": f.check,
-                "severity": f.severity,
-                "message": f.message,
-                "refs": [{"kind": r.kind, "id": r.id} for r in f.refs],
-            }
-            for f in findings
-        ],
+        "findings": findings_json(findings),
     }
 
 

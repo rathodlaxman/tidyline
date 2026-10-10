@@ -1,8 +1,8 @@
 """Plain-text report (DESIGN.md 9, v0.1). Returns a string; never prints.
 
 Counts only, except for recurring and leftover templates, which are listed
-with their titles. Health-check findings arrive in v0.2, so that section is a
-marked placeholder.
+with their titles. The health-check section lists every check with its finding
+count, nothing more; `tidyline check` gives the details.
 """
 
 from __future__ import annotations
@@ -14,6 +14,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from tidyline.checks import CHECKS, run_checks
 from tidyline.model import (
     STATUS_CANCELLED,
     STATUS_COMPLETED,
@@ -58,8 +59,7 @@ def render_report(
     _counts(out, snapshot, today, options)
     _recurrence(out, snapshot)
     _warnings(out, snapshot)
-    out.heading("Health checks")
-    out.line("Health checks arrive in v0.2.")
+    _checks(out, snapshot, today)
     return out.text()
 
 
@@ -163,6 +163,16 @@ def _counts(out, snapshot: Snapshot, today: dt.date, options: ReportOptions) -> 
             indent=2,
         )
         out.row("Trashed projects", sum(1 for p in projects if p.trashed), indent=2)
+
+
+def _checks(out, snapshot: Snapshot, today: dt.date) -> None:
+    findings = run_checks(snapshot, today)  # default options: no user patterns
+    out.heading("Health checks")
+    for check_id, module in CHECKS.items():
+        count = sum(1 for f in findings if f.check == check_id)
+        out.row(check_id, f"{module.SEVERITY:<9}{count}")
+    out.line()
+    out.line("Run `tidyline check` for details.")
 
 
 def _is_live(task: Task) -> bool:

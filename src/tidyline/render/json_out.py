@@ -14,6 +14,7 @@ import datetime as dt
 from collections.abc import Iterable, Mapping
 from typing import Any
 
+from tidyline.checks import run_checks
 from tidyline.model import (
     START_ANYTIME,
     START_INBOX,
@@ -26,6 +27,7 @@ from tidyline.model import (
     TaskKind,
 )
 from tidyline.recurrence import Rule
+from tidyline.render.check_out import findings_json
 from tidyline.status import effective_status
 
 EXPORT_SCHEMA_VERSION = "1"
@@ -47,7 +49,8 @@ def build_export(
     tool_version: str,
     environment: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """The export as a JSON-ready dict. `today` drives effective status."""
+    """The export as a JSON-ready dict. `today` drives effective status and the
+    checks; the checks run with default options (no user patterns)."""
     if exported_at.tzinfo is None:
         raise ValueError("exported_at must be timezone-aware")
     tasks = {task.uuid: task for task in snapshot.tasks}
@@ -79,7 +82,7 @@ def build_export(
             context.template(t, t.uuid in leftovers)
             for t in _ordered(snapshot.templates)
         ],
-        "findings": [],
+        "findings": findings_json(run_checks(snapshot, today)),
         "warnings": list(snapshot.warnings),
     }
 

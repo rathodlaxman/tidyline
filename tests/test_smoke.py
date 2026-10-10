@@ -87,7 +87,7 @@ def test_report_to_the_terminal(entry_point, env, fixture_db):
     result = run(entry_point, env, "--db", str(fixture_db), "report")
     assert result.returncode == 0, result.stderr
     assert result.stdout.startswith("tidyline report\n")
-    assert "Health checks arrive in v0.2." in result.stdout
+    assert "Run `tidyline check` for details." in result.stdout
     assert "\x1b" not in result.stdout
 
 

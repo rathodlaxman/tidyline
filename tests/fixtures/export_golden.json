@@ -2205,6 +2205,226 @@
       "instances": []
     }
   ],
-  "findings": [],
+  "findings": [
+    {
+      "check": "open_in_trashed_project",
+      "severity": "warning",
+      "message": "open to-do inside a trashed project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "I0M9dXG5x35F71zvT51f8I"
+        },
+        {
+          "kind": "project",
+          "id": "0BRXWMOqSXexzIxvtDFVPA"
+        }
+      ]
+    },
+    {
+      "check": "unfiled_open",
+      "severity": "warning",
+      "message": "open to-do with no area and no project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "6DD9igNV0EzWp4vcmIz5bw"
+        }
+      ]
+    },
+    {
+      "check": "unfiled_open",
+      "severity": "warning",
+      "message": "open to-do with no area and no project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "QzRqxLaN7PzullK0nMl52G"
+        }
+      ]
+    },
+    {
+      "check": "unfiled_open",
+      "severity": "warning",
+      "message": "open to-do with no area and no project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "UyyYfHNVv4ztufiMln1T2A"
+        }
+      ]
+    },
+    {
+      "check": "title_hygiene",
+      "severity": "warning",
+      "message": "stray middle dot at the end; doubled spaces",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "P6MTeEdg1286r2kS4dRb1c"
+        }
+      ]
+    },
+    {
+      "check": "title_hygiene",
+      "severity": "warning",
+      "message": "leading whitespace",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "c2o7D7yVhG2lVWRuTCAQGi"
+        }
+      ]
+    },
+    {
+      "check": "possible_duplicates",
+      "severity": "warning",
+      "message": "2 open to-dos share a normalised title",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "g0DPKtjqKZjO1ixGZEdL50"
+        },
+        {
+          "kind": "task",
+          "id": "ZUqPSvwiEqNPAgOl8aJ7hb"
+        }
+      ]
+    },
+    {
+      "check": "dated_in_someday_project",
+      "severity": "warning",
+      "message": "to-do with a start date inside a Someday project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "lQqQdAL0SA4H89Abmii4Pl"
+        },
+        {
+          "kind": "project",
+          "id": "9yR288KiUB7u3di4DEOxiG"
+        }
+      ]
+    },
+    {
+      "check": "dated_in_someday_project",
+      "severity": "warning",
+      "message": "to-do with a start date inside a Someday project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "5XraJeptMddzC5lcAHYl4D"
+        },
+        {
+          "kind": "project",
+          "id": "9yR288KiUB7u3di4DEOxiG"
+        }
+      ]
+    },
+    {
+      "check": "dated_in_someday_project",
+      "severity": "warning",
+      "message": "to-do with a start date inside a Someday project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "GOf1XnpvNOodYovFzguhqV"
+        },
+        {
+          "kind": "project",
+          "id": "9yR288KiUB7u3di4DEOxiG"
+        }
+      ]
+    },
+    {
+      "check": "active_project_no_open_tasks",
+      "severity": "warning",
+      "message": "active project with no open to-dos",
+      "refs": [
+        {
+          "kind": "project",
+          "id": "NhgBlLAwIJbdVbl28DOtjl"
+        }
+      ]
+    },
+    {
+      "check": "recurrence_not_recognised",
+      "severity": "warning",
+      "message": "recurrence rule not recognised",
+      "refs": [
+        {
+          "kind": "template",
+          "id": "8q0yNzsj6oL9mRcwcyWUcr"
+        }
+      ]
+    },
+    {
+      "check": "recurrence_not_recognised",
+      "severity": "warning",
+      "message": "recurrence rule not recognised",
+      "refs": [
+        {
+          "kind": "template",
+          "id": "6VY1SqExqdZd4fPDxQUr7M"
+        }
+      ]
+    },
+    {
+      "check": "recurrence_not_recognised",
+      "severity": "warning",
+      "message": "recurrence rule could not be read",
+      "refs": [
+        {
+          "kind": "template",
+          "id": "b3kjygLUBU65JN8vPLpgn0"
+        }
+      ]
+    },
+    {
+      "check": "leftover_templates",
+      "severity": "info",
+      "message": "recurring template whose project is trashed",
+      "refs": [
+        {
+          "kind": "template",
+          "id": "IsnkJqXPRItebiHgwu78zz"
+        }
+      ]
+    },
+    {
+      "check": "someday_in_active_project",
+      "severity": "info",
+      "message": "Someday to-do inside an active project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "jE3aYQX7qCTbzCQhZayNls"
+        },
+        {
+          "kind": "project",
+          "id": "bsybxkoEhUxPaev3t6mXI8"
+        }
+      ]
+    },
+    {
+      "check": "outside_heading",
+      "severity": "info",
+      "message": "2 open to-dos outside any heading in a project that uses headings",
+      "refs": [
+        {
+          "kind": "project",
+          "id": "bsybxkoEhUxPaev3t6mXI8"
+        },
+        {
+          "kind": "task",
+          "id": "nsVHJeF98uPHOUsn0Iv71n"
+        },
+        {
+          "kind": "task",
+          "id": "jE3aYQX7qCTbzCQhZayNls"
+        }
+      ]
+    }
+  ],
   "warnings": []
 }

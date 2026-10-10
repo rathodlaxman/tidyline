@@ -1,6 +1,7 @@
 """Text report (DESIGN.md 9), against the synthetic fixture only."""
 
 import datetime as dt
+import json
 import os
 import re
 import sqlite3
@@ -85,10 +86,63 @@ def test_untested_versions_are_flagged(fixture_db):
     assert value(text, "Things app") == "unknown"
 
 
-def test_health_checks_placeholder_is_last(report_text):
-    assert report_text.rstrip().endswith(
-        "Health checks\n-------------\nHealth checks arrive in v0.2."
+EXPECTED_CHECK_ROWS = [
+    ("open_in_trashed_project", "warning", 1),
+    ("unfiled_open", "warning", 3),
+    ("title_hygiene", "warning", 2),
+    ("possible_duplicates", "warning", 1),
+    ("dated_in_someday_project", "warning", 3),
+    ("active_project_no_open_tasks", "warning", 1),
+    ("recurrence_not_recognised", "warning", 3),
+    ("leftover_templates", "info", 1),
+    ("someday_in_active_project", "info", 1),
+    ("outside_heading", "info", 1),
+]
+
+
+def health_section(text):
+    return text.split("Health checks\n-------------\n")[1]
+
+
+def test_health_checks_section_is_last_and_lists_every_check(report_text):
+    section = health_section(report_text)
+    assert report_text.endswith("Run `tidyline check` for details.\n")
+    rows = re.findall(r"^(\w+)\s+(warning|info)\s+(\d+)$", section, re.M)
+    assert rows == [(c, s, str(n)) for c, s, n in EXPECTED_CHECK_ROWS]
+    assert "arrive in v0.2" not in report_text
+
+
+def test_health_counts_match_check_json(fixture_db, report_text, capsys):
+    assert cli.main(["--db", str(fixture_db), "check", "--json"]) == 1
+    findings = json.loads(capsys.readouterr().out)["findings"]
+    rows = re.findall(r"^(\w+)\s+(?:warning|info)\s+(\d+)$", report_text, re.M)
+    for check, count in rows:
+        assert count == str(sum(1 for f in findings if f["check"] == check)), check
+
+
+def test_health_section_has_counts_only(fixture_db):
+    snapshot, text = make_report(fixture_db)
+    section = health_section(text)
+    ids = {t.uuid for t in snapshot.tasks}
+    assert [i for i in ids if i in section] == []
+    titles = {t.title.strip() for t in snapshot.tasks if len(t.title.strip()) > 3}
+    leaked = [t for t in titles if t in section]
+    assert leaked == []
+    assert set(re.findall(r"\w+", section)) <= (
+        {c for c, _, _ in EXPECTED_CHECK_ROWS}
+        | {"warning", "info", "Run", "tidyline", "check", "for", "details"}
+        | set(re.findall(r"\d+", section))
     )
+
+
+def test_report_exits_0_whatever_the_findings(fixture_db, no_real_app):
+    assert run_report(fixture_db) == 0  # the fixture has warnings
+
+
+def test_findings_use_default_options_only(fixture_db):
+    # a title that only a user pattern would flag stays unflagged in the report
+    _, text = make_report(fixture_db)
+    assert re.search(r"^title_hygiene\s+warning\s+2$", text, re.M)
 
 
 def test_ends_with_one_newline(report_text):
@@ -260,7 +314,7 @@ def test_cli_prints_the_report(fixture_db, capsys, no_real_app):
     assert run_report(fixture_db) == 0
     captured = capsys.readouterr()
     assert captured.out.startswith("tidyline report\n")
-    assert "Health checks arrive in v0.2." in captured.out
+    assert "Run `tidyline check` for details." in captured.out
     assert value(captured.out, "Open to-dos") == "29"
     assert value(captured.out, "Database version") == "29"
     assert value(captured.out, "Things app") == "unknown"

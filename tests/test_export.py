@@ -104,7 +104,7 @@ def test_top_level_keys(exported):
     ]
     assert exported["export_schema_version"] == "1"
     assert exported["anonymisation"] == "none"
-    assert exported["findings"] == []
+    assert exported["findings"]  # the checks ran; see the findings tests below
     assert exported["warnings"] == []
     assert exported["exported_at"] == "2026-10-10T12:00:00+00:00"
     assert exported["environment"] == ENVIRONMENT
@@ -409,3 +409,44 @@ def test_cli_write_failure_exits_3(
     assert run_export(fixture_db, tmp_path / "export.json") == 3
     err = capsys.readouterr().err
     assert "could not write" in err and "No space left on device" in err
+
+
+# --- findings ---------------------------------------------------------------------
+
+
+def test_export_findings_equal_check_json_findings(fixture_db, exported, capsys):
+    assert cli.main(["--db", str(fixture_db), "check", "--json"]) == 1
+    from_check = json.loads(capsys.readouterr().out)["findings"]
+    assert exported["findings"] == from_check
+    assert len(from_check) == 17
+
+
+def test_export_findings_have_ids_and_no_titles(exported):
+    for finding in exported["findings"]:
+        assert set(finding) == {"check", "severity", "message", "refs"}
+        for ref in finding["refs"]:
+            assert set(ref) == {"kind", "id"}
+    text = json.dumps(exported["findings"], ensure_ascii=False)
+    titles = {t["title"].strip() for t in exported["tasks"] if len(t["title"]) > 3}
+    assert [t for t in titles if t in text] == []
+
+
+def test_export_has_no_keys_beyond_design_7_4(exported):
+    assert "findings_summary" not in exported
+    assert exported["export_schema_version"] == "1"
+
+
+def test_export_findings_follow_registry_order(exported):
+    from tidyline.checks import CHECK_IDS
+
+    order = [CHECK_IDS.index(f["check"]) for f in exported["findings"]]
+    assert order == sorted(order)
+
+
+def test_cli_export_contains_the_findings(fixture_db, tmp_path, no_real_app):
+    out = tmp_path / "export.json"
+    assert run_export(fixture_db, out) == 0
+    data = json.loads(out.read_text(encoding="utf-8"))
+    from tidyline.checks import CHECK_IDS
+
+    assert {f["check"] for f in data["findings"]} == set(CHECK_IDS)
