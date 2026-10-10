@@ -128,3 +128,14 @@ def test_missing_database_is_a_clear_failure(entry_point, env, tmp_path):
     result = run(entry_point, env, "--db", str(tmp_path / "none.sqlite"), "doctor")
     assert result.returncode == 3
     assert "error:" in result.stderr
+
+
+def test_prompt_finds_the_packaged_template(entry_point, env, fixture_db, tmp_path):
+    out = tmp_path / "prompt"
+    result = run(entry_point, env, "--db", str(fixture_db), "prompt", "--out", str(out))
+    assert result.returncode == 0, result.stderr
+    assert "Nothing has been sent anywhere" in result.stdout
+    text = (out / "tidyline_prompt.md").read_text(encoding="utf-8")
+    assert text.startswith("# Things 3 System Audit")
+    assert "{{" not in text
+    assert stat.S_IMODE((out / "tidyline_payload.json").stat().st_mode) == 0o600

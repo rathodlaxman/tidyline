@@ -22,6 +22,14 @@ from tidyline.db.schema import (
     tested_versions_text,
 )
 from tidyline.db.snapshot import SnapshotError, open_snapshot
+from tidyline.llm.prompt import (
+    KEPT,
+    PAYLOAD_FILE,
+    PROMPT_FILE,
+    ContextError,
+    build_prompt,
+    parse_context,
+)
 from tidyline.read import ReadError, read_snapshot
 from tidyline.render.check_out import check_json, check_text
 from tidyline.render.json_out import build_export
@@ -133,6 +141,36 @@ def build_parser() -> argparse.ArgumentParser:
     check.add_argument(
         "--json", action="store_true", help="print findings as JSON, ids only"
     )
+    prompt = commands.add_parser(
+        "prompt",
+        help="write an anonymised payload and a filled audit prompt for an LLM",
+    )
+    prompt.add_argument(
+        "--db",
+        metavar="PATH",
+        default=argparse.SUPPRESS,
+        help="path to the Things database",
+    )
+    prompt.add_argument(
+        "--anonymise",
+        choices=("light", "strict"),
+        default="strict",
+        help="strict (default): titles replaced by labels; light: titles kept "
+        "but scrubbed",
+    )
+    prompt.add_argument(
+        "--context",
+        metavar="FILE",
+        help="text file with Role:, Priorities: and Dates: sections",
+    )
+    prompt.add_argument(
+        "--out",
+        metavar="DIR",
+        help=f"write {PAYLOAD_FILE} and {PROMPT_FILE} into this folder",
+    )
+    prompt.add_argument(
+        "--copy", action="store_true", help="put the prompt on the clipboard (pbcopy)"
+    )
     return parser
 
 
@@ -147,6 +185,8 @@ def main(argv: list[str] | None = None) -> int:
         return report(args)
     if args.command == "check":
         return check(args)
+    if args.command == "prompt":
+        return prompt(args)
     parser.print_help()
     return 0
 
@@ -348,6 +388,154 @@ def check(args: argparse.Namespace) -> int:
     if any(f.severity == "warning" for f in findings):
         return EXIT_WARNINGS
     return EXIT_OK
+
+
+def prompt(args: argparse.Namespace) -> int:
+    context = None
+    if args.context is not None:
+        try:
+            context = parse_context(
+                Path(args.context).expanduser().read_text(encoding="utf-8")
+            )
+        except ContextError as error:
+            print(f"error: --context {args.context}: {error}", file=sys.stderr)
+            return EXIT_USAGE
+        except (OSError, UnicodeDecodeError) as error:
+            print(
+                f"error: could not read --context {args.context} ({error}). Give "
+                "a UTF-8 text file.",
+                file=sys.stderr,
+            )
+            return EXIT_USAGE
+
+    out_dir = None
+    if args.out is not None:
+        out_dir = Path(args.out).expanduser()
+        if out_dir.exists() and not out_dir.is_dir():
+            print(
+                f"error: {out_dir} exists and is not a folder. Choose a folder for "
+                "--out.",
+                file=sys.stderr,
+            )
+            return EXIT_USAGE
+        taken = [n for n in (PAYLOAD_FILE, PROMPT_FILE) if (out_dir / n).exists()]
+        if taken:
+            print(
+                f"error: {', '.join(taken)} already in {out_dir}, so nothing was "
+                "written. Choose another --out folder, or move the old files.",
+                file=sys.stderr,
+            )
+            return EXIT_USAGE
+
+    loaded = _load(args)
+    if loaded is None:
+        return EXIT_FAILURE
+    snapshot, schema_report, macos, things = loaded
+    payload = anonymise(
+        build_export(
+            snapshot,
+            today=dt.date.today(),
+            exported_at=dt.datetime.now(dt.timezone.utc).replace(microsecond=0),
+            tool_version=__version__,
+            environment={
+                "macos": macos,
+                "arch": platform.machine() or None,
+                "things_version": things,
+                "database_version": schema_report.database_version,
+            },
+        ),
+        args.anonymise,
+    )
+    result = build_prompt(payload, context)
+
+    written: list[tuple[Path, int]] = []
+    code = EXIT_OK
+    problem = None
+    if out_dir is not None:
+        files = (
+            (out_dir / PAYLOAD_FILE, json.dumps(payload, indent=2, ensure_ascii=False)),
+            (out_dir / PROMPT_FILE, result.text),
+        )
+        try:
+            if not out_dir.exists():
+                out_dir.mkdir(parents=True, mode=0o700)
+                os.chmod(out_dir, 0o700)  # exact mode whatever the umask
+            for path, text in files:
+                _write_private(path, text + "\n")
+                written.append((path, path.stat().st_size))
+        except OSError as error:
+            for path, _ in written:
+                path.unlink(missing_ok=True)
+            written = []
+            code = EXIT_FAILURE
+            problem = (
+                f"could not write into {out_dir}: {error.strerror or error}. Nothing "
+                "was kept. Check the folder is writable, or choose another --out."
+            )
+    copied = False
+    if args.copy and code == EXIT_OK:
+        try:
+            subprocess.run(
+                ["pbcopy"],
+                input=result.text.encode("utf-8"),
+                check=True,
+                timeout=10,
+            )
+            copied = True
+        except (OSError, subprocess.SubprocessError) as error:
+            code = EXIT_FAILURE
+            problem = (
+                f"could not copy to the clipboard with pbcopy ({error}). Use --out "
+                "DIR to save the prompt to a file instead."
+            )
+
+    print(_prompt_preview(result, args, context, written, copied))
+    if problem:
+        print(f"error: {problem}", file=sys.stderr)
+    return code
+
+
+def _prompt_preview(result, args, context, written, copied) -> str:
+    lines = ["tidyline prompt: preview", ""]
+    lines.append(f"Anonymisation: {result.level}")
+    counts = ", ".join(f"{n} {name}" for name, n in result.counts.items())
+    lines.append(f"Payload counts: {counts}")
+    lines.append("Removed or replaced at this level:")
+    lines += [f"  - {item}" for item in result.removed]
+    lines.append(f"Kept: {KEPT}")
+    lines.append("")
+    if context is not None:
+        lines.append(f"Context from {args.context} (sent exactly as written):")
+        for label, value in (
+            ("Role", context.role),
+            ("Priorities", context.priorities),
+            ("Dates", context.dates),
+        ):
+            if value:
+                lines.append(f"{label}: {value}")
+    if result.unfilled:
+        lines.append(
+            "warning: these placeholders stay visible in the prompt; fill them "
+            f"with --context: {', '.join(result.unfilled)}"
+        )
+    lines.append("")
+    if written:
+        lines.append("Written:")
+        lines += [f"  {path}  ({size} bytes)" for path, size in written]
+    if copied:
+        lines.append("Copied the prompt text to the clipboard.")
+        if not written:
+            lines.append(
+                "The clipboard holds the prompt only. Use --out DIR to get the "
+                "payload file the prompt refers to."
+            )
+    if not written and not copied:
+        lines.append(
+            "Nothing was written. Use --out DIR to save the payload and prompt, "
+            "or --copy to put the prompt on the clipboard."
+        )
+    lines.append("Nothing has been sent anywhere. You attach or paste these yourself.")
+    return "\n".join(lines)
 
 
 def _prepare_out(argument: str) -> Path | None:
