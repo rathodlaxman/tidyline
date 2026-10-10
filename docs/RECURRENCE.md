@@ -6,7 +6,7 @@ This file contains no personal data. "Verified" means the convention was checked
 
 ## Where rules live
 
-A repeating to-do has a hidden **template** row in `TMTask` with `rt1_recurrenceRule` set. The rule is a binary property list (plist) holding one dictionary. The to-dos you see are **instances**; each points to its template through `rt1_repeatingTemplate`. Templates do not always have an open instance, so tidyline builds its list from templates.
+A repeating to-do has a hidden **template** row in `TMTask` with `rt1_recurrenceRule` set. The rule is an XML property list (verified on a real database; binary is also accepted) holding one dictionary. Blobs over 100 KB are not read. The to-dos you see are **instances**; each points to its template through `rt1_repeatingTemplate`. Templates do not always have an open instance, so tidyline builds its list from templates.
 
 ## Fields
 

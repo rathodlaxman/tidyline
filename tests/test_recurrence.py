@@ -9,6 +9,7 @@ import pytest
 from fixtures import build_fixture as bf
 
 from tidyline.recurrence import (
+    MAX_BLOB_BYTES,
     NOT_RECOGNISED_TEXT,
     UNREADABLE_TEXT,
     Rule,
@@ -17,6 +18,7 @@ from tidyline.recurrence import (
 
 FIXED_TODAY = dt.date(2026, 10, 10)
 NEVER = 64092211200.0
+bf_limit = MAX_BLOB_BYTES
 
 
 def rule(fu=8, fa=1, tp=0, of=None, **extra):
@@ -110,7 +112,7 @@ FIXTURE_TEXT = {
     "tpl_invalid_plist": (
         UNREADABLE_TEXT,
         "unrecognised",
-        ("not a binary plist (InvalidFileException: Invalid file)",),
+        ("not a readable plist (InvalidFileException: Invalid file)",),
     ),
 }
 
@@ -473,7 +475,9 @@ def test_non_calendar_yearly_date_is_noted():
         b"not a plist",
         b"bplist00",
         b"bplist00" + bytes(range(64)),
-        plistlib.dumps({"fu": 8}, fmt=plistlib.FMT_XML),  # XML, not binary
+        b"<?xml version='1.0'?><plist>",  # truncated XML
+        b"\x00" * 100,
+        b"x" * (bf_limit + 1),  # oversized
         plistlib.dumps([1, 2, 3], fmt=plistlib.FMT_BINARY),  # not a dict
         plistlib.dumps("text", fmt=plistlib.FMT_BINARY),
         None,
@@ -489,6 +493,41 @@ def test_unreadable_input(value):
     assert not result.recognised
     assert "_decode_error" in result.raw
     assert "_hex_prefix" in result.raw
+
+
+def test_xml_plist_is_accepted():
+    blob = plistlib.dumps(rule(), fmt=plistlib.FMT_XML)
+    assert parse_rule(blob).text == "Monthly on day 1"
+
+
+def test_xml_and_binary_give_identical_rules():
+    for fmt_rule in (rule(), rule(fu=256, of=[{"wd": 0}], rc=3, ts=-2)):
+        xml = parse_rule(plistlib.dumps(fmt_rule, fmt=plistlib.FMT_XML))
+        binary = parse_rule(plistlib.dumps(fmt_rule, fmt=plistlib.FMT_BINARY))
+        assert xml.recognised
+        assert xml == binary
+        for name in ("text", "unit", "interval", "confidence", "notes", "raw"):
+            assert getattr(xml, name) == getattr(binary, name)
+
+
+def test_fixture_uses_both_plist_formats():
+    blobs = bf.rule_blobs(FIXED_TODAY)
+    assert blobs["tpl_weekly_fri"].startswith(b"bplist00")
+    assert blobs["tpl_weekly_sat"].startswith(b"<?xml")
+
+
+def test_oversized_blob_is_rejected_with_a_note():
+    blob = plistlib.dumps(rule(pad="x" * (bf_limit + 1)), fmt=plistlib.FMT_XML)
+    result = assert_never_raises_and_is_well_formed(blob)
+    assert not result.recognised
+    assert "byte limit" in result.notes[0]
+
+
+def test_blob_at_the_limit_is_still_read():
+    blob = plistlib.dumps(rule(), fmt=plistlib.FMT_XML)
+    padded = blob + b" " * (bf_limit - len(blob))
+    assert len(padded) == bf_limit
+    assert parse_rule(padded).text == "Monthly on day 1"
 
 
 def test_bytes_like_inputs_are_accepted():

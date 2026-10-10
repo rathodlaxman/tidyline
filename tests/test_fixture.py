@@ -196,7 +196,10 @@ def test_recurrence_rules_decode(built):
     assert len(blobs) == len(rules) + 1 == 26
     for key, rule in rules.items():
         blob = blobs[bf.make_uuid(key)]
-        assert blob.startswith(b"bplist00")
+        if key in bf.BINARY_RULE_KEYS:
+            assert blob.startswith(b"bplist00")
+        else:
+            assert blob.startswith(b"<?xml")
         assert plistlib.loads(blob) == rule
         assert isinstance(rule["ia"], float)
         assert isinstance(rule["sr"], float)

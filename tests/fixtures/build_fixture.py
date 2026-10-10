@@ -20,6 +20,9 @@ without personal values):
      of today. Every other row has startBucket 0. things.py ignores startBucket,
      so such a task still appears in things.today().
 
+ V5. Rules are XML plists, verified on a real database; binary plists are also
+     accepted. The fixture writes XML, except BINARY_RULE_KEYS (binary).
+
 UNVERIFIED (invented or assumed; revisit against real data):
 
  U1. dy = -1 (last day of the month) has never been seen in real data.
@@ -264,6 +267,7 @@ RULE_SPECS = (
     ("tpl_trashed", "Defrost the freezer", "area_home", 8, 1, 0, [{"dy": 13}], {}),
     ("tpl_leftover", "Send the newsletter", None, 8, 1, 0, [{"dy": 0}], {}),
 )
+BINARY_RULE_KEYS = frozenset({"tpl_weekly_fri"})  # the rest are written as XML
 INVALID_RULE_KEY = "tpl_invalid_plist"
 INVALID_RULE_BLOB = b"this is not a plist"
 INVALID_RULE_TITLE = "Rinse the compost caddy"
@@ -320,7 +324,10 @@ def recurrence_rules(today: dt.date) -> dict[str, dict]:
 
 def rule_blobs(today: dt.date) -> dict[str, bytes]:
     """The raw rt1_recurrenceRule bytes for every template, including the bad one."""
-    blobs = {key: rule_bytes(rule) for key, rule in recurrence_rules(today).items()}
+    blobs = {
+        key: rule_bytes(rule, binary=key in BINARY_RULE_KEYS)
+        for key, rule in recurrence_rules(today).items()
+    }
     blobs[INVALID_RULE_KEY] = INVALID_RULE_BLOB
     return blobs
 
@@ -341,8 +348,9 @@ def make_uuid(key: str) -> str:
     return "".join(chars)
 
 
-def rule_bytes(rule: dict) -> bytes:
-    return plistlib.dumps(rule, fmt=plistlib.FMT_BINARY)
+def rule_bytes(rule: dict, binary: bool = False) -> bytes:
+    fmt = plistlib.FMT_BINARY if binary else plistlib.FMT_XML
+    return plistlib.dumps(rule, fmt=fmt)
 
 
 def _insert(conn: sqlite3.Connection, table: str, row: dict) -> None:

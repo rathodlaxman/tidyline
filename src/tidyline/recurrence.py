@@ -24,6 +24,7 @@ NEVER_ENDS_THRESHOLD = 6.0e10  # ed at or above this looks like "never ends"
 KNOWN_FIELDS = frozenset({"fu", "fa", "tp", "of", "ed", "ia", "rc", "rrv", "sr", "ts"})
 
 # Upper bounds that keep the text sane; real rules are far below them.
+MAX_BLOB_BYTES = 100 * 1024  # real rules are a few hundred bytes
 MAX_INTERVAL = 10_000
 MAX_REPEAT_LIMIT = 1_000_000
 MAX_LEAD_DAYS = 1_000_000
@@ -69,7 +70,7 @@ class Rule:
 
 
 def parse_rule(value: object) -> Rule:
-    """Describe a rule given as binary-plist bytes or an already-decoded dict."""
+    """Describe a rule given as plist bytes (XML or binary) or a decoded dict."""
     try:
         return _parse(value)
     except Exception as error:  # last resort: parse_rule must never raise
@@ -87,10 +88,15 @@ def parse_rule(value: object) -> Rule:
 def _parse(value: object) -> Rule:
     if isinstance(value, (bytes, bytearray, memoryview)):
         data = bytes(value)
+        if len(data) > MAX_BLOB_BYTES:
+            return _unreadable(
+                f"rule is {len(data)} bytes, over the {MAX_BLOB_BYTES} byte limit",
+                data,
+            )
         try:
-            decoded = plistlib.loads(data, fmt=plistlib.FMT_BINARY)
+            decoded = plistlib.loads(data)  # XML and binary are auto-detected
         except Exception as error:
-            return _unreadable(f"not a binary plist ({_error_text(error)})", data)
+            return _unreadable(f"not a readable plist ({_error_text(error)})", data)
         if not isinstance(decoded, Mapping):
             kind = type(decoded).__name__
             return _unreadable(f"plist holds a {kind}, not a dict", data)
