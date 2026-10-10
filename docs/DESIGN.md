@@ -40,7 +40,7 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-10 | Default anonymisation for `prompt` (level 0): **strict**. `--anonymise light` is available for a fuller audit. |
 | 2026-10-10 | `read.py` is a **hybrid**: things.py (trashed=None, status=None) supplies identity and structure of to-dos, projects, headings, areas and tags. One read-only SQL pass over the same snapshot supplies what things.py lacks: packed dates, suppression date, raw timestamps, `startBucket`, `rt1_*`, tag UUIDs, checklist items, template rows, ordering. Rows are matched by UUID. If the two sources disagree, a warning is recorded and the row is skipped. Verified on the maintainer's database: 0 warnings. |
 | 2026-10-10 | v0.2 choices: title-hygiene patterns come from a repeatable `--pattern REGEX` option on `check` (no config file, no new dependency); new warning check "open to-dos inside a trashed project", with those to-dos excluded from all other checks; `strict` anonymisation labels are numbered by sorted id so they are stable between exports. |
-| 2026-10-10 | Exit codes: runtime failures (database not found or unreadable) exit 3 on every command, so `check` can use 1 for "warnings found". `check` accepts `--db` after the command like `doctor`, `export` and `report`. Finding messages never contain titles or user pattern text. Duplicate normalisation replaces punctuation with a space instead of deleting it. |
+| 2026-10-10 | Exit codes: runtime failures (database not found or unreadable, output not writable) exit 3 on every command and an unusable `--out` path found up front exits 2, so `check` can use 1 for "warnings found". `check` accepts `--db` after the command like `doctor`, `export` and `report`. Finding messages never contain titles or user pattern text. Duplicate normalisation replaces punctuation with a space instead of deleting it. |
 | 2026-10-10 | JSON export 7.4 open points settled: all rows included with flags (open, completed, cancelled, trashed); coded fields written as a name plus the raw code (`status` and `status_code`, `start` and `start_code`); `completion_date` is `stopDate` as ISO 8601 with UTC offset for completed and cancelled alike; areas, projects and headings use the same shape as tasks. Export file is created with mode 0600, an existing path is never overwritten, and `light` and `strict` are refused until v0.2. |
 
 ## 4. Tested environment
@@ -172,7 +172,7 @@ Definitions (settled 2026-10-10):
 - Someday inside active project (info): in-scope to-do with effective status Someday in a project that is open and not Someday.
 - Outside any heading (info): one finding per project that has at least one non-trashed heading, with the project as the first ref and each in-scope open to-do directly under it, with no heading, as the other refs.
 - Findings carry ids and fixed-wording messages only, never titles, notes or user pattern text. `check --json` has `check_schema_version` "1".
-- Exit codes: 0 success, 1 `check` found at least one warning, 2 usage error, 3 the database could not be found or read (all commands).
+- Exit codes: 0 success, 1 `check` found at least one warning, 2 usage error (including an unusable `--out` path found before any work: path exists, folder missing), 3 the run failed (database could not be found or read, schema check failed, output could not be written). All commands.
 
 All joins use UUIDs, never titles. Candidates for later, not committed: overdue deadlines, Inbox size, stale tasks.
 
