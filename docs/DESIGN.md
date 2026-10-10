@@ -43,6 +43,7 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-10 | Exit codes: runtime failures (database not found or unreadable, output not writable) exit 3 on every command and an unusable `--out` path found up front exits 2, so `check` can use 1 for "warnings found". `check` accepts `--db` after the command like `doctor`, `export` and `report`. Finding messages never contain titles or user pattern text. Duplicate normalisation replaces punctuation with a space instead of deleting it. |
 | 2026-10-10 | `prompt` and `decode` (settled 2026-10-10): `prompt` always prints a preview (level, counts, what is removed, the context text if given) and writes `tidyline_payload.json` and `tidyline_prompt.md` into `--out DIR`; `--copy` puts the prompt text on the clipboard (macOS `pbcopy`, no dependency); with neither option nothing is written. `--context FILE` fills the three context fields of the template; the area list is filled from the anonymised area labels; unfilled placeholders stay visible and the preview warns. Only the anonymised payload and the filled template leave the tool; the text report is never included because it lists recurring task titles. The packaged template (`llm/audit_prompt.md`) is adapted from the maintainer's own template: one attached payload file, a short data note, and a level-dependent Part 5. At `strict` titles are hidden, so Part 5 (task wording) is replaced by an instruction to skip it; `light` keeps scrubbed titles and supports Part 5. New command `decode` maps labels back to titles using the current database, possible because labels derive from ids. |
 | 2026-10-10 | JSON export 7.4 open points settled: all rows included with flags (open, completed, cancelled, trashed); coded fields written as a name plus the raw code (`status` and `status_code`, `start` and `start_code`); `completion_date` is `stopDate` as ISO 8601 with UTC offset for completed and cancelled alike; areas, projects and headings use the same shape as tasks. Export file is created with mode 0600, an existing path is never overwritten, and `light` and `strict` are refused until v0.2. |
+| 2026-10-11 | v0.2 release: the author shown on PyPI is the name only, with no email. Releases are uploaded by hand with `uv publish` using a project-scoped token. TestPyPI is used first. |
 
 ## 4. Tested environment
 
@@ -268,7 +269,7 @@ Done when:
 - On the real database, counts match the earlier personal script except for the intended fixes, and every difference is explained. The comparison script stays outside the repo.
 - Works while Things is running.
 
-### v0.2: audit and first public release (PyPI)
+### v0.2: audit and first public release (PyPI). DONE 2026-10-11, published to PyPI as 0.2.0
 
 Scope: all checks in 7.3, `check`, `recurrence`, anonymisation, `prompt`, `decode`.
 
@@ -312,17 +313,20 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 ## 11. Verify during v0.1
 
 - Which column marks This Evening, and its values.
-- Whether overdue-deadline tasks without a start date should count as Today (rule 5).
-- Whether macOS shows a privacy prompt when Terminal reads the Group Container while Things is running.
 - That the backup API copy works while Things is writing.
-- Meaning of `wdo` values other than 1 and -1, and of `dy` = -1 (last day).
-- Whether `ts` 0 can mean a deadline on the same day, and whether `ed` ordinary values correspond to "ends on date" in the dialog.
-- Whether an evening task can carry a past date or sit in a Someday project.
-- Rule 5 also applies to Someday tasks (7.1 order): a Someday task with no start date and an overdue deadline is Today. Not seen on real data.
 - A task inside a trashed or closed project is classified from its own fields (status ignores closed parents). Candidate health check for v0.2.
 - Real database read check, 2026-10-10 (counts only): 36 live templates all recognised, 2 leftover templates, 0 warnings, effective status counts sum to the open to-do total.
-- In the export, a task's `area` is its own column and is not inherited from its project. Decide in v0.2 whether consumers need an inherited area.
 - Works while Things is running: confirmed 2026-10-10. Doctor, export, report and the parity run all read a snapshot while the Things app was open.
 - Parity run against the personal v6 script, 2026-10-10 (counts only, outside the repo): 22 of 24 checks identical (areas, projects, open/completed/cancelled to-dos, Inbox/Anytime/Someday, deadlines, notes, checklists, tags, area sizes, unfiled, live and leftover templates, repeating instances). Explained differences: (1) v6 labels every dated task Upcoming; tidyline splits them into Today (11) and Upcoming (8), as intended. (2) tidyline reports 33 open to-dos inside trashed projects that v6 cannot see. (3) tidyline lists 5 completed headings of completed projects that v6 omits (things.py does not return them in project items). (4) tidyline recurrence text is more specific (ends after, end date, lead time), so it forms more distinct groups; both total 36 templates.
 - Done 2026-10-10: template row shape; keys real rules carry; daily offsets; `startBucket` = 1 for This Evening (7.1, 7.2).
 - Verify with counts-only queries against the maintainer's own database, run by hand and never committed. Output contains numbers and key names, no titles.
+
+### Still open
+
+- Whether overdue-deadline tasks without a start date should count as Today (rule 5).
+- Whether macOS shows a privacy prompt when Terminal reads the Group Container while Things is running.
+- Meaning of `wdo` values other than 1 and -1, and of `dy` = -1 (last day).
+- Whether `ts` 0 can mean a deadline on the same day, and whether `ed` ordinary values correspond to "ends on date" in the dialog.
+- Whether an evening task can carry a past date or sit in a Someday project.
+- Rule 5 also applies to Someday tasks (7.1 order): a Someday task with no start date and an overdue deadline is Today. Not seen on real data.
+- In the export, a task's `area` is its own column and is not inherited from its project. Decide in v0.2 whether consumers need an inherited area.

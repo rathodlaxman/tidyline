@@ -36,6 +36,9 @@ automated tests, and no real data is stored in the repository.
   - "every 3 months on the last weekday of that name"
 - The anonymised exports were checked for leaks. A decode round trip also
   worked: 2,057 labels were decoded correctly.
+- tidyline 0.2.0 was installed from PyPI with `uv tool install tidyline`, and
+  `tidyline doctor` reported schema ok, database version 29, tested yes, on the
+  maintainer's Mac.
 
 ## Not checked
 

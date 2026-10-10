@@ -42,7 +42,31 @@ What it does not do:
 
 ## Install
 
-From source:
+You need Python 3.10 or later and [uv](https://docs.astral.sh/uv/) or pipx.
+
+```
+uv tool install tidyline
+```
+
+or
+
+```
+pipx install tidyline
+```
+
+Then check it works:
+
+```
+tidyline --version
+```
+
+To upgrade:
+
+```
+uv tool upgrade tidyline
+```
+
+### From source (for development)
 
 ```
 git clone https://github.com/rathodlaxman/tidyline.git
@@ -51,29 +75,26 @@ uv sync
 uv run tidyline --version
 ```
 
-You need [uv](https://docs.astral.sh/uv/) and Python 3.10 or later.
-
-Once published: `pipx install tidyline` or `uv tool install tidyline`.
-
 macOS may block Terminal from reading Things' data folder. If `doctor` says so,
 open System Settings, Privacy & Security, Full Disk Access, turn it on for your
 terminal app, then quit and reopen the terminal.
 
 ## Quick start
 
-Run these from the folder you cloned. Write outputs outside any git folder, so
-they cannot be committed by accident. The examples use `~/tidyline-out/`, which
-must exist first:
+These examples use the installed `tidyline` command. In a source checkout, run
+`uv run tidyline` instead, from the folder you cloned. Write outputs outside any
+git folder, so they cannot be committed by accident. The examples use
+`~/tidyline-out/`, which must exist first:
 
 ```
 mkdir -p -m 700 ~/tidyline-out
-uv run tidyline doctor
-uv run tidyline report
-uv run tidyline check
-uv run tidyline recurrence
-uv run tidyline export --out ~/tidyline-out/export.json
-uv run tidyline prompt --out ~/tidyline-out/prompt
-uv run tidyline decode ~/tidyline-out/answer.md --out ~/tidyline-out/answer-decoded.md
+tidyline doctor
+tidyline report
+tidyline check
+tidyline recurrence
+tidyline export --out ~/tidyline-out/export.json
+tidyline prompt --out ~/tidyline-out/prompt
+tidyline decode ~/tidyline-out/answer.md --out ~/tidyline-out/answer-decoded.md
 ```
 
 - `doctor` finds the database and checks permissions, the schema and versions.
@@ -119,7 +140,7 @@ tidyline never sends your data anywhere. `prompt` prepares two files, and you
 decide whether to attach or paste them into an assistant yourself.
 
 ```
-uv run tidyline prompt --context my-context.txt --out ~/tidyline-out/prompt
+tidyline prompt --context my-context.txt --out ~/tidyline-out/prompt
 ```
 
 - The default is `--anonymise strict`. There is no `none` option for `prompt`.
@@ -142,7 +163,7 @@ want task wording reviewed, and accept that `light` leaves titles in place.
 To turn the answer back into real titles, save it to a file and run:
 
 ```
-uv run tidyline decode ~/tidyline-out/answer.md
+tidyline decode ~/tidyline-out/answer.md
 ```
 
 `decode` recomputes each label from the current database, so it needs no
