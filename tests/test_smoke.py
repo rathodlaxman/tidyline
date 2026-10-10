@@ -154,3 +154,14 @@ def test_decode(entry_point, env, fixture_db, tmp_path):
     assert result.returncode == 0, result.stderr
     assert result.stdout == "Keep **Household** as it is.\n"
     assert "1 labels replaced" in result.stderr
+
+
+def test_recurrence(entry_point, env, fixture_db):
+    result = run(entry_point, env, "--db", str(fixture_db), "recurrence")
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.rstrip("\n").endswith(
+        "25 templates, 21 live, 1 leftover, 3 not recognised"
+    )
+    raw = run(entry_point, env, "--db", str(fixture_db), "recurrence", "--raw")
+    assert raw.returncode == 0, raw.stderr
+    assert raw.stdout.startswith("warning: Raw rules may contain personal data.")

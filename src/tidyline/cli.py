@@ -34,6 +34,7 @@ from tidyline.llm.prompt import (
 from tidyline.read import ReadError, read_snapshot
 from tidyline.render.check_out import check_json, check_text
 from tidyline.render.json_out import build_export
+from tidyline.render.recurrence_out import render_recurrence
 from tidyline.render.text import ReportOptions, render_report
 
 # Exit codes (DESIGN.md 7.3): 1 is reserved for `check` finding a warning.
@@ -172,6 +173,20 @@ def build_parser() -> argparse.ArgumentParser:
     prompt.add_argument(
         "--copy", action="store_true", help="put the prompt on the clipboard (pbcopy)"
     )
+    recurrence = commands.add_parser(
+        "recurrence", help="list every repeating template with its readable rule"
+    )
+    recurrence.add_argument(
+        "--db",
+        metavar="PATH",
+        default=argparse.SUPPRESS,
+        help="path to the Things database",
+    )
+    recurrence.add_argument(
+        "--raw",
+        action="store_true",
+        help="also show each rule as stored and the fields read from it",
+    )
     decode = commands.add_parser(
         "decode",
         help="replace strict labels in an LLM answer with your real titles",
@@ -204,6 +219,8 @@ def main(argv: list[str] | None = None) -> int:
         return prompt(args)
     if args.command == "decode":
         return decode(args)
+    if args.command == "recurrence":
+        return recurrence(args)
     parser.print_help()
     return 0
 
@@ -510,6 +527,14 @@ def prompt(args: argparse.Namespace) -> int:
     if problem:
         print(f"error: {problem}", file=sys.stderr)
     return code
+
+
+def recurrence(args: argparse.Namespace) -> int:
+    loaded = _load(args)
+    if loaded is None:
+        return EXIT_FAILURE
+    print(render_recurrence(loaded[0], raw=args.raw), end="")
+    return EXIT_OK
 
 
 MAX_ANSWER_BYTES = 5 * 1024 * 1024

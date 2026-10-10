@@ -88,6 +88,7 @@ class Task:
     tag_uuids: tuple[str, ...] = ()
     recurrence_template_uuid: str | None = None
     recurrence: Rule | None = None
+    raw_rule: bytes | None = None  # the stored rule blob, for `recurrence --raw`
     recurrence_paused: bool = False
     created: dt.datetime | None = None
     modified: dt.datetime | None = None

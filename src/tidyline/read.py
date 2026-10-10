@@ -229,6 +229,7 @@ def _from_row(
         heading_uuid=row["heading"],
         index=row["index"] or 0,
         recurrence=parse_rule(row["rt1_recurrenceRule"]),
+        raw_rule=_blob(row["rt1_recurrenceRule"]),
         recurrence_paused=bool(row["rt1_instanceCreationPaused"]),
         **_raw_fields(row, tag_links, warnings),
     )
@@ -293,6 +294,12 @@ def _mapped(
         return names[value]
     warnings.append(f"TMTask {row['uuid']}: unknown {column} {row[column]!r}")
     return row[column]
+
+
+def _blob(value: object) -> bytes:
+    if isinstance(value, (bytes, bytearray, memoryview)):
+        return bytes(value)
+    return str(value).encode("utf-8", "replace")
 
 
 def _is_leftover(

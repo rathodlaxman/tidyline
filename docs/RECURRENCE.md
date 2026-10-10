@@ -69,6 +69,8 @@ Each rule has a **confidence**:
 - **Positive `ts`, negative `rc`.** Never seen. Noted as `unfamiliar value`, and the text is unchanged.
 - **`ia` and `sr`.** Not interpreted.
 
+To list every rule as tidyline reads it, so you can compare it with the Repeat dialog in Things, run `tidyline recurrence` (add `--raw` to see each rule as stored).
+
 ## Reporting an unfamiliar rule
 
 If tidyline shows `recurring (rule not recognised)`, an `unfamiliar field`, an `unfamiliar value` or `assumed`, a report helps. You can send one without sharing any task titles or notes.

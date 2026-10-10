@@ -1,0 +1,126 @@
+1 year after completion
+  title:  Descale the kettle
+  in:     area Household
+  state:  live
+
+Daily
+  title:  Take out the recycling
+  in:     area Household
+  state:  live
+
+Every 2 weeks on Sun
+  title:  Wash the bedding
+  in:     area Household
+  state:  live
+
+Every 3 months on day 5
+  title:  Clean the oven
+  in:     area Household
+  state:  live
+
+Every 6 months on day 14
+  title:  Service the bicycle
+  in:     area Household
+  state:  live
+
+Monthly on day 1
+  title:  Review the budget sheet
+  in:     area Side Studio
+  state:  live
+
+Monthly on day 1 (has an end date)
+  title:  Send the course invoice
+  in:     area Side Studio
+  state:  live
+
+Monthly on day 14 (starts 7 days before deadline)
+  title:  Order printer ink
+  in:     area Side Studio
+  state:  live
+
+Monthly on day 15
+  title:  Pay the rent
+  in:     area Household
+  state:  live
+
+Monthly on last day
+  title:  Back up the laptop
+  in:     area Side Studio
+  state:  live
+
+Monthly on the first Sun
+  title:  Call the family
+  in:     area Household
+  state:  live
+
+Monthly on the last Sun
+  title:  Tidy the workshop
+  in:     area Side Studio
+  state:  live
+
+Weekly on Fri
+  title:  Water the balcony herbs
+  in:     area Household
+  state:  live
+
+Weekly on Sat
+  title:  Check the tyre pressure
+  in:     area Side Studio
+  state:  live
+
+Weekly on Sat (ends after 12 times)
+  title:  Practise the scales
+  in:     area Side Studio
+  state:  live
+
+Weekly on Sat (paused)
+  title:  Mow the lawn
+  in:     area Household
+  state:  live
+
+Weekly on Sun
+  title:  Plan the week ahead
+  in:     area Household
+  state:  live
+
+Weekly on Sun
+  title:  Rotate the pantry stock
+  in:     area Household
+  state:  live
+
+Weekly on Sun
+  title:  Review the garden plan
+  in:     area Household
+  state:  live
+
+Yearly on Feb 28
+  title:  Renew the domain name
+  in:     area Side Studio
+  state:  live
+
+Yearly on Jan 1
+  title:  Set the year's goals
+  in:     area Household
+  state:  live
+
+Monthly on day 1
+  title:  Send the newsletter
+  in:     project Old Newsletter (trashed)
+  state:  leftover
+
+not recognised
+  title:  Empty the dehumidifier
+  in:     area Household
+  state:  not recognised
+
+not recognised
+  title:  Check the smoke alarms
+  in:     area Household
+  state:  not recognised
+
+not recognised
+  title:  Rinse the compost caddy
+  in:     area Household
+  state:  not recognised
+
+25 templates, 21 live, 1 leftover, 3 not recognised

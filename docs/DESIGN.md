@@ -250,7 +250,7 @@ The core returns data and never prints. The CLI only parses options and calls th
 | `report` | Text summary; HTML from v0.3 | `--html`, `--out`, `--include-completed`, `--no-color` |
 | `check` | Health checks only; exit code 1 if any warning | `--only`, `--json` |
 | `export` | JSON export | `--out`, `--anonymise {none,light,strict}` |
-| `recurrence` | Live and leftover recurring tasks | `--raw` |
+| `recurrence` | List every repeating template with its readable rule, so it can be checked against what Things shows: one block per template (rule text or "not recognised", title, project or area, state live / leftover / not recognised) sorted by state, rule text and id, then a summary line. Exit 0 even when rules are not recognised. `--raw` adds the rule as stored (XML text, or hex and length for a binary plist), the decoded fields and, for an unrecognised rule, the reason, after a personal-data warning line. | `--raw`, `--db` |
 | `prompt` | Level 0: anonymised payload plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--out DIR`, `--copy` |
 | `decode` | Replace strict labels (`Task k3f9az`) in an LLM answer with the real titles from the current database. Reads the answer from a UTF-8 file of at most 5 MB; writes the decoded text to stdout, or to `--out` (mode 0600, never overwrites). A summary (labels replaced, distinct, unmatched; never titles) and a personal-data warning go to stderr. | `ANSWER_FILE`, `--out FILE`, `--db` |
 | `ask` | v0.4: levels 1 and 2, after preview and confirmation | `--provider`, `--model`, `--yes` |
