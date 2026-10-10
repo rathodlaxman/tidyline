@@ -102,7 +102,7 @@ Checked against the maintainer's database on 2026-10-10 (counts only):
 
 ### 7.2 Recurrence
 
-Templates are hidden rows with `rt1_recurrenceRule` (a binary plist). Each visible instance points to its template through `rt1_repeatingTemplate`.
+Templates are hidden rows with `rt1_recurrenceRule` (a property list; the real database stores it in the **XML** plist format, not binary. Verified 2026-10-10: a decoder that accepted only binary plists read none of 40 real rules). The decoder accepts both XML and binary plists. Each visible instance points to its template through `rt1_repeatingTemplate`.
 
 | Field | Meaning |
 |---|---|
@@ -272,7 +272,7 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 
 1. Scaffold with uv: package layout, `requires-python = ">=3.10"`, things.py as the only runtime dependency, pytest, ruff and pytest-socket as development dependencies.
 2. Dump the schema only: `sqlite3 -readonly "<path>" .schema > tests/fixtures/schema.sql`. Read it before committing.
-3. Fixture builder that inserts synthetic rows using the real encodings (packed dates, binary plist recurrence rules).
+3. Fixture builder that inserts synthetic rows using the real encodings (packed dates, XML plist recurrence rules).
 4. `db/locate.py`, `db/snapshot.py`, `db/schema.py`, then `doctor`.
 5. `model.py`, `read.py`, `status.py`.
 6. `recurrence.py`.
