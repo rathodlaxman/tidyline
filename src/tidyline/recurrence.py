@@ -411,7 +411,11 @@ def _unreadable(reason: str, data: bytes) -> Rule:
         recognised=False,
         text=UNREADABLE_TEXT,
         notes=(reason,),
-        raw={"_decode_error": reason, "_hex_prefix": data[:16].hex()},
+        raw={
+            "_decode_error": reason,
+            "_hex_prefix": data[:16].hex(),
+            "_length": len(data),
+        },
     )
 
 

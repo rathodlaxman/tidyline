@@ -1,0 +1,2435 @@
+{
+  "export_schema_version": "1",
+  "tool": {
+    "name": "tidyline",
+    "version": "test"
+  },
+  "exported_at": "2026-10-10T12:00:00+00:00",
+  "environment": {
+    "macos": "27.0.1",
+    "arch": "arm64",
+    "things_version": "3.24.1",
+    "database_version": 29
+  },
+  "anonymisation": "strict",
+  "areas": [
+    {
+      "id": "XMqwV40z8xUqayA9xX8JT9",
+      "title": "Area 66aatt"
+    },
+    {
+      "id": "KZqSAW21AoCBbypXyjZVXT",
+      "title": "Area 5lchwq"
+    }
+  ],
+  "projects": [
+    {
+      "id": "bsTNY9syUV7Horu9Fq6AlR",
+      "title": "Project okhdkg",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "wGxl93z5ycOyNFS8vtRwfl",
+      "title": "Project sacqgd",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "bsybxkoEhUxPaev3t6mXI8",
+      "title": "Project miztj7",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "9yR288KiUB7u3di4DEOxiG",
+      "title": "Project 6bpl6h",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "NhgBlLAwIJbdVbl28DOtjl",
+      "title": "Project knxwzb",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "0BRXWMOqSXexzIxvtDFVPA",
+      "title": "Project ramw6l",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": true,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "3LznkhEhglYinIb9KGZEGK",
+      "title": "Project j5tngb",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-08-31T09:00:00+00:00",
+      "tags": []
+    }
+  ],
+  "headings": [
+    {
+      "id": "Mlhg0a4075JPnMtPKnHsF6",
+      "title": "Heading tfr5o5",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Project miztj7"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "yJ90Hrd7EnrwooQ0ebTeoV",
+      "title": "Heading qbkut7",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Project miztj7"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": []
+    },
+    {
+      "id": "FNxuzYlDtdpVq97XCi4N54",
+      "title": "Heading pdsi77",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "3LznkhEhglYinIb9KGZEGK",
+        "title": "Project j5tngb"
+      },
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-08-31T09:00:00+00:00",
+      "tags": []
+    }
+  ],
+  "tasks": [
+    {
+      "id": "STLVXiQn9bqyg7g7RZ6zrY",
+      "title": "Task 2ji4gg",
+      "notes": null,
+      "area": null,
+      "project": null,
+      "heading": null,
+      "effective_status": "inbox",
+      "start": "inbox",
+      "start_code": 0,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "wVvljVFHpIWniNyVPyXkeQ",
+      "title": "Task vxzmxe",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "today",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": "2026-10-10",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "k2OpyrjPS4NaggjxUTWGPn",
+      "title": "Task kybyea",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "this_evening",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": "2026-10-10",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "zi9evA2iFtjaaj4aVVC3VR",
+      "title": "Task 6x7xly",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsTNY9syUV7Horu9Fq6AlR",
+        "title": "Project okhdkg"
+      },
+      "heading": null,
+      "effective_status": "today",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": "2026-10-09",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "hEK8x3Hx2T8ZBlB1mjQZir",
+      "title": "Task zs53af",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "upcoming",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": "2026-10-17",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 3,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "sBz54JbHf6Y5o2g3aeN5fO",
+      "title": "Task ixx3dm",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "wGxl93z5ycOyNFS8vtRwfl",
+        "title": "Project sacqgd"
+      },
+      "heading": null,
+      "effective_status": "today",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": "2026-10-05",
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "jUQaUleiMpTwGMRTfj9OdP",
+      "title": "Task trsino",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "wGxl93z5ycOyNFS8vtRwfl",
+        "title": "Project sacqgd"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": "2026-10-07",
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "g0DPKtjqKZjO1ixGZEdL50",
+      "title": "Task 54ypoe",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsTNY9syUV7Horu9Fq6AlR",
+        "title": "Project okhdkg"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "ZUqPSvwiEqNPAgOl8aJ7hb",
+      "title": "Task fcwwa7",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "wGxl93z5ycOyNFS8vtRwfl",
+        "title": "Project sacqgd"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "6H08pYDsfxcG7P60bmVpZn",
+      "title": "Task eu4w4b",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsTNY9syUV7Horu9Fq6AlR",
+        "title": "Project okhdkg"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "P6MTeEdg1286r2kS4dRb1c",
+      "title": "Task v5ngre",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "wGxl93z5ycOyNFS8vtRwfl",
+        "title": "Project sacqgd"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "GhQJovIClW5mMaZ6lTbvd4",
+      "title": "Task li7775",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Project miztj7"
+      },
+      "heading": {
+        "id": "Mlhg0a4075JPnMtPKnHsF6",
+        "title": "Heading tfr5o5"
+      },
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [
+        {
+          "id": "JMThOdCqrpzRvpQoElkpQZ",
+          "title": "Tag xsg7rg"
+        },
+        {
+          "id": "Kxi31m2NykZ9I5ETLkIA1c",
+          "title": "Tag oziqxy"
+        }
+      ],
+      "checklist": null,
+      "checklist_count": 2,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "GiGOWffcNJ3kkTA4lEf5tx",
+      "title": "Task c6dmkj",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Project miztj7"
+      },
+      "heading": {
+        "id": "Mlhg0a4075JPnMtPKnHsF6",
+        "title": "Heading tfr5o5"
+      },
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "1crys6LN5aV8Fy3JaDU0Ph",
+      "title": "Task xpf22e",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Project miztj7"
+      },
+      "heading": {
+        "id": "yJ90Hrd7EnrwooQ0ebTeoV",
+        "title": "Heading qbkut7"
+      },
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "nsVHJeF98uPHOUsn0Iv71n",
+      "title": "Task h4stp4",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Project miztj7"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "jE3aYQX7qCTbzCQhZayNls",
+      "title": "Task mycdfv",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "bsybxkoEhUxPaev3t6mXI8",
+        "title": "Project miztj7"
+      },
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "lQqQdAL0SA4H89Abmii4Pl",
+      "title": "Task gneakf",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "9yR288KiUB7u3di4DEOxiG",
+        "title": "Project 6bpl6h"
+      },
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": "2026-10-22",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "5XraJeptMddzC5lcAHYl4D",
+      "title": "Task cet5bl",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "9yR288KiUB7u3di4DEOxiG",
+        "title": "Project 6bpl6h"
+      },
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": "2026-11-09",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "GOf1XnpvNOodYovFzguhqV",
+      "title": "Task kj547t",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "9yR288KiUB7u3di4DEOxiG",
+        "title": "Project 6bpl6h"
+      },
+      "heading": null,
+      "effective_status": "someday",
+      "start": "someday",
+      "start_code": 2,
+      "start_date": "2026-09-30",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "lB04kFqq3uaVWIWqyKdQdW",
+      "title": "Task qaznbe",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 2,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "c2o7D7yVhG2lVWRuTCAQGi",
+      "title": "Task 5mvwt3",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "6DD9igNV0EzWp4vcmIz5bw",
+      "title": "Task wramie",
+      "notes": null,
+      "area": null,
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "QzRqxLaN7PzullK0nMl52G",
+      "title": "Task 56s4j5",
+      "notes": null,
+      "area": null,
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "PR23twfsajRlp1Dbd9nkSy",
+      "title": "Task g4xqnt",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [
+        {
+          "id": "JMThOdCqrpzRvpQoElkpQZ",
+          "title": "Tag xsg7rg"
+        }
+      ],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "UyyYfHNVv4ztufiMln1T2A",
+      "title": "Task ujj5pv",
+      "notes": null,
+      "area": null,
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "5gGatSXVSVnM3eV6Zl8c1Q",
+      "title": "Task h4y5xx",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "ZoI5C0fI2kpdkdd8i1GoMJ",
+      "title": "Task q4qr7g",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "W2ClbUfKYdITzRMX5ZH2mC",
+      "title": "Task wovx6s",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "cancelled",
+      "status_code": 2,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "Y3ETTqnZE5h9dFDofPBZiu",
+      "title": "Task ius2uy",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": true,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "I0M9dXG5x35F71zvT51f8I",
+      "title": "Task uh6tup",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "0BRXWMOqSXexzIxvtDFVPA",
+        "title": "Project ramw6l"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "WYXwlgPSBotgDxFB2efa8s",
+      "title": "Task oigxd7",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "3LznkhEhglYinIb9KGZEGK",
+        "title": "Project j5tngb"
+      },
+      "heading": {
+        "id": "FNxuzYlDtdpVq97XCi4N54",
+        "title": "Heading pdsi77"
+      },
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "Gg8VHTtszA7c1FPEDom5Jv",
+      "title": "Task v2lqav",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "NhgBlLAwIJbdVbl28DOtjl",
+        "title": "Project knxwzb"
+      },
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "gjF4cbNLr0b0t6lnlSyT25",
+      "title": "Task p5ih6s",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "today",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": "2026-10-10",
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": {
+        "id": "or7HRAP4vxlO4UQgiEmteF",
+        "title": "Template 6zcco7"
+      },
+      "recurrence": {
+        "text": "Daily",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 16,
+          "ia": 700000000.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700003600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    },
+    {
+      "id": "nMmSPFMLBIpsIAaIIBcc9c",
+      "title": "Task onkkyo",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": {
+        "id": "BG2mpmtNbQk2aaOwGmUskn",
+        "title": "Template hwc6k2"
+      },
+      "recurrence": {
+        "text": "Weekly on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 700086400.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700090000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    },
+    {
+      "id": "Xwn85g8JzXV22bpZ5CKJwm",
+      "title": "Task rqsfj5",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": {
+        "id": "FoRqmnIQCGgFN631SESUiF",
+        "title": "Template wownee"
+      },
+      "recurrence": {
+        "text": "Monthly on day 15",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700518400.0,
+          "of": [
+            {
+              "dy": 14
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700522000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    },
+    {
+      "id": "ItHKyzrJ0jCOXtCGdgbmEk",
+      "title": "Task 6h4xno",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": {
+        "id": "tXAtXxFUa5R5UW5huJzPPU",
+        "title": "Template xyongo"
+      },
+      "recurrence": {
+        "text": "Every 2 weeks on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 2,
+          "fu": 256,
+          "ia": 700345600.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700349200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    },
+    {
+      "id": "I9CGWSnUglFV0DDo81k6YP",
+      "title": "Task ldwwxq",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "effective_status": "closed",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "completed",
+      "status_code": 3,
+      "trashed": false,
+      "completion_date": "2026-10-08T09:00:00+00:00",
+      "tags": [],
+      "checklist": null,
+      "checklist_count": 0,
+      "recurring_template": {
+        "id": "R6Vl3qvYXYDiTJsm11V7h1",
+        "title": "Template hphbsg"
+      },
+      "recurrence": {
+        "text": "Yearly on Feb 28",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 4,
+          "ia": 701036800.0,
+          "of": [
+            {
+              "dy": 27,
+              "mo": 1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701040400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      }
+    }
+  ],
+  "recurring_templates": [
+    {
+      "id": "or7HRAP4vxlO4UQgiEmteF",
+      "title": "Template 6zcco7",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Daily",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 16,
+          "ia": 700000000.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700003600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "gjF4cbNLr0b0t6lnlSyT25"
+      ]
+    },
+    {
+      "id": "BG2mpmtNbQk2aaOwGmUskn",
+      "title": "Template hwc6k2",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 700086400.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700090000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "nMmSPFMLBIpsIAaIIBcc9c"
+      ]
+    },
+    {
+      "id": "P1zmNccnxYxmZaxglkwpIj",
+      "title": "Template lhnbs7",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Fri",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 700172800.0,
+          "of": [
+            {
+              "wd": 5
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700176400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "q0zoQ02iat6g5a95pX9h9q",
+      "title": "Template ab2wr3",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sat",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 700259200.0,
+          "of": [
+            {
+              "wd": 6
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700262800.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "tXAtXxFUa5R5UW5huJzPPU",
+      "title": "Template xyongo",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Every 2 weeks on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 2,
+          "fu": 256,
+          "ia": 700345600.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700349200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "ItHKyzrJ0jCOXtCGdgbmEk"
+      ]
+    },
+    {
+      "id": "i6nkGJfVuDHpvzSSeOb6pZ",
+      "title": "Template rm26sd",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 1",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700432000.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700435600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "FoRqmnIQCGgFN631SESUiF",
+      "title": "Template wownee",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 15",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700518400.0,
+          "of": [
+            {
+              "dy": 14
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700522000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "Xwn85g8JzXV22bpZ5CKJwm"
+      ]
+    },
+    {
+      "id": "yQXL6BTdzWCUauIqhDGyYc",
+      "title": "Template vbrtbt",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on last day",
+        "confidence": "assumed",
+        "notes": [
+          "assumed convention: dy -1 read as the last day of the month (not seen on a real database)"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700604800.0,
+          "of": [
+            {
+              "dy": -1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700608400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "GQ3Q1K7HPbJ0CCKhdmHWtS",
+      "title": "Template pq5k75",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Every 3 months on day 5",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 3,
+          "fu": 8,
+          "ia": 700691200.0,
+          "of": [
+            {
+              "dy": 4
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700694800.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "O9ykYlkRlc5RpEvWehYDRT",
+      "title": "Template wli2hw",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Every 6 months on day 14",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 6,
+          "fu": 8,
+          "ia": 700777600.0,
+          "of": [
+            {
+              "dy": 13
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700781200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "qkeJAcVzwadEWtUrJi2trJ",
+      "title": "Template 73msqa",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on the first Sun",
+        "confidence": "assumed",
+        "notes": [
+          "assumed convention: wdo 1 read as <text> (only wdo -1 has been checked against the app)"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700864000.0,
+          "of": [
+            {
+              "wd": 0,
+              "wdo": 1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700867600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "DA496wF4q4SXHzpHnkL4XW",
+      "title": "Template 7bq36u",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on the last Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 700950400.0,
+          "of": [
+            {
+              "wd": 0,
+              "wdo": -1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 700954000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "R6Vl3qvYXYDiTJsm11V7h1",
+      "title": "Template hphbsg",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Yearly on Feb 28",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 4,
+          "ia": 701036800.0,
+          "of": [
+            {
+              "dy": 27,
+              "mo": 1
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701040400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": [
+        "I9CGWSnUglFV0DDo81k6YP"
+      ]
+    },
+    {
+      "id": "dUDoOrLVDnx8Y0YFGl9IYl",
+      "title": "Template mlhn64",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Yearly on Jan 1",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 4,
+          "ia": 701123200.0,
+          "of": [
+            {
+              "dy": 0,
+              "mo": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701126800.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "Pr5Z37f60agCDYVwBE9FFH",
+      "title": "Template 7k4veq",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "1 year after completion",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 4,
+          "ia": 701209600.0,
+          "of": [
+            {
+              "dy": 0,
+              "mo": 7
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701213200.0,
+          "tp": 1,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "CaGrfuagOFp01XYuvxCtHS",
+      "title": "Template 3gxxfe",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sun",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "fa": 1,
+          "fu": 256,
+          "ia": 701296000.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701299600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "FoQyOS7wh3uREmAyYaCKNQ",
+      "title": "Template 7hixuz",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 1 (has an end date)",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 1799366400.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 701382400.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701386000.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "5h7tkgOraTqYzsskeKWR7E",
+      "title": "Template oacyuw",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sat (ends after 12 times)",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 701468800.0,
+          "of": [
+            {
+              "wd": 6
+            }
+          ],
+          "rc": 12,
+          "rrv": 4,
+          "sr": 701472400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "1U9SOeR2fkDVElwr8tC3KR",
+      "title": "Template 2rucn3",
+      "notes": null,
+      "area": {
+        "id": "KZqSAW21AoCBbypXyjZVXT",
+        "title": "Area 5lchwq"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 14 (starts 7 days before deadline)",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 701555200.0,
+          "of": [
+            {
+              "dy": 13
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701558800.0,
+          "tp": 0,
+          "ts": -7
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "8q0yNzsj6oL9mRcwcyWUcr",
+      "title": "Template fv2qrp",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "recurring (rule not recognised)",
+        "confidence": "unrecognised",
+        "notes": [
+          "unknown rule version: rrv=5"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 701641600.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 5,
+          "sr": 701645200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "6VY1SqExqdZd4fPDxQUr7M",
+      "title": "Template re4d4f",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "recurring (rule not recognised)",
+        "confidence": "unrecognised",
+        "notes": [
+          "unknown unit: fu=999"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 999,
+          "ia": 701728000.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701731600.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "YHPeigapCU2XvXkcefxQ0d",
+      "title": "Template hik5bv",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "Weekly on Sun",
+        "confidence": "verified",
+        "notes": [
+          "unfamiliar field: zz"
+        ],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 701814400.0,
+          "of": [
+            {
+              "wd": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701818000.0,
+          "tp": 0,
+          "ts": 0,
+          "zz": 1
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "XaNHL3veD7qPq3WQ2NBb1n",
+      "title": "Template tnkums",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": true,
+      "recurrence": {
+        "text": "Weekly on Sat",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 256,
+          "ia": 701900800.0,
+          "of": [
+            {
+              "wd": 6
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 701904400.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "IsnkJqXPRItebiHgwu78zz",
+      "title": "Template 2l2vpl",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "0BRXWMOqSXexzIxvtDFVPA",
+        "title": "Project ramw6l"
+      },
+      "heading": null,
+      "leftover": true,
+      "paused": false,
+      "recurrence": {
+        "text": "Monthly on day 1",
+        "confidence": "verified",
+        "notes": [],
+        "raw": {
+          "ed": 64092211200.0,
+          "fa": 1,
+          "fu": 8,
+          "ia": 702073600.0,
+          "of": [
+            {
+              "dy": 0
+            }
+          ],
+          "rc": 0,
+          "rrv": 4,
+          "sr": 702077200.0,
+          "tp": 0,
+          "ts": 0
+        }
+      },
+      "tags": [],
+      "instances": []
+    },
+    {
+      "id": "b3kjygLUBU65JN8vPLpgn0",
+      "title": "Template fiu5qk",
+      "notes": null,
+      "area": {
+        "id": "XMqwV40z8xUqayA9xX8JT9",
+        "title": "Area 66aatt"
+      },
+      "project": null,
+      "heading": null,
+      "leftover": false,
+      "paused": false,
+      "recurrence": {
+        "text": "recurring (rule unreadable)",
+        "confidence": "unrecognised",
+        "notes": [
+          "not a readable plist (InvalidFileException: Invalid file)"
+        ],
+        "raw": {
+          "_decode_error": "<text>",
+          "_length": 19
+        }
+      },
+      "tags": [],
+      "instances": []
+    }
+  ],
+  "findings": [
+    {
+      "check": "open_in_trashed_project",
+      "severity": "warning",
+      "message": "open to-do inside a trashed project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "I0M9dXG5x35F71zvT51f8I"
+        },
+        {
+          "kind": "project",
+          "id": "0BRXWMOqSXexzIxvtDFVPA"
+        }
+      ]
+    },
+    {
+      "check": "unfiled_open",
+      "severity": "warning",
+      "message": "open to-do with no area and no project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "6DD9igNV0EzWp4vcmIz5bw"
+        }
+      ]
+    },
+    {
+      "check": "unfiled_open",
+      "severity": "warning",
+      "message": "open to-do with no area and no project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "QzRqxLaN7PzullK0nMl52G"
+        }
+      ]
+    },
+    {
+      "check": "unfiled_open",
+      "severity": "warning",
+      "message": "open to-do with no area and no project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "UyyYfHNVv4ztufiMln1T2A"
+        }
+      ]
+    },
+    {
+      "check": "title_hygiene",
+      "severity": "warning",
+      "message": "stray middle dot at the end; doubled spaces",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "P6MTeEdg1286r2kS4dRb1c"
+        }
+      ]
+    },
+    {
+      "check": "title_hygiene",
+      "severity": "warning",
+      "message": "leading whitespace",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "c2o7D7yVhG2lVWRuTCAQGi"
+        }
+      ]
+    },
+    {
+      "check": "possible_duplicates",
+      "severity": "warning",
+      "message": "2 open to-dos share a normalised title",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "g0DPKtjqKZjO1ixGZEdL50"
+        },
+        {
+          "kind": "task",
+          "id": "ZUqPSvwiEqNPAgOl8aJ7hb"
+        }
+      ]
+    },
+    {
+      "check": "dated_in_someday_project",
+      "severity": "warning",
+      "message": "to-do with a start date inside a Someday project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "lQqQdAL0SA4H89Abmii4Pl"
+        },
+        {
+          "kind": "project",
+          "id": "9yR288KiUB7u3di4DEOxiG"
+        }
+      ]
+    },
+    {
+      "check": "dated_in_someday_project",
+      "severity": "warning",
+      "message": "to-do with a start date inside a Someday project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "5XraJeptMddzC5lcAHYl4D"
+        },
+        {
+          "kind": "project",
+          "id": "9yR288KiUB7u3di4DEOxiG"
+        }
+      ]
+    },
+    {
+      "check": "dated_in_someday_project",
+      "severity": "warning",
+      "message": "to-do with a start date inside a Someday project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "GOf1XnpvNOodYovFzguhqV"
+        },
+        {
+          "kind": "project",
+          "id": "9yR288KiUB7u3di4DEOxiG"
+        }
+      ]
+    },
+    {
+      "check": "active_project_no_open_tasks",
+      "severity": "warning",
+      "message": "active project with no open to-dos",
+      "refs": [
+        {
+          "kind": "project",
+          "id": "NhgBlLAwIJbdVbl28DOtjl"
+        }
+      ]
+    },
+    {
+      "check": "recurrence_not_recognised",
+      "severity": "warning",
+      "message": "recurrence rule not recognised",
+      "refs": [
+        {
+          "kind": "template",
+          "id": "8q0yNzsj6oL9mRcwcyWUcr"
+        }
+      ]
+    },
+    {
+      "check": "recurrence_not_recognised",
+      "severity": "warning",
+      "message": "recurrence rule not recognised",
+      "refs": [
+        {
+          "kind": "template",
+          "id": "6VY1SqExqdZd4fPDxQUr7M"
+        }
+      ]
+    },
+    {
+      "check": "recurrence_not_recognised",
+      "severity": "warning",
+      "message": "recurrence rule could not be read",
+      "refs": [
+        {
+          "kind": "template",
+          "id": "b3kjygLUBU65JN8vPLpgn0"
+        }
+      ]
+    },
+    {
+      "check": "leftover_templates",
+      "severity": "info",
+      "message": "recurring template whose project is trashed",
+      "refs": [
+        {
+          "kind": "template",
+          "id": "IsnkJqXPRItebiHgwu78zz"
+        }
+      ]
+    },
+    {
+      "check": "someday_in_active_project",
+      "severity": "info",
+      "message": "Someday to-do inside an active project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "jE3aYQX7qCTbzCQhZayNls"
+        },
+        {
+          "kind": "project",
+          "id": "bsybxkoEhUxPaev3t6mXI8"
+        }
+      ]
+    },
+    {
+      "check": "outside_heading",
+      "severity": "info",
+      "message": "2 open to-dos outside any heading in a project that uses headings",
+      "refs": [
+        {
+          "kind": "project",
+          "id": "bsybxkoEhUxPaev3t6mXI8"
+        },
+        {
+          "kind": "task",
+          "id": "nsVHJeF98uPHOUsn0Iv71n"
+        },
+        {
+          "kind": "task",
+          "id": "jE3aYQX7qCTbzCQhZayNls"
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

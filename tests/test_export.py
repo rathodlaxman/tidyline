@@ -49,6 +49,7 @@ TASK_KEYS = {
     "completion_date",
     "tags",
     "checklist",
+    "checklist_count",
     "recurring_template",
     "recurrence",
 }
@@ -124,6 +125,7 @@ def test_every_task_has_the_listed_keys(exported):
     for entry in exported["projects"] + exported["headings"]:
         assert set(entry) == TASK_KEYS - {
             "checklist",
+            "checklist_count",
             "recurring_template",
             "recurrence",
         }
@@ -318,19 +320,9 @@ def test_cli_refuses_a_dangling_symlink(fixture_db, tmp_path, no_real_app):
     assert not (tmp_path / "nowhere.json").exists()
 
 
-@pytest.mark.parametrize("level", ["light", "strict"])
-def test_cli_anonymise_levels_are_not_available_yet(
-    fixture_db, tmp_path, capsys, level, no_real_app
-):
-    out = tmp_path / "export.json"
-    assert run_export(fixture_db, out, "--anonymise", level) == 2
-    assert not out.exists()
-    assert "arrives in v0.2" in capsys.readouterr().err
-
-
 def test_cli_stdout_is_not_supported(fixture_db, capsys, no_real_app):
     assert cli.main(["--db", str(fixture_db), "export", "--out", "-"]) == 2
-    assert "not supported in v0.1" in capsys.readouterr().err
+    assert "not supported" in capsys.readouterr().err
 
 
 def test_cli_missing_folder(fixture_db, tmp_path, capsys, no_real_app):

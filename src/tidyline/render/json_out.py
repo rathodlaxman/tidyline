@@ -142,6 +142,7 @@ class _Context:
         if task.kind is TaskKind.TODO:
             template = self.tasks.get(task.recurrence_template_uuid or "")
             result["checklist"] = self.checklists.get(task.uuid, [])
+            result["checklist_count"] = len(result["checklist"])
             result["recurring_template"] = self.ref(
                 task.recurrence_template_uuid, self.tasks
             )

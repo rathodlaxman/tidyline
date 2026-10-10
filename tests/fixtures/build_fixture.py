@@ -590,7 +590,22 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
         )  # things.today() ignores the parent Someday project
 
         # Area-level and unfiled tasks ----------------------------------
-        todo("t_lease", "Renew the lease", area="area_home")
+        # Clearly fake personal data, for the anonymisation tests: a URL in the
+        # title; an email, a long digit run and a phone number in the notes; an
+        # amount, a date and a phone number in the checklist.
+        todo(
+            "t_lease",
+            "Renew the lease at www.example.com/flat-12",
+            area="area_home",
+            notes=(
+                "Ask landlord@example.com about deposit ref 25000000; "
+                "call +91 98765 43210 or 555-010-4477."
+            ),
+            checklist=(
+                ("Pay Rs. 1,500 fee by 2026-10-10", 0),
+                ("Transfer $1,200.00 to account 12345678", 0),
+            ),
+        )
         todo("t_portfolio", " Update portfolio site", area="area_studio")
         todo("t_cables", "Sort the loose cables")
         # Needs NFKC: a full-width B, an fi ligature and a decomposed accent

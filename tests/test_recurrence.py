@@ -170,8 +170,9 @@ def test_raw_is_a_json_safe_copy(fixture_rules):
 
 def test_unreadable_raw_has_error_and_hex_prefix(fixture_rules):
     result = parse_rule(fixture_rules["tpl_invalid_plist"])
-    assert set(result.raw) == {"_decode_error", "_hex_prefix"}
+    assert set(result.raw) == {"_decode_error", "_hex_prefix", "_length"}
     assert result.raw["_hex_prefix"] == bf.INVALID_RULE_BLOB[:16].hex()
+    assert result.raw["_length"] == len(bf.INVALID_RULE_BLOB)
 
 
 # --- text formats -----------------------------------------------------------

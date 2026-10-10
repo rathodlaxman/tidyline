@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 from tidyline import __version__
+from tidyline.anonymise import LEVELS, anonymise
 from tidyline.checks import CHECK_IDS, CheckOptions, run_checks
 from tidyline.db.locate import DatabaseNotFoundError, locate_database
 from tidyline.db.schema import (
@@ -78,9 +79,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     export.add_argument(
         "--anonymise",
-        choices=("none", "light", "strict"),
+        choices=LEVELS,
         default="none",
-        help="anonymisation level; only none is available in v0.1",
+        help="none (default), light (scrub titles, drop notes) or strict "
+        "(replace titles with labels)",
     )
     report = commands.add_parser("report", help="print or write the text report")
     report.add_argument(
@@ -202,17 +204,9 @@ def doctor(args: argparse.Namespace) -> int:
 
 
 def export(args: argparse.Namespace) -> int:
-    if args.anonymise != "none":
-        print(
-            f"error: --anonymise {args.anonymise} arrives in v0.2. Nothing was "
-            "exported. Use --anonymise none (the default) for a full export, and "
-            "keep the file private.",
-            file=sys.stderr,
-        )
-        return EXIT_USAGE
     if args.out == "-":
         print(
-            "error: writing to standard output (--out -) is not supported in v0.1. "
+            "error: writing to standard output (--out -) is not supported. "
             "Give a file path, for example --out things-export.json.",
             file=sys.stderr,
         )
@@ -237,6 +231,7 @@ def export(args: argparse.Namespace) -> int:
             "database_version": report.database_version,
         },
     )
+    data = anonymise(data, args.anonymise)
     text = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
     if not _write_out(out, text):
         return EXIT_FAILURE
@@ -251,11 +246,18 @@ def export(args: argparse.Namespace) -> int:
             'see "warnings" in the file.',
             file=sys.stderr,
         )
-    print(
-        "note: this file contains your personal task data. Keep it private and "
-        "do not commit or share it.",
-        file=sys.stderr,
-    )
+    if args.anonymise == "strict":
+        print(
+            "note: titles and notes are replaced, but structure and dates still "
+            "reveal how you work. Share it with care.",
+            file=sys.stderr,
+        )
+    else:
+        print(
+            "note: this file contains your personal task data. Keep it private "
+            "and do not commit or share it.",
+            file=sys.stderr,
+        )
     return 0
 
 

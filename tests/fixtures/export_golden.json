@@ -255,6 +255,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -279,6 +280,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -303,6 +305,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -327,6 +330,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -370,6 +374,7 @@
           "status_code": 0
         }
       ],
+      "checklist_count": 3,
       "recurring_template": null,
       "recurrence": null
     },
@@ -394,6 +399,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -418,6 +424,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -442,6 +449,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -466,6 +474,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -490,6 +499,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -514,6 +524,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -563,6 +574,7 @@
           "status_code": 0
         }
       ],
+      "checklist_count": 2,
       "recurring_template": null,
       "recurrence": null
     },
@@ -590,6 +602,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -617,6 +630,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -641,6 +655,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -665,6 +680,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -689,6 +705,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -713,6 +730,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -737,13 +755,14 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
     {
       "id": "lB04kFqq3uaVWIWqyKdQdW",
-      "title": "Renew the lease",
-      "notes": null,
+      "title": "Renew the lease at www.example.com/flat-12",
+      "notes": "Ask landlord@example.com about deposit ref 25000000; call +91 98765 43210 or 555-010-4477.",
       "area": {
         "id": "XMqwV40z8xUqayA9xX8JT9",
         "title": "Household"
@@ -760,7 +779,21 @@
       "trashed": false,
       "completion_date": null,
       "tags": [],
-      "checklist": [],
+      "checklist": [
+        {
+          "id": "ygryjmY6qx5O2sf2QKCQQB",
+          "title": "Pay Rs. 1,500 fee by 2026-10-10",
+          "status": "open",
+          "status_code": 0
+        },
+        {
+          "id": "c5FZvWcUfVVBUuv6q04TMM",
+          "title": "Transfer $1,200.00 to account 12345678",
+          "status": "open",
+          "status_code": 0
+        }
+      ],
+      "checklist_count": 2,
       "recurring_template": null,
       "recurrence": null
     },
@@ -785,6 +818,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -806,6 +840,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -827,6 +862,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -856,6 +892,7 @@
         }
       ],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -877,6 +914,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -901,6 +939,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -925,6 +964,7 @@
       "completion_date": "2026-10-08T09:00:00+00:00",
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -949,6 +989,7 @@
       "completion_date": "2026-10-08T09:00:00+00:00",
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -973,6 +1014,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -997,6 +1039,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -1024,6 +1067,7 @@
       "completion_date": "2026-10-08T09:00:00+00:00",
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -1048,6 +1092,7 @@
       "completion_date": "2026-10-08T09:00:00+00:00",
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": null,
       "recurrence": null
     },
@@ -1072,6 +1117,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": {
         "id": "or7HRAP4vxlO4UQgiEmteF",
         "title": "Take out the recycling"
@@ -1119,6 +1165,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": {
         "id": "BG2mpmtNbQk2aaOwGmUskn",
         "title": "Plan the week ahead"
@@ -1166,6 +1213,7 @@
       "completion_date": null,
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": {
         "id": "FoRqmnIQCGgFN631SESUiF",
         "title": "Pay the rent"
@@ -1213,6 +1261,7 @@
       "completion_date": "2026-10-08T09:00:00+00:00",
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": {
         "id": "tXAtXxFUa5R5UW5huJzPPU",
         "title": "Wash the bedding"
@@ -1260,6 +1309,7 @@
       "completion_date": "2026-10-08T09:00:00+00:00",
       "tags": [],
       "checklist": [],
+      "checklist_count": 0,
       "recurring_template": {
         "id": "R6Vl3qvYXYDiTJsm11V7h1",
         "title": "Renew the domain name"
@@ -2198,7 +2248,8 @@
         ],
         "raw": {
           "_decode_error": "not a readable plist (InvalidFileException: Invalid file)",
-          "_hex_prefix": "74686973206973206e6f74206120706c"
+          "_hex_prefix": "74686973206973206e6f74206120706c",
+          "_length": 19
         }
       },
       "tags": [],
