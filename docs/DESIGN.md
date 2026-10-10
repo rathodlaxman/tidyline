@@ -39,6 +39,7 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-10 | Runtime dependencies: **things.py only** through v0.2. CLI built on the standard library `argparse`. HTML templating decided at v0.3. |
 | 2026-10-10 | Default anonymisation for `prompt` (level 0): **strict**. `--anonymise light` is available for a fuller audit. |
 | 2026-10-10 | `read.py` is a **hybrid**: things.py (trashed=None, status=None) supplies identity and structure of to-dos, projects, headings, areas and tags. One read-only SQL pass over the same snapshot supplies what things.py lacks: packed dates, suppression date, raw timestamps, `startBucket`, `rt1_*`, tag UUIDs, checklist items, template rows, ordering. Rows are matched by UUID. If the two sources disagree, a warning is recorded and the row is skipped. Verified on the maintainer's database: 0 warnings. |
+| 2026-10-10 | v0.2 choices: title-hygiene patterns come from a repeatable `--pattern REGEX` option on `check` (no config file, no new dependency); new warning check "open to-dos inside a trashed project", with those to-dos excluded from all other checks; `strict` anonymisation labels are numbered by sorted id so they are stable between exports. |
 | 2026-10-10 | JSON export 7.4 open points settled: all rows included with flags (open, completed, cancelled, trashed); coded fields written as a name plus the raw code (`status` and `status_code`, `start` and `start_code`); `completion_date` is `stopDate` as ISO 8601 with UTC offset for completed and cancelled alike; areas, projects and headings use the same shape as tasks. Export file is created with mode 0600, an existing path is never overwritten, and `light` and `strict` are refused until v0.2. |
 
 ## 4. Tested environment
@@ -146,6 +147,7 @@ Each check returns findings with a severity: `warning` (probably a problem) or `
 
 | Check | Severity |
 |---|---|
+| Open to-dos inside a trashed project (added 2026-10-10; these are excluded from every other check) | warning |
 | Unfiled open tasks (no area, no project) | warning |
 | Title hygiene: stray `·` at the start or end, leading or trailing whitespace, doubled spaces, plus user-configured patterns (empty by default) | warning |
 | Possible duplicates: same title after Unicode NFKC normalisation, case folding and removing punctuation | warning |
@@ -155,6 +157,8 @@ Each check returns findings with a severity: `warning` (probably a problem) or `
 | Leftover recurring templates | info |
 | Someday tasks inside active projects | info |
 | Tasks outside any heading in projects that use headings | info |
+
+User-configured title patterns are passed as a repeatable `--pattern REGEX` option on `check`. There is no config file in v0.2 (a TOML reader would be a new dependency on Python 3.10).
 
 All joins use UUIDs, never titles. Candidates for later, not committed: overdue deadlines, Inbox size, stale tasks.
 
@@ -181,7 +185,7 @@ Tasks carry: id, title, notes, area, project, heading (as ids plus titles), effe
 |---|---|---|---|---|
 | `none` | as is | as is | as is | everything |
 | `light` | kept, with emails, phone numbers, URLs, money amounts and long digit runs replaced by placeholders | removed | kept, scrubbed the same way | structure, dates, tags, recurrence |
-| `strict` | replaced by stable labels (`Area A`, `Project 3`, `Task 17`, `Tag 2`) | removed | replaced by count | structure, dates, recurrence, counts |
+| `strict` | replaced by stable labels (`Area A`, `Project 3`, `Task 17`, `Tag 2`), numbered by sorted id so a label stays the same between exports and says nothing about list order | removed | replaced by count | structure, dates, recurrence, counts |
 
 The URL-scheme auth token is never read or exported at any level.
 
@@ -231,7 +235,7 @@ Global: `--db PATH`, `--version`, `--verbose`.
 
 ## 9. Milestones
 
-### v0.1: core and parity (private repo, or TestPyPI)
+### v0.1: core and parity (private repo, or TestPyPI). DONE 2026-10-10, tagged v0.1.0
 
 Scope: snapshot reader, schema check, `doctor`, model, effective status, recurrence, `export` (none level), text `report`.
 
@@ -294,6 +298,7 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 - A task inside a trashed or closed project is classified from its own fields (status ignores closed parents). Candidate health check for v0.2.
 - Real database read check, 2026-10-10 (counts only): 36 live templates all recognised, 2 leftover templates, 0 warnings, effective status counts sum to the open to-do total.
 - In the export, a task's `area` is its own column and is not inherited from its project. Decide in v0.2 whether consumers need an inherited area.
+- Works while Things is running: confirmed 2026-10-10. Doctor, export, report and the parity run all read a snapshot while the Things app was open.
 - Parity run against the personal v6 script, 2026-10-10 (counts only, outside the repo): 22 of 24 checks identical (areas, projects, open/completed/cancelled to-dos, Inbox/Anytime/Someday, deadlines, notes, checklists, tags, area sizes, unfiled, live and leftover templates, repeating instances). Explained differences: (1) v6 labels every dated task Upcoming; tidyline splits them into Today (11) and Upcoming (8), as intended. (2) tidyline reports 33 open to-dos inside trashed projects that v6 cannot see. (3) tidyline lists 5 completed headings of completed projects that v6 omits (things.py does not return them in project items). (4) tidyline recurrence text is more specific (ends after, end date, lead time), so it forms more distinct groups; both total 36 templates.
 - Done 2026-10-10: template row shape; keys real rules carry; daily offsets; `startBucket` = 1 for This Evening (7.1, 7.2).
 - Verify with counts-only queries against the maintainer's own database, run by hand and never committed. Output contains numbers and key names, no titles.
