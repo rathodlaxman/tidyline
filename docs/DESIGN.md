@@ -57,6 +57,10 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-11 | Styling (`render/style.py`): `bold`, `notice` (bold yellow) and `danger` (bold red), using only the 16 standard ANSI colours so the terminal theme decides the shades. Applied only when the target stream is a terminal and `NO_COLOR` is not set; stdout and stderr are judged separately. Used for: the `error:` prefix (red; the message stays plain); `warning:` labels (yellow); privacy notes on stderr (blank line before and after, the label yellow and the sentence "Keep it private and do not commit or share it." red); in the help screen only the "New here?" line and "Step-by-step guide:"; in the `prompt` preview the section labels, "warning:" and the closing "Nothing has been sent anywhere" line; in `check` the heading per check and the link line; in `report` the section headings (off with `--no-color`). Nothing else is styled. |
 | 2026-10-11 | The text output of `check` changes layout only (replaces the first version of this row): a total line, then a heading per check (`id (severity, N findings)`), then the items grouped under their place with a count: a trashed project or heading (`open_in_trashed_project`), the project (`dated_in_someday_project`, `someday_in_active_project`, `outside_heading`), the project or area, or "No project or area" (`title_hygiene`), the area or "No area" (`active_project_no_open_tasks`). A message that is the same for every finding is printed once under the heading; a message that differs follows its item after a dash. `possible_duplicates` is one line per set of matching titles joined by `=`; templates are one line each. `unfiled_open` has one place by definition, so it is one list under its message. `check --json`, finding ids, messages, counts and exit codes are unchanged. |
 | 2026-10-11 | A reader of standard output that closes early (`| head`) ends the run quietly with exit 0: `main` catches `BrokenPipeError` and points stdout at devnull, as the Python documentation recipe does. Files are written whole before anything is printed about them, so no partial file is left. |
+| 2026-10-11 | The HTML report (`report --html`, 7.7) shows real titles, like the text output of `check`. It is personal data. The text `report` stays counts-only (the 2026-10-11 recurring-templates row still holds for it). |
+| 2026-10-11 | `report --html` has no `--anonymise` option in 0.3.0. |
+| 2026-10-11 | HTML templating (left open in the 2026-10-10 dependencies row): the HTML is built with the standard library only, by string building plus `html.escape`; no template dependency. The optional inline script of the 2026-10-10 HTML row is not part of 0.3.0: the file has no `<script>`; a filter box may come later in its own commit. |
+| 2026-10-11 | Homebrew tap: `rathodlaxman/tidyline` (repository `homebrew-tidyline`). A later stage of v0.3, not built yet. |
 
 ## 4. Tested environment
 
@@ -274,6 +278,40 @@ Contents:
 
 `prompt --out` writes the payload as compact JSON (one line, no indentation, separators `,` and `:`, non-ASCII kept); the export stays indented. No completed, cancelled or trashed to-do appears as a row or an id anywhere in the payload. The preview says what was left out and that it is counted in the summary only.
 
+### 7.7 HTML report
+
+Settled 2026-10-11 (decisions log). The HTML report shows real titles; it is personal data, like the text output of `check`.
+
+Command: `tidyline report --html --out FILE`.
+- `--out` is required with `--html`; without it the run stops with exit 2 and a message that says `--out` is missing and gives an example. `--out -` is refused as for the text report.
+- `FILE` follows the rules of every other `--out` file: a new file only (an existing path is exit 2), mode 0600, the last folder level created when missing (mode 0700, the parent must exist), and that folder removed again if the write fails.
+- `--include-completed` adds a "Closed items" table to "At a glance" with the same counts and labels as the text report's "Closed items" block (completed in the last 30 days, completed earlier, completed with no date, completed, cancelled and trashed projects). Without it the HTML has no such table.
+- `--no-color` is accepted and has no effect on the file: it only governs terminal styling, and the HTML has none. The notes printed after writing follow the usual terminal rules (decisions log, styling row).
+- After writing, stdout gets one line, `Wrote the HTML report to PATH`, and stderr the privacy note in the usual style (blank line before and after, label in yellow, "Keep it private and do not commit or share it." in red), saying the file contains task titles.
+
+The file:
+- One self-contained HTML file that needs no network. Inline CSS only. No `<script>`, no `<link>`, no `@import`, no `url(`, no `src=`, no web fonts, no images, no inline event handlers.
+- `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">` and a no-referrer policy. The only outbound things are plain `<a href>` links to the fixing guide (`FIXING_PROBLEMS.md` on GitHub, one per check with findings, pointing at that check's section), each with `rel="noopener noreferrer"`.
+- Every dynamic string (titles, project and area names, pattern text, messages, versions, paths) passes through `html.escape(quote=True)`. Control characters in titles are replaced as in the text output, and titles are wrapped in `<bdi>` so right-to-left or override characters cannot reorder the text around them.
+- `<html lang="en">`, `<title>tidyline report, DATE</title>`, a viewport meta tag, UTF-8.
+- Follows the system light or dark setting with CSS variables and `prefers-color-scheme`. System font stack. Text contrast is at least 4.5:1 in both themes (a test computes it from the CSS variables). Colour is never the only signal: severities and statuses are written in words. A small print stylesheet removes backgrounds and shadows.
+- Works at phone width: wrapping flex rows, tables inside a horizontally scrolling box.
+- Check cards are native `<details>`: warning checks open by default, info checks closed.
+
+Sections, in order:
+1. Header: title, local date, tidyline version, Things version, database version, macOS, "Tested versions: yes/no", and a personal-data notice that says the file contains task titles and to keep it private.
+2. "Look at this first": one sentence computed from the finding counts only, for example "15 warnings across 6 checks; the largest group is open_in_trashed_project (5)." The largest group is the warning check with the most findings (the first in registry order on a tie). With no warnings: "No warnings.", followed by the info count when there is any. No advice beyond naming the check.
+3. "At a glance" tiles: open to-dos, open projects, areas, completed in the last 30 days, live repeating to-dos.
+4. "Where your open to-dos sit": a stacked bar for Inbox, Today, This Evening, Upcoming, Anytime and Someday, with a legend giving each name and number (zero included).
+5. "Health checks": every check in registry order, warnings first then info. A check with no findings is one "No findings" row. Items are grouped exactly as the text `check` output groups them (7.3 and the 2026-10-11 layout row), titles shown, the per-finding message after the title, and the message shared by all findings once at the top. One link per check with findings to its section of the fixing guide. The report runs the checks with default options (no `--pattern`).
+6. "Repeating to-dos": the counts of the text report (live, leftover, recognised, assumed, and not recognised when any), then a table of every template in the order of `tidyline recurrence`: title, place, rule text, confidence. Assumed and not-recognised rows are marked in words and by a row style.
+7. "Read warnings": "None." or the list, as in the text report.
+8. Footer: "Made offline by tidyline X from a private copy of the database. Nothing was sent anywhere and nothing in Things was changed." and the not-affiliated line.
+
+Numbers: every number comes from the same core functions the text `report` and `check` use (counts, recurrence counts, check grouping); there is no second implementation of counting or grouping. Tests compare the numbers in the HTML with the text report.
+
+Tests, all against the synthetic fixture: a golden snapshot of the whole file; hostile titles (markup, quotes, ampersands, `javascript:`, unusual Unicode) in a project, a heading, a to-do, an area and a template, all escaped and no `<script>` element; no external resources; numbers equal to the text report; file mode 0600; existing file refused; missing `--out` refused; a run against a database with sockets blocked.
+
 ## 8. Architecture
 
 ```
@@ -353,7 +391,7 @@ Done when:
 Done when:
 - `report --html` writes one file that opens offline in Safari and Chrome and reads well at phone width.
 - Snapshot tests of the HTML pass against the fixture.
-- `brew install <user>/tap/tidyline` works on a clean Mac.
+- `brew install rathodlaxman/tidyline/tidyline` works on a clean Mac (tap repository `homebrew-tidyline`, decisions log 2026-10-11).
 - Screenshots use only fixture data.
 
 ### v0.4: opt-in LLM levels 1 and 2
