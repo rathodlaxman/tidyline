@@ -283,6 +283,12 @@ Golden files under `tests/fixtures/` are regenerated with
 The design and the decisions behind it are in [docs/DESIGN.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/DESIGN.md).
 How repeat rules are read is in [docs/RECURRENCE.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/RECURRENCE.md).
 
+## AI-Assisted Development
+
+Claude Code was used as a development assistant during parts of this project.
+
+I remain responsible for the design, code review, testing, security, licensing, and final acceptance of all changes.
+
 ## Licence
 
 MIT. See [LICENSE](https://github.com/rathodlaxman/tidyline/blob/main/LICENSE). tidyline depends on
