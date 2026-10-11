@@ -257,7 +257,7 @@ Contents:
 - `recurring_templates`: the export's entries without notes; `instances` lists open instances only.
 - `checks_run` and `findings` as in the export; `data_read_warnings` is the export's `warnings`.
 
-No completed, cancelled or trashed to-do appears as a row or an id anywhere in the payload. The preview says what was left out and that it is counted in the summary only.
+`prompt --out` writes the payload as compact JSON (one line, no indentation, separators `,` and `:`, non-ASCII kept); the export stays indented. No completed, cancelled or trashed to-do appears as a row or an id anywhere in the payload. The preview says what was left out and that it is counted in the summary only.
 
 ## 8. Architecture
 

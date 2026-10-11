@@ -8,8 +8,9 @@ The payload (`llm/payload.py`) must already be anonymised (`light` or
 
 from __future__ import annotations
 
+import json
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from importlib import resources
 from typing import Any
 
@@ -107,9 +108,15 @@ class PromptResult:
     unfilled: tuple[
         str, ...
     ]  # placeholder texts left visible, e.g. "[ROLE AND SITUATION]"
-    counts: dict[str, int] = field(default_factory=dict)
+    counts: tuple[str, ...] = ()  # for the preview, e.g. "2 areas"
     removed: tuple[str, ...] = ()
     area_list: str = ""
+
+
+def compact_json(payload: dict[str, Any]) -> str:
+    """The payload as written by `prompt --out`: one line, no spaces between
+    tokens, non-ASCII kept as is. The export stays indented."""
+    return json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
 
 
 def load_template() -> str:
@@ -201,15 +208,17 @@ def build_prompt(
     text = _TOKEN.sub(lambda match: values[match.group(1)], template)
     assert "{{" not in _TOKEN.sub("", template), "template braces left unfilled"
 
-    counts = {
-        "areas": len(payload["areas"]),
-        "projects": len(payload["projects"]),
-        "headings": len(payload["headings"]),
-        "open to-dos": len(payload["tasks"]),
-        "tags": len(payload["tags"]),
-        "recurring templates": len(payload["recurring_templates"]),
-        "findings": len(payload["findings"]),
-    }
+    summary = payload["summary"]
+    counts = (
+        f"{len(payload['areas'])} areas",
+        f"{len(payload['projects'])} projects",
+        f"{len(payload['headings'])} headings",
+        f"{len(payload['tasks'])} to-do rows ({summary['open_todos']} open, "
+        f"{summary['open_in_trashed_project']} inside trashed projects)",
+        f"{len(payload['tags'])} tags",
+        f"{len(payload['recurring_templates'])} recurring templates",
+        f"{len(payload['findings'])} findings",
+    )
     return PromptResult(
         text=text,
         level=level,

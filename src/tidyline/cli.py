@@ -31,6 +31,7 @@ from tidyline.llm.prompt import (
     PROMPT_FILE,
     ContextError,
     build_prompt,
+    compact_json,
     parse_context,
 )
 from tidyline.read import ReadError, read_snapshot
@@ -482,7 +483,7 @@ def prompt(args: argparse.Namespace) -> int:
     problem = None
     if out_dir is not None:
         files = (
-            (out_dir / PAYLOAD_FILE, json.dumps(payload, indent=2, ensure_ascii=False)),
+            (out_dir / PAYLOAD_FILE, compact_json(payload)),
             (out_dir / PROMPT_FILE, result.text),
         )
         try:
@@ -611,8 +612,7 @@ def _local_now() -> dt.datetime:
 def _prompt_preview(result, args, context, written, copied) -> str:
     lines = ["tidyline prompt: preview", ""]
     lines.append(f"Anonymisation: {result.level}")
-    counts = ", ".join(f"{n} {name}" for name, n in result.counts.items())
-    lines.append(f"Payload counts: {counts}")
+    lines.append(f"Payload counts: {', '.join(result.counts)}")
     lines.append("Removed or replaced at this level:")
     lines += [f"  - {item}" for item in result.removed]
     lines.append(f"Kept: {KEPT}")

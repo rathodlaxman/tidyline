@@ -311,8 +311,8 @@ def test_preview_without_out_or_copy_writes_nothing(fixture_db, tmp_path, capsys
     out = capsys.readouterr().out
     assert "Anonymisation: strict" in out
     assert (
-        "Payload counts: 2 areas, 6 projects, 2 headings, 30 open to-dos, 2 tags, "
-        "25 recurring templates, 17 findings" in out
+        "Payload counts: 2 areas, 6 projects, 2 headings, 30 to-do rows (29 open, "
+        "1 inside trashed projects), 2 tags, 25 recurring templates, 17 findings" in out
     )
     assert (
         "Left out (counted in the summary only):\n"
@@ -485,3 +485,26 @@ def test_prompt_module_has_no_network_or_print():
     forbidden = {"socket", "urllib", "http", "requests", "subprocess", "ssl"}
     assert [m for m in imports if m.split(".")[0] in forbidden] == []
     assert not re.search(r"\bprint\(", source)
+
+
+def test_payload_file_is_compact_json(fixture_db, tmp_path):
+    assert run(fixture_db, "--out", str(tmp_path / "p"), "--anonymise", "light") == 0
+    text = (tmp_path / "p" / "tidyline_payload.json").read_text("utf-8")
+    body = text.removesuffix("\n")
+    assert "\n" not in body and "\t" not in body
+    assert body.startswith('{"payload_schema_version":"1","anonymisation":"light",')
+    data = json.loads(text)
+    assert body == json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+    assert "pimentón" in body  # non-ASCII kept, not escaped
+
+
+def test_preview_counts_name_to_do_rows(fixture_db, capsys):
+    payload = payload_of(fixture_db, "strict")
+    summary = payload["summary"]
+    rows = f"{len(payload['tasks'])} to-do rows ({summary['open_todos']} open, "
+    rows += f"{summary['open_in_trashed_project']} inside trashed projects)"
+    assert rows in build_prompt(payload).counts
+    assert run(fixture_db) == 0
+    out = capsys.readouterr().out
+    assert rows in out
+    assert "open to-dos," not in out
