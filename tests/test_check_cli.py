@@ -31,8 +31,8 @@ def test_text_output_groups_by_check_and_shows_titles(fixture_db, capsys):
     assert "open_in_trashed_project (warning, 3 findings)\n" in out
     assert "possible_duplicates (warning, 1 finding)\n" in out
     assert out.endswith(f"How to fix these: {FIXING_GUIDE_URL}\n")
-    assert '      to-do    "Pay the electricity bill"' in out
-    assert '      to-do    "Reconcile  receipts ·"' in out  # whitespace kept
+    assert '  "Pay the electricity bill" = "pay the electricity bill."' in out
+    assert '      "Reconcile  receipts ·" - stray middle dot' in out  # whitespace kept
     assert '  "Old Newsletter" (project, 3 open to-dos)' in out
 
 
@@ -89,8 +89,8 @@ def test_patterns_shown_on_screen_but_not_in_json(fixture_db, capsys):
         == 1
     )
     out = capsys.readouterr().out
-    assert "  - matches user pattern 1 (/^Paint/)" in out
-    assert "  - matches user pattern 2 (/(?i)level/)" in out
+    assert '"Paint the shed door" - matches user pattern 1 (/^Paint/)' in out
+    assert "- matches user pattern 2 (/(?i)level/)" in out
     assert (
         run(fixture_db, "--only", "title_hygiene", "--pattern", "^Paint", "--json") == 1
     )
@@ -113,7 +113,7 @@ def test_control_characters_in_titles_are_replaced(fixture_db, capsys):
     run(fixture_db, "--only", "unfiled_open")
     out = capsys.readouterr().out
     assert "\x1b" not in out and "\x07" not in out
-    assert '      to-do    "Sort?[31m the cables?"' in out
+    assert '      "Sort?[31m the cables?"' in out
 
 
 def test_missing_database(tmp_path, capsys):
@@ -155,7 +155,9 @@ def test_info_only_exits_0(fixture_db, capsys):
     out = capsys.readouterr().out
     assert out.startswith("tidyline check: 3 checks, 3 findings (0 warnings, 3 info)")
     assert "leftover_templates (info, 1 finding)" in out
-    assert '      template "Send the newsletter"' in out
+    assert (
+        '  "Send the newsletter" - recurring template whose project is trashed' in out
+    )
     assert run(fixture_db, "--only", *only, "--json") == 0
     data = json.loads(capsys.readouterr().out)
     assert data["summary"] == {"warning": 0, "info": 3}

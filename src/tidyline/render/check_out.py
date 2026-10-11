@@ -9,10 +9,11 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import Any
 
 from tidyline.checks import CHECKS, Finding
-from tidyline.model import Snapshot
+from tidyline.model import Snapshot, Task
 from tidyline.render.style import PLAIN, Style
 
 CHECK_SCHEMA_VERSION = "1"
@@ -25,7 +26,6 @@ KIND_LABELS = {
     "heading": "heading",
     "template": "template",
 }
-GROUPED_CHECK = "open_in_trashed_project"
 USER_PATTERN = re.compile(r"matches user pattern (\d+)")
 
 
@@ -69,6 +69,31 @@ def check_json(findings: Sequence[Finding], checks: Sequence[str]) -> dict[str, 
     }
 
 
+@dataclass(frozen=True)
+class _Lookup:
+    """What the text output needs to show titles and places."""
+
+    tasks: dict[str, Task]
+    areas: dict[str, str]
+    patterns: Sequence[str]
+
+    def title(self, uuid: str) -> str:
+        task = self.tasks.get(uuid)
+        return f'"{safe_title(task.title)}"' if task is not None else "(not found)"
+
+    def place(self, task: Task) -> tuple[str, str] | None:
+        """Where a to-do lives: its project (through its heading), else its
+        area, else nowhere (None). Returns (kind, uuid)."""
+        project = task.project_uuid
+        if project is None and task.heading_uuid in self.tasks:
+            project = self.tasks[task.heading_uuid].project_uuid
+        if project in self.tasks:
+            return ("project", project)
+        if task.area_uuid in self.areas:
+            return ("area", task.area_uuid)
+        return None
+
+
 def check_text(
     findings: Sequence[Finding],
     checks: Sequence[str],
@@ -76,7 +101,15 @@ def check_text(
     patterns: Sequence[str] = (),
     style: Style = PLAIN,
 ) -> str:
-    titles = {task.uuid: task.title for task in snapshot.tasks}
+    """The text output: a total line, then one section per check. A message
+    that is the same for every finding is printed once under the heading; a
+    message that differs follows its item. Items are grouped under their
+    project, area or trashed project, with a count."""
+    lookup = _Lookup(
+        {task.uuid: task for task in snapshot.tasks},
+        {area.uuid: area.title for area in snapshot.areas},
+        patterns,
+    )
     summary = _summary(findings)
     lines = [
         f"tidyline check: {len(checks)} checks, {len(findings)} findings "
@@ -88,10 +121,8 @@ def check_text(
         lines += ["", style.bold(heading), "-" * len(heading)]
         if not found:
             lines.append("  none")
-        elif check == GROUPED_CHECK:
-            lines += _grouped_by_container(found, titles)
         else:
-            lines += _one_line_each(found, titles, patterns)
+            lines += SECTIONS.get(check, _one_line_each)(found, lookup)
     lines.append("")
     lines.append(style.bold(f"How to fix these: {FIXING_GUIDE_URL}"))
     return "\n".join(lines) + "\n"
@@ -101,27 +132,64 @@ def _count(number: int, noun: str) -> str:
     return f"{number} {noun}" + ("" if number == 1 else "s")
 
 
-def _shown(ref_id: str, titles: dict[str, str]) -> str:
-    title = titles.get(ref_id)
-    return f'"{safe_title(title)}"' if title is not None else "(not found)"
+def _described(message: str, body: list[str]) -> list[str]:
+    return [f"{message}:", *body]
 
 
-def _one_line_each(
-    found: Sequence[Finding], titles: dict[str, str], patterns: Sequence[str]
+def _group_lines(
+    groups: dict[tuple[str, str] | None, list[str]],
+    lookup: _Lookup,
+    noun: str,
+    nowhere: str,
 ) -> list[str]:
+    """One heading per place with its count, the items beneath it."""
     lines = []
-    for finding in found:
-        lines.append(f"  - {_with_patterns(finding.message, patterns)}")
-        for ref in finding.refs:
-            lines.append(f"      {KIND_LABELS[ref.kind]:<9}{_shown(ref.id, titles)}")
+    for place, items in groups.items():
+        if place is None:
+            name = nowhere
+            kind = ""
+        else:
+            kind_name, uuid = place
+            name = (
+                lookup.title(uuid)
+                if kind_name == "project"
+                else (f'"{safe_title(lookup.areas[uuid])}"')
+            )
+            kind = f"{kind_name}, "
+        lines.append(f"  {name} ({kind}{_count(len(items), noun)})")
+        lines += [f"      {item}" for item in items]
     return lines
 
 
-def _grouped_by_container(
-    found: Sequence[Finding], titles: dict[str, str]
-) -> list[str]:
-    """One block per trashed project (or heading), its open to-dos beneath it.
-    Each finding's refs are the to-do, then the trashed container."""
+def _by_place(
+    found: Sequence[Finding], lookup: _Lookup, describe=None
+) -> dict[tuple[str, str] | None, list[str]]:
+    """Group the first ref of each finding by where that item lives. The item
+    line is its title, and `describe(finding)` appended when it is given."""
+    groups: dict[tuple[str, str] | None, list[str]] = {}
+    for finding in found:
+        ref = finding.refs[0]
+        task = lookup.tasks.get(ref.id)
+        place = lookup.place(task) if task is not None else None
+        item = lookup.title(ref.id)
+        if describe is not None:
+            item += f" - {describe(finding)}"
+        groups.setdefault(place, []).append(item)
+    return groups
+
+
+def _one_line_each(found: Sequence[Finding], lookup: _Lookup) -> list[str]:
+    """The fallback and the simple checks: the title, then the finding's own
+    message after a dash, one line per finding."""
+    return [
+        f"  {lookup.title(f.refs[0].id)} - {_with_patterns(f.message, lookup.patterns)}"
+        for f in found
+    ]
+
+
+def _trashed_container(found: Sequence[Finding], lookup: _Lookup) -> list[str]:
+    """One block per trashed project (or heading); the finding's refs are the
+    to-do, then the trashed container."""
     groups: dict[str, list[Finding]] = {}
     kinds: dict[str, str] = {}
     for finding in found:
@@ -131,12 +199,77 @@ def _grouped_by_container(
     lines = []
     for container_id, members in groups.items():
         lines.append(
-            f"  {_shown(container_id, titles)} "
+            f"  {lookup.title(container_id)} "
             f"({kinds[container_id]}, {_count(len(members), 'open to-do')})"
         )
-        for finding in members:
-            lines.append(f"      {_shown(finding.refs[0].id, titles)}")
+        lines += [f"      {lookup.title(f.refs[0].id)}" for f in members]
     return lines
+
+
+def _unfiled(found: Sequence[Finding], lookup: _Lookup) -> list[str]:
+    """Every finding is a to-do with no project or area: one message, one list."""
+    return _described(
+        found[0].message, [f"      {lookup.title(f.refs[0].id)}" for f in found]
+    )
+
+
+def _title_hygiene(found: Sequence[Finding], lookup: _Lookup) -> list[str]:
+    groups = _by_place(
+        found, lookup, lambda f: _with_patterns(f.message, lookup.patterns)
+    )
+    return _group_lines(groups, lookup, "to-do", "No project or area")
+
+
+def _possible_duplicates(found: Sequence[Finding], lookup: _Lookup) -> list[str]:
+    """One line per set of matching titles."""
+    return [
+        "  " + " = ".join(lookup.title(ref.id) for ref in finding.refs)
+        for finding in found
+    ]
+
+
+def _by_second_ref(found: Sequence[Finding], lookup: _Lookup) -> list[str]:
+    """The to-do is the first ref and its project the second; group by project."""
+    groups: dict[tuple[str, str] | None, list[str]] = {}
+    for finding in found:
+        groups.setdefault(("project", finding.refs[1].id), []).append(
+            lookup.title(finding.refs[0].id)
+        )
+    return _described(
+        found[0].message, _group_lines(groups, lookup, "to-do", "No project")
+    )
+
+
+def _projects_by_area(found: Sequence[Finding], lookup: _Lookup) -> list[str]:
+    groups = _by_place(found, lookup)
+    return _described(
+        found[0].message, _group_lines(groups, lookup, "project", "No area")
+    )
+
+
+def _outside_heading(found: Sequence[Finding], lookup: _Lookup) -> list[str]:
+    """The project is the first ref, the loose to-dos follow."""
+    lines = []
+    for finding in found:
+        to_dos = finding.refs[1:]
+        lines.append(
+            f"  {lookup.title(finding.refs[0].id)} (project, "
+            f"{_count(len(to_dos), 'open to-do')} outside any heading)"
+        )
+        lines += [f"      {lookup.title(ref.id)}" for ref in to_dos]
+    return lines
+
+
+SECTIONS = {
+    "open_in_trashed_project": _trashed_container,
+    "unfiled_open": _unfiled,
+    "title_hygiene": _title_hygiene,
+    "possible_duplicates": _possible_duplicates,
+    "dated_in_someday_project": _by_second_ref,
+    "active_project_no_open_tasks": _projects_by_area,
+    "someday_in_active_project": _by_second_ref,
+    "outside_heading": _outside_heading,
+}
 
 
 def safe_title(text: str) -> str:
