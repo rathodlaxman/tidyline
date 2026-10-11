@@ -181,13 +181,21 @@ def _is_live(task: Task) -> bool:
 
 
 def _recurrence(out, snapshot: Snapshot) -> None:
-    """Counts only. Titles are shown by `tidyline recurrence`."""
+    """Counts only. Titles are shown by `tidyline recurrence`.
+
+    Recognised rules were read and described; of those, Assumed ones rest on a
+    convention not yet seen on a real database (DESIGN.md 7.2), the rest were
+    verified against what Things shows."""
     leftovers = set(snapshot.leftover_template_uuids)
     templates = snapshot.templates
     not_recognised = sum(1 for t in templates if not t.recurrence.recognised)
     out.heading("Recurring templates")
     out.row("Live", sum(1 for t in templates if t.uuid not in leftovers))
     out.row("Leftover", len(leftovers & {t.uuid for t in templates}))
+    out.row("Recognised", sum(1 for t in templates if t.recurrence.recognised))
+    out.row(
+        "Assumed", sum(1 for t in templates if t.recurrence.confidence == "assumed")
+    )
     if not_recognised:
         out.row("Not recognised", not_recognised)
     out.line()

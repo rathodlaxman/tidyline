@@ -14,8 +14,8 @@
   recurrence timestamps `ed`, `ia` and `sr` are withheld (null).
 - `exported_at` and every date derived from it use local time with its UTC
   offset, in both `export` and `prompt`.
-- `report` shows recurring-template counts only (live, leftover, and not
-  recognised when there are any); no template title appears. `recurrence` shows
+- `report` shows recurring-template counts only (live, leftover, recognised,
+  assumed, and not recognised when there are any); no template title appears. `recurrence` shows
   the titles.
 - The example label in the prompt, preview, README and design notes is now
   `Task k3f7az`; the old example contained a digit that real labels never have.

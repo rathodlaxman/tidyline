@@ -316,7 +316,8 @@ def test_cli_never_writes_to_the_database(fixture_db, tmp_path, labels, capsys):
 
 
 def test_decode_module_has_no_network_or_print():
-    source = open(decode_module.__file__, encoding="utf-8").read()
+    with open(decode_module.__file__, encoding="utf-8") as handle:
+        source = handle.read()
     imports = re.findall(r"^\s*(?:import|from)\s+([\w.]+)", source, re.M)
     forbidden = {"socket", "urllib", "http", "requests", "subprocess", "ssl"}
     assert [m for m in imports if m.split(".")[0] in forbidden] == []
@@ -336,5 +337,6 @@ def test_help_lists_decode(capsys):
 
 def test_decode_builds_no_export():
     # decode needs titles only: it neither exports nor anonymises
-    source = open(decode_module.__file__, encoding="utf-8").read()
+    with open(decode_module.__file__, encoding="utf-8") as handle:
+        source = handle.read()
     assert "build_export" not in source and "anonymise(" not in source

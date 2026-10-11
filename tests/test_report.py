@@ -213,6 +213,8 @@ def test_recurrence_section_has_counts_only(report_text):
     assert section == (
         "Live                          24\n"
         "Leftover                      1\n"
+        "Recognised                    22\n"
+        "Assumed                       2\n"
         "Not recognised                3\n"
         "\n"
         "Details: tidyline recurrence"
@@ -227,6 +229,8 @@ def test_not_recognised_row_is_left_out_when_zero(fixture_db):
     _, text = make_report(fixture_db)
     assert "Not recognised" not in text
     assert "Live                          0" in text
+    assert "Recognised                    0" in text
+    assert "Assumed                       0" in text
 
 
 def test_no_template_title_appears(fixture_db):
