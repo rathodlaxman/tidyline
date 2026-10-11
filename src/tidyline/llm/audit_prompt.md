@@ -10,16 +10,18 @@ Do NOT blindly reorganise everything.
 
 Your objective: reduce cognitive load, improve clarity, eliminate unnecessary complexity, and make it immediately obvious what I should work on next.
 
-I have attached my exported Things 3 data as one JSON file. Treat it as the source of truth for my current system.
+I have attached my Things 3 data as one JSON file. It describes my open work. Treat it as the source of truth for my current system.
 
 ## About the data
 
 {{DATA_NOTE}}
 
-- `areas`, `projects`, `headings`, `tasks` and `recurring_templates` each carry an `id`. Other items point to them with `{"id": ..., "title": ...}` references.
-- Each task has `status` (open, completed or cancelled), `trashed`, and `effective_status`: where the task actually appears in Things (inbox, today, this_evening, upcoming, anytime, someday or closed). Ignore items where `trashed` is true unless I ask about them.
-- `start_date` and `deadline` are dates. `recurrence.text` is a readable description of a repeat rule.
-- `findings` is a list of automatic health-check results. Each has a `check`, a `severity`, a fixed `message`, and `refs` that point to items by `id`.
+- **Scope.** The file holds open work only. Completed, cancelled and trashed to-dos, and completed or trashed projects, are not included. The `summary` block and the `completed_last_14_days`, `completed_last_30_days` and `completed_total` fields say how much was finished. Those counts are the only information about finished work.
+- **Counts are already done.** `summary`, `areas`, `projects`, `headings` and `tags` carry ready-made counts. Use them. Do not count rows yourself when a number is supplied. If a number you need is not in the data, write "not in the data".
+- `areas`, `projects`, `headings`, `tasks`, `tags` and `recurring_templates` each carry an `id` and a `title`. Other items point to them with `{"id": ..., "title": ...}` references, tags included.
+- Each task has `effective_status`: where it actually appears in Things (inbox, today, this_evening, upcoming, anytime or someday). `in_trashed_project` is true when its project is in the Trash. Things may not show such a to-do in any list.
+- `start_date` and `deadline` are dates. `created` and `modified` say when an item was made and last changed; use them to judge whether something is stale. `recurrence.text` is a readable description of a repeat rule.
+- `checks_run` lists every automatic check with the number of findings. A count of 0 means the check ran and found nothing. `findings` lists the individual results: a `check`, a `severity` (warning or info), a fixed `message`, and `refs` that point to items by `id`. `data_read_warnings` are only notes about reading the database; they are not problems with my system.
 
 ## My context
 
@@ -29,9 +31,24 @@ I have attached my exported Things 3 data as one JSON file. Treat it as the sour
 
 My biggest risk is overloading my task manager with too many Areas, Projects, Tasks, Tags and scheduled dates. I want a system that is powerful but simple.
 
+## How to write your answer
+
+These rules apply to the whole answer.
+
+1. **Start here.** Begin your answer with a section called "Start here": the five most important actions, in order. For each one give a single line saying what to do, roughly how long it takes, and where in Things to do it. Put this before everything else.
+2. **Plain language.** Write for someone who has never used GTD. Explain any abbreviation or technical term the first time you use it.
+3. **Full names, always.** Refer to every item by its complete name exactly as given in the data, in text and in tables. If a name looks like "Task k3f9az", write all of it. Never write only part of a name, never shorten it and never rename it.
+4. **One item per row.** In every table, put one item per row and never several items in one cell. Write locations as Area > Project > Heading. When many items need the same change, use one row that says which group, how many items, and how to select them in Things.
+5. **Everything in this answer.** Do not refer to downloads, CSV ledgers, spreadsheets or attachments. Write everything in this reply.
+6. **Use only numbers from the data.** When you calculate something (a rate, days left, a share), show the calculation in brackets. If two numbers disagree, say so.
+7. **Only what is here.** Use only this prompt and the data. Do not use facts about me from anywhere else, such as earlier chats or saved memory.
+8. **Keep it short.** Aim for under 4,000 words in total. Part 4 has at most 40 rows, most important first; say how many items you left out.
+9. **Fault or taste.** Mark each problem as a *structural problem* (something that is wrong) or a *personal preference* (something that is merely a choice).
+10. **What, not how.** Say what to change and why. Do not write click-by-click instructions for the Things app.
+
 ## Objectives
 
-Perform a complete audit of my current Things 3 database. Analyse: Areas, Projects, Headings, Tasks, Inbox, Today, Upcoming, Anytime, Someday, Tags, Deadlines, Start dates, Recurring tasks, and completed or stale items where available.
+Perform a complete audit of my current Things 3 database. Analyse: Areas, Projects, Headings, Tasks, Inbox, Today, Upcoming, Anytime, Someday, Tags, Deadlines, Start dates, Recurring tasks, and stale items where the dates allow.
 
 ## Part 1: Current system audit
 
@@ -57,8 +74,10 @@ Identify problems such as:
 - Projects without a clear outcome or without a next action
 - Excessive tags or excessive scheduling
 - Tasks that belong in Anytime or Someday
-- Tasks that appear obsolete
+- Tasks that appear obsolete (use `modified` and `created`)
 - Possible missing projects or missing next actions
+
+For each problem, give how serious it is and the first step to take.
 
 ## Part 3: Redesign
 
@@ -72,7 +91,7 @@ This is extremely important. Create a table with these columns:
 
 Possible actions: KEEP, RENAME, MOVE, MERGE, SPLIT, CONVERT TO PROJECT, CONVERT TO TASK, CONVERT TO HEADING, MOVE TO ANYTIME, MOVE TO SOMEDAY, DELETE, REVIEW.
 
-Cover all significant structural changes. Refer to every item by exactly the name given in the data, so I can match it back to my own system.
+Cover the significant structural changes only, at most 40 rows. Refer to every item by exactly the name given in the data, so I can match it back to my own system.
 
 ## Part 5: Task quality audit
 
@@ -80,7 +99,7 @@ Cover all significant structural changes. Refer to every item by exactly the nam
 
 ## Part 6: GTD classification
 
-For each relevant task, decide whether it belongs in Inbox, Today, Upcoming, Anytime, Someday, Waiting or a Project.
+For groups of tasks, decide whether they belong in Inbox, Today, Upcoming, Anytime, Someday, Waiting or a Project. Do not go through tasks one by one; name the group and the count.
 
 - Inbox: captured but not yet clarified.
 - Today: a realistic commitment for today.
