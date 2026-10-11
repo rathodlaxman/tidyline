@@ -39,6 +39,7 @@ from tidyline.render.check_out import check_json, check_text
 from tidyline.render.help_out import render_help
 from tidyline.render.json_out import build_export
 from tidyline.render.recurrence_out import render_recurrence
+from tidyline.render.style import stderr_style, stdout_style
 from tidyline.render.text import ReportOptions, render_report
 
 # Exit codes (DESIGN.md 7.3): 1 is reserved for `check` finding a warning.
@@ -47,11 +48,13 @@ EXIT_WARNINGS = 1
 EXIT_USAGE = 2
 EXIT_FAILURE = 3  # the database could not be found or read; a write failed
 
+KEEP_PRIVATE = "Keep it private and do not commit or share it."
+
 # The report holds counts only (DESIGN.md decisions log, 2026-10-11): no task,
 # project, heading, area or template title. The note must say what is true.
 REPORT_FILE_NOTE = (
     "note: this file holds counts only, with no titles. It is still personal "
-    "data about your Things setup. Keep it private and do not commit or share it."
+    "data about your Things setup. " + KEEP_PRIVATE
 )
 
 THINGS_INFO_PLIST = Path("/Applications/Things3.app/Contents/Info.plist")
@@ -250,8 +253,7 @@ def _run(argv: list[str] | None) -> int:
         return decode(args)
     if args.command == "recurrence":
         return recurrence(args)
-    color = not os.environ.get("NO_COLOR") and sys.stdout.isatty()
-    print(render_help(__version__, color=color), end="")
+    print(render_help(__version__, stdout_style()), end="")
     return 0
 
 
@@ -264,11 +266,11 @@ def doctor(args: argparse.Namespace) -> int:
         source = locate_database(args.db)
     except DatabaseNotFoundError as error:
         show("Database:", "not found")
-        print(f"error: {error}", file=sys.stderr)
+        _error(f"{error}")
         return EXIT_FAILURE
     except PermissionError as error:
         show("Database:", "cannot look (permission denied)")
-        print(f"error: {_permission_help(error)}", file=sys.stderr)
+        _error(f"{_permission_help(error)}")
         return EXIT_FAILURE
     show("Database:", _tilde(source))
 
@@ -282,7 +284,7 @@ def doctor(args: argparse.Namespace) -> int:
             report = check_schema(copy, macos_version=macos, things_version=things)
     except SnapshotError as error:
         show("Snapshot copy:", "failed")
-        print(f"error: {error}", file=sys.stderr)
+        _error(f"{error}")
         if error.permission_problem:
             print(f"hint: {_permission_help(error)}", file=sys.stderr)
         if args.verbose and error.__cause__:
@@ -290,7 +292,7 @@ def doctor(args: argparse.Namespace) -> int:
         return EXIT_FAILURE
     except SchemaError as error:
         show("Schema:", "failed")
-        print(f"error: {error}", file=sys.stderr)
+        _error(f"{error}")
         return EXIT_FAILURE
 
     show("Schema:", "ok")
@@ -303,16 +305,15 @@ def doctor(args: argparse.Namespace) -> int:
     else:
         show("Tested:", f"no. {tested_versions_text()}")
         for warning in report.warnings:
-            print(f"warning: {warning}", file=sys.stderr)
+            _warn(str(warning))
     return 0
 
 
 def export(args: argparse.Namespace) -> int:
     if args.out == "-":
-        print(
-            "error: writing to standard output (--out -) is not supported. "
-            "Give a file path, for example --out things-export.json.",
-            file=sys.stderr,
+        _error(
+            "writing to standard output (--out -) is not supported. "
+            "Give a file path, for example --out things-export.json."
         )
         return EXIT_USAGE
     out = _prepare_out(args.out)
@@ -346,41 +347,35 @@ def export(args: argparse.Namespace) -> int:
         f"{len(data['recurring_templates'])} recurring templates to {out}"
     )
     if snapshot.warnings:
-        print(
-            f"warning: {len(snapshot.warnings)} values could not be read; "
-            'see "warnings" in the file.',
-            file=sys.stderr,
+        _warn(
+            f"{len(snapshot.warnings)} values could not be read; "
+            'see "warnings" in the file.'
         )
     if args.anonymise == "strict":
-        print(
+        _privacy_note(
             "note: titles and notes are replaced, but structure and dates still "
-            "reveal how you work. Share it with care.",
-            file=sys.stderr,
+            "reveal how you work. Share it with care."
         )
     else:
-        print(
-            "note: this file contains your personal task data. Keep it private "
-            "and do not commit or share it.",
-            file=sys.stderr,
+        _privacy_note(
+            "note: this file contains your personal task data. " + KEEP_PRIVATE
         )
     return 0
 
 
 def report(args: argparse.Namespace) -> int:
     if args.html:
-        print(
-            "error: the HTML report arrives in v0.3. Nothing was written. Run "
-            "`tidyline report` for the text report.",
-            file=sys.stderr,
+        _error(
+            "the HTML report arrives in v0.3. Nothing was written. Run "
+            "`tidyline report` for the text report."
         )
         return EXIT_USAGE
     out = None
     if args.out is not None:
         if args.out == "-":
-            print(
-                "error: --out - is not supported. Leave out --out to print the "
-                "report in the terminal, or give a file path.",
-                file=sys.stderr,
+            _error(
+                "--out - is not supported. Leave out --out to print the "
+                "report in the terminal, or give a file path."
             )
             return EXIT_USAGE
         out = _prepare_out(args.out)
@@ -391,12 +386,7 @@ def report(args: argparse.Namespace) -> int:
         return EXIT_FAILURE
     snapshot, schema_report, macos, things = loaded
 
-    color = (
-        out is None
-        and not args.no_color
-        and not os.environ.get("NO_COLOR")
-        and sys.stdout.isatty()
-    )
+    color = out is None and not args.no_color and stdout_style().enabled
     text = render_report(
         snapshot,
         today=dt.date.today(),
@@ -415,7 +405,7 @@ def report(args: argparse.Namespace) -> int:
     if not _write_out(out, text):
         return EXIT_FAILURE
     print(f"Wrote the report to {out}")
-    print(REPORT_FILE_NOTE, file=sys.stderr)
+    _privacy_note(REPORT_FILE_NOTE)
     return 0
 
 
@@ -425,10 +415,9 @@ def check(args: argparse.Namespace) -> int:
         try:
             patterns.append(re.compile(text))
         except re.error as error:
-            print(
-                f"error: --pattern {number} is not a valid regular expression "
-                f"({error}). Fix it, or quote it so the shell leaves it alone.",
-                file=sys.stderr,
+            _error(
+                f"--pattern {number} is not a valid regular expression "
+                f"({error}). Fix it, or quote it so the shell leaves it alone."
             )
             return EXIT_USAGE
     loaded = _load(args)
@@ -445,7 +434,10 @@ def check(args: argparse.Namespace) -> int:
     if args.json:
         print(json.dumps(check_json(findings, checks), indent=2, ensure_ascii=False))
     else:
-        print(check_text(findings, checks, snapshot, args.pattern), end="")
+        print(
+            check_text(findings, checks, snapshot, args.pattern, stdout_style()),
+            end="",
+        )
     if any(f.severity == "warning" for f in findings):
         return EXIT_WARNINGS
     return EXIT_OK
@@ -459,13 +451,12 @@ def prompt(args: argparse.Namespace) -> int:
                 Path(args.context).expanduser().read_text(encoding="utf-8")
             )
         except ContextError as error:
-            print(f"error: --context {args.context}: {error}", file=sys.stderr)
+            _error(f"--context {args.context}: {error}")
             return EXIT_USAGE
         except (OSError, UnicodeDecodeError) as error:
-            print(
-                f"error: could not read --context {args.context} ({error}). Give "
-                "a UTF-8 text file.",
-                file=sys.stderr,
+            _error(
+                f"could not read --context {args.context} ({error}). Give "
+                "a UTF-8 text file."
             )
             return EXIT_USAGE
 
@@ -476,10 +467,9 @@ def prompt(args: argparse.Namespace) -> int:
             return EXIT_USAGE
         taken = [n for n in (PAYLOAD_FILE, PROMPT_FILE) if (out_dir / n).exists()]
         if taken:
-            print(
-                f"error: {', '.join(taken)} already in {out_dir}, so nothing was "
-                "written. Choose another --out folder, or move the old files.",
-                file=sys.stderr,
+            _error(
+                f"{', '.join(taken)} already in {out_dir}, so nothing was "
+                "written. Choose another --out folder, or move the old files."
             )
             return EXIT_USAGE
 
@@ -540,7 +530,7 @@ def prompt(args: argparse.Namespace) -> int:
 
     print(_prompt_preview(result, args, context, written, copied))
     if problem:
-        print(f"error: {problem}", file=sys.stderr)
+        _error(f"{problem}")
     return code
 
 
@@ -548,7 +538,7 @@ def recurrence(args: argparse.Namespace) -> int:
     loaded = _load(args)
     if loaded is None:
         return EXIT_FAILURE
-    print(render_recurrence(loaded[0], raw=args.raw), end="")
+    print(render_recurrence(loaded[0], raw=args.raw, style=stdout_style()), end="")
     return EXIT_OK
 
 
@@ -562,25 +552,22 @@ def decode(args: argparse.Namespace) -> int:
         if not answer.is_file():
             raise IsADirectoryError(f"{answer} is not a file")
         if size > MAX_ANSWER_BYTES:
-            print(
-                f"error: {answer} is {size} bytes; decode reads at most 5 MB. "
-                "Save only the answer text in the file.",
-                file=sys.stderr,
+            _error(
+                f"{answer} is {size} bytes; decode reads at most 5 MB. "
+                "Save only the answer text in the file."
             )
             return EXIT_USAGE
         text = answer.read_bytes().decode("utf-8")
     except UnicodeDecodeError:
-        print(
-            f"error: {answer} is not valid UTF-8 text. Save the answer as plain "
-            "UTF-8 text and try again.",
-            file=sys.stderr,
+        _error(
+            f"{answer} is not valid UTF-8 text. Save the answer as plain "
+            "UTF-8 text and try again."
         )
         return EXIT_USAGE
     except OSError as error:
-        print(
-            f"error: could not read {answer} ({error.strerror or error}). Check the "
-            "path, or save the answer to a text file first.",
-            file=sys.stderr,
+        _error(
+            f"could not read {answer} ({error.strerror or error}). Check the "
+            "path, or save the answer to a text file first."
         )
         return EXIT_USAGE
 
@@ -608,10 +595,9 @@ def decode(args: argparse.Namespace) -> int:
             return EXIT_FAILURE
         print(f"Wrote the decoded answer to {out}")
     print(summary, file=sys.stderr)
-    print(
+    _privacy_note(
         "warning: the decoded text contains real titles from your Things database. "
-        "It is personal data; keep it private.",
-        file=sys.stderr,
+        "It is personal data. " + KEEP_PRIVATE
     )
     return EXIT_OK
 
@@ -635,6 +621,27 @@ def _decode_summary(result: DecodeResult) -> str:
     return "\n".join(lines)
 
 
+def _error(message: str) -> None:
+    """`error:` in red bold, then the message as plain text, on stderr."""
+    print(f"{stderr_style().danger('error:')} {message}", file=sys.stderr)
+
+
+def _warn(message: str) -> None:
+    """`warning:` in yellow bold, then the message as plain text, on stderr."""
+    print(f"{stderr_style().notice('warning:')} {message}", file=sys.stderr)
+
+
+def _privacy_note(message: str) -> None:
+    """A `note:` or `warning:` about personal data on stderr, set apart by a
+    blank line before and after. The label is yellow bold and the sentence
+    "Keep it private ..." is red bold."""
+    style = stderr_style()
+    label, _, body = message.partition(": ")
+    if body.endswith(KEEP_PRIVATE):
+        body = body[: -len(KEEP_PRIVATE)] + style.danger(KEEP_PRIVATE)
+    print(f"\n{style.notice(label + ':')} {body}\n", file=sys.stderr)
+
+
 def _local_now() -> dt.datetime:
     """Now in local time with its UTC offset. `exported_at` and every date
     derived from it (created, modified, completed windows) use this."""
@@ -642,13 +649,14 @@ def _local_now() -> dt.datetime:
 
 
 def _prompt_preview(result, args, context, written, copied) -> str:
+    style = stdout_style()
     lines = ["tidyline prompt: preview", ""]
-    lines.append(f"Anonymisation: {result.level}")
-    lines.append(f"Payload counts: {', '.join(result.counts)}")
-    lines.append("Removed or replaced at this level:")
+    lines.append(f"{style.bold('Anonymisation:')} {result.level}")
+    lines.append(f"{style.bold('Payload counts:')} {', '.join(result.counts)}")
+    lines.append(style.bold("Removed or replaced at this level:"))
     lines += [f"  - {item}" for item in result.removed]
-    lines.append(f"Kept: {KEPT}")
-    lines.append("Left out (counted in the summary only):")
+    lines.append(f"{style.bold('Kept:')} {KEPT}")
+    lines.append(style.bold("Left out (counted in the summary only):"))
     lines += [f"  - {item}" for item in LEFT_OUT]
     lines.append("")
     if context is not None:
@@ -662,12 +670,13 @@ def _prompt_preview(result, args, context, written, copied) -> str:
                 lines.append(f"{label}: {value}")
     if result.unfilled:
         lines.append(
-            "warning: these placeholders stay visible in the prompt; fill them "
+            f"{style.notice('warning:')} these placeholders stay visible in the "
+            "prompt; fill them "
             f"with --context: {', '.join(result.unfilled)}"
         )
     lines.append("")
     if written:
-        lines.append("Written:")
+        lines.append(style.bold("Written:"))
         lines += [f"  {path}  ({size} bytes)" for path, size in written]
     if copied:
         lines.append("Copied the prompt text to the clipboard.")
@@ -681,7 +690,11 @@ def _prompt_preview(result, args, context, written, copied) -> str:
             "Nothing was written. Use --out DIR to save the payload and prompt, "
             "or --copy to put the prompt on the clipboard."
         )
-    lines.append("Nothing has been sent anywhere. You attach or paste these yourself.")
+    lines.append(
+        style.bold(
+            "Nothing has been sent anywhere. You attach or paste these yourself."
+        )
+    )
     return "\n".join(lines)
 
 
@@ -690,10 +703,9 @@ def _prepare_out(argument: str) -> Path | None:
     unusable. The folder is only checked here; `_write_out` creates it."""
     out = Path(argument).expanduser()
     if out.exists() or out.is_symlink():
-        print(
-            f"error: {out} already exists, so nothing was written. Choose a new "
-            "--out path, or move or delete the old file first.",
-            file=sys.stderr,
+        _error(
+            f"{out} already exists, so nothing was written. Choose a new "
+            "--out path, or move or delete the old file first."
         )
         return None
     if not _check_out_folder(out.parent):
@@ -708,35 +720,31 @@ def _check_out_folder(folder: Path) -> bool:
     read gets a warning on stderr and is left as it is."""
     if folder.is_dir():
         if folder.stat().st_mode & 0o044:
-            print(
-                f"warning: the folder {folder} can be read by other users on this "
+            _warn(
+                f"the folder {folder} can be read by other users on this "
                 "Mac. tidyline leaves its permissions as they are. Use a folder "
-                "that only you can read (chmod 700) for personal data.",
-                file=sys.stderr,
+                "that only you can read (chmod 700) for personal data."
             )
         return True
     if folder.exists() or folder.is_symlink():
-        print(
-            f"error: {folder} exists and is not a folder, so nothing was written. "
-            "Choose a folder for --out.",
-            file=sys.stderr,
+        _error(
+            f"{folder} exists and is not a folder, so nothing was written. "
+            "Choose a folder for --out."
         )
         return False
     parent = folder.parent
     if parent.is_dir():
         return True
     if parent.exists() or parent.is_symlink():
-        print(
-            f"error: {parent} exists and is not a folder, so tidyline cannot create "
-            f"{folder.name} in it. Choose another --out path.",
-            file=sys.stderr,
+        _error(
+            f"{parent} exists and is not a folder, so tidyline cannot create "
+            f"{folder.name} in it. Choose another --out path."
         )
         return False
-    print(
-        f"error: the folder {folder} does not exist, and neither does {parent}. "
+    _error(
+        f"the folder {folder} does not exist, and neither does {parent}. "
         "tidyline creates only the last folder level. Create the parent folder "
-        "yourself, or choose another --out path.",
-        file=sys.stderr,
+        "yourself, or choose another --out path."
     )
     return False
 
@@ -770,10 +778,10 @@ def _load(args: argparse.Namespace):
     try:
         source = locate_database(args.db)
     except DatabaseNotFoundError as error:
-        print(f"error: {error}", file=sys.stderr)
+        _error(f"{error}")
         return None
     except PermissionError as error:
-        print(f"error: {_permission_help(error)}", file=sys.stderr)
+        _error(f"{_permission_help(error)}")
         return None
 
     macos = _macos_version()
@@ -785,14 +793,14 @@ def _load(args: argparse.Namespace):
             )
             snapshot = read_snapshot(copy)
     except SnapshotError as error:
-        print(f"error: {error}", file=sys.stderr)
+        _error(f"{error}")
         if error.permission_problem:
             print(f"hint: {_permission_help(error)}", file=sys.stderr)
         if args.verbose and error.__cause__:
             print(f"cause: {error.__cause__!r}", file=sys.stderr)
         return None
     except (SchemaError, ReadError) as error:
-        print(f"error: {error}", file=sys.stderr)
+        _error(f"{error}")
         return None
     return snapshot, schema_report, macos, things
 
@@ -803,19 +811,17 @@ def _write_out(out: Path, text: str) -> bool:
         created = _make_out_folder(out.parent)
         _write_private(out, text)
     except FileExistsError:
-        print(
-            f"error: {out} appeared while writing, so nothing was written. "
-            "Choose a new --out path.",
-            file=sys.stderr,
+        _error(
+            f"{out} appeared while writing, so nothing was written. "
+            "Choose a new --out path."
         )
         if created:
             _remove_empty(out.parent)
         return False
     except OSError as error:
-        print(
-            f"error: could not write {out}: {error.strerror or error}. Check the "
-            "folder is writable, or choose another --out path.",
-            file=sys.stderr,
+        _error(
+            f"could not write {out}: {error.strerror or error}. Check the "
+            "folder is writable, or choose another --out path."
         )
         if created:
             _remove_empty(out.parent)

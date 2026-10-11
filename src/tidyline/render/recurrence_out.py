@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from tidyline.model import Snapshot, Task
 from tidyline.render.check_out import safe_title
+from tidyline.render.style import PLAIN, Style
 
 RAW_WARNING = (
     "Raw rules may contain personal data. Check before pasting them into a "
@@ -29,7 +30,9 @@ RULE_FIELDS = (
 )
 
 
-def render_recurrence(snapshot: Snapshot, *, raw: bool = False) -> str:
+def render_recurrence(
+    snapshot: Snapshot, *, raw: bool = False, style: Style = PLAIN
+) -> str:
     tasks = {task.uuid: task for task in snapshot.tasks}
     areas = {area.uuid: area.title for area in snapshot.areas}
     leftovers = set(snapshot.leftover_template_uuids)
@@ -47,7 +50,7 @@ def render_recurrence(snapshot: Snapshot, *, raw: bool = False) -> str:
 
     lines: list[str] = []
     if raw:
-        lines += [f"warning: {RAW_WARNING}", ""]
+        lines += [f"{style.notice('warning:')} {RAW_WARNING}", ""]
     for state, template in entries:
         lines += _block(state, template, tasks, areas, raw)
         lines.append("")

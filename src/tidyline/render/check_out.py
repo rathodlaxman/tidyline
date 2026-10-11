@@ -13,6 +13,7 @@ from typing import Any
 
 from tidyline.checks import CHECKS, Finding
 from tidyline.model import Snapshot
+from tidyline.render.style import PLAIN, Style
 
 CHECK_SCHEMA_VERSION = "1"
 FIXING_GUIDE_URL = (
@@ -73,6 +74,7 @@ def check_text(
     checks: Sequence[str],
     snapshot: Snapshot,
     patterns: Sequence[str] = (),
+    style: Style = PLAIN,
 ) -> str:
     titles = {task.uuid: task.title for task in snapshot.tasks}
     summary = _summary(findings)
@@ -83,7 +85,7 @@ def check_text(
     for check in checks:
         found = [f for f in findings if f.check == check]
         heading = f"{check} ({CHECKS[check].SEVERITY}, {_count(len(found), 'finding')})"
-        lines += ["", heading, "-" * len(heading)]
+        lines += ["", style.bold(heading), "-" * len(heading)]
         if not found:
             lines.append("  none")
         elif check == GROUPED_CHECK:
@@ -91,7 +93,7 @@ def check_text(
         else:
             lines += _one_line_each(found, titles, patterns)
     lines.append("")
-    lines.append(f"How to fix these: {FIXING_GUIDE_URL}")
+    lines.append(style.bold(f"How to fix these: {FIXING_GUIDE_URL}"))
     return "\n".join(lines) + "\n"
 
 

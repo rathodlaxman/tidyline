@@ -8,6 +8,7 @@ from pytest_socket import SocketBlockedError
 from tidyline import __version__
 from tidyline.cli import build_parser, main
 from tidyline.render.help_out import COMMANDS, render_help
+from tidyline.render.style import Style
 
 COMMAND_NAMES = [name for name, _ in COMMANDS]
 
@@ -37,7 +38,12 @@ def test_no_command_prints_the_help_screen(capsys):
 
 
 def test_help_screen_uses_colour_only_when_asked():
-    assert "\x1b[1m" in render_help("9.9", color=True)
+    styled = render_help("9.9", Style(True))
+    assert (
+        "\x1b[1mNew here? Run tidyline doctor, then tidyline report.\x1b[0m" in styled
+    )
+    assert "\x1b[1mStep-by-step guide:\x1b[0m" in styled
+    assert styled.count("\x1b[1m") == 2  # nothing else is styled
     assert "\x1b" not in render_help("9.9")
 
 

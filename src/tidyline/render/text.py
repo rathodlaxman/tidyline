@@ -23,6 +23,7 @@ from tidyline.model import (
     Task,
     TaskKind,
 )
+from tidyline.render.style import Style
 from tidyline.status import Status, effective_status
 
 MAX_WARNING_LINES = 20
@@ -35,7 +36,6 @@ STATUS_ORDER = (
     (Status.ANYTIME, "Anytime"),
     (Status.SOMEDAY, "Someday"),
 )
-BOLD, RESET = "\x1b[1m", "\x1b[0m"
 
 
 @dataclass(frozen=True)
@@ -66,13 +66,13 @@ def render_report(
 
 class _Writer:
     def __init__(self, color: bool):
-        self.color = color
+        self.style = Style(color)
         self.lines: list[str] = []
 
     def heading(self, title: str) -> None:
         if self.lines:
             self.lines.append("")
-        self.lines.append(f"{BOLD}{title}{RESET}" if self.color else title)
+        self.lines.append(self.style.bold(title))
         self.lines.append("-" * len(title))
 
     def line(self, text: str = "") -> None:

@@ -3,7 +3,8 @@ never prints. `tidyline --help` is argparse's own output and is not touched."""
 
 from __future__ import annotations
 
-BOLD, RESET = "\x1b[1m", "\x1b[0m"
+from tidyline.render.style import PLAIN, Style
+
 GUIDE_URL = "https://github.com/rathodlaxman/tidyline/blob/main/docs/GETTING_STARTED.md"
 
 COMMANDS = (
@@ -25,18 +26,15 @@ EXAMPLES = (
 )
 
 
-def render_help(version: str, *, color: bool = False) -> str:
+def render_help(version: str, style: Style = PLAIN) -> str:
     """The help screen as text, at most 80 characters wide."""
 
-    def heading(text: str) -> str:
-        return f"{BOLD}{text}{RESET}" if color else text
-
     width = max(len(name) for name, _ in COMMANDS) + 2
-    lines = [heading(f"tidyline {version}"), ""]
+    lines = [f"tidyline {version}", ""]
     lines.append("Check your Things 3 setup for problems. Unofficial, read-only.")
-    lines += ["", heading("Commands")]
+    lines += ["", "Commands"]
     lines += [f"  {name:<{width}}{what}" for name, what in COMMANDS]
-    lines += ["", heading("Examples")]
+    lines += ["", "Examples"]
     example_width = max(len(command) for command, _ in EXAMPLES) + 2
     for command, note in EXAMPLES:
         if 2 + example_width + len(note) <= 80:
@@ -45,14 +43,14 @@ def render_help(version: str, *, color: bool = False) -> str:
             lines += [f"  {command}", f"      {note}"]
     lines += [
         "",
-        heading("Your task titles"),
+        "Your task titles",
         "  Show them on screen or in the file: check, recurrence, export, decode.",
         "  Never show them: report, check --json.",
         "  export and prompt hide them with --anonymise strict.",
         "  Nothing is sent anywhere.",
         "",
-        "New here? Run tidyline doctor, then tidyline report.",
-        "Step-by-step guide:",
+        style.bold("New here? Run tidyline doctor, then tidyline report."),
+        style.bold("Step-by-step guide:"),
         f"  {GUIDE_URL}",
         "More detail on any command: tidyline COMMAND --help, or tidyline --help.",
     ]
