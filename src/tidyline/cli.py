@@ -47,6 +47,13 @@ EXIT_WARNINGS = 1
 EXIT_USAGE = 2
 EXIT_FAILURE = 3  # the database could not be found or read; a write failed
 
+# The report holds counts only (DESIGN.md decisions log, 2026-10-11): no task,
+# project, heading, area or template title. The note must say what is true.
+REPORT_FILE_NOTE = (
+    "note: this file holds counts only, with no titles. It is still personal "
+    "data about your Things setup. Keep it private and do not commit or share it."
+)
+
 THINGS_INFO_PLIST = Path("/Applications/Things3.app/Contents/Info.plist")
 
 TERMINAL_APPS = {
@@ -408,11 +415,7 @@ def report(args: argparse.Namespace) -> int:
     if not _write_out(out, text):
         return EXIT_FAILURE
     print(f"Wrote the report to {out}")
-    print(
-        "note: this file contains the titles of your recurring tasks. Keep it "
-        "private and do not commit or share it.",
-        file=sys.stderr,
-    )
+    print(REPORT_FILE_NOTE, file=sys.stderr)
     return 0
 
 

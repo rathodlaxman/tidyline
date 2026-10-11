@@ -97,7 +97,7 @@ def test_report_to_a_file(entry_point, env, fixture_db, tmp_path):
     assert result.returncode == 0, result.stderr
     assert stat.S_IMODE(out.stat().st_mode) == 0o600
     assert out.read_text(encoding="utf-8").startswith("tidyline report\n")
-    assert "recurring tasks" in result.stderr
+    assert "counts only" in result.stderr
 
 
 def test_export(entry_point, env, fixture_db, tmp_path):

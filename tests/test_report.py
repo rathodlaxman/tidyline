@@ -368,7 +368,7 @@ def test_out_writes_a_private_file_and_reminds(
     assert not ESCAPE.search(text)
     captured = capsys.readouterr()
     assert "Wrote the report to" in captured.out
-    assert "titles of your recurring tasks" in captured.err
+    assert cli.REPORT_FILE_NOTE in captured.err
     assert "tidyline report" not in captured.out.split("\n", 1)[0]
 
 
@@ -430,3 +430,28 @@ def test_out_write_failure_exits_3(
     monkeypatch.setattr(cli, "_write_private", fail)
     assert run_report(fixture_db, "--out", str(tmp_path / "r.txt")) == 3
     assert "could not write" in capsys.readouterr().err
+
+
+def test_note_and_content_agree(fixture_db, tmp_path, capsys, no_real_app):
+    """The note says "counts only" exactly when no title is in the file."""
+    out = tmp_path / "report.txt"
+    assert run_report(fixture_db, "--out", str(out)) == 0
+    text = out.read_text(encoding="utf-8")
+    with open_snapshot(fixture_db) as copy:
+        snapshot = read_snapshot(copy)
+    titles = {
+        item.title
+        for group in (
+            snapshot.areas, snapshot.projects, snapshot.headings,
+            snapshot.todos, snapshot.templates,
+        )
+        for item in group
+        if item.title
+    }  # fmt: skip
+    assert len(titles) > 20
+    leaked = sorted(t for t in titles if t in text)
+    claims_counts_only = "counts only" in cli.REPORT_FILE_NOTE
+    assert claims_counts_only == (not leaked), leaked
+    assert "personal data" in cli.REPORT_FILE_NOTE
+    assert "personal data" not in text  # the note is on stderr, not in the file
+    assert cli.REPORT_FILE_NOTE in capsys.readouterr().err
