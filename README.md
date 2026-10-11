@@ -110,6 +110,13 @@ Every command accepts `--db PATH` for a database in a non-standard place. You
 can also set the `THINGSDB` environment variable. Add `--verbose` before the
 command for more detail when something fails.
 
+## Guides
+
+- [Getting started](https://github.com/rathodlaxman/tidyline/blob/main/docs/GETTING_STARTED.md): a step-by-step guide for people
+  who have never used a command line tool.
+- [Fixing the problems tidyline finds](https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md): what each
+  health check means and how to fix it in Things 3.
+
 ## Commands
 
 | Command | What it does | Options |

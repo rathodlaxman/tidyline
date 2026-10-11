@@ -15,6 +15,9 @@ from tidyline.checks import CHECKS, Finding
 from tidyline.model import Snapshot
 
 CHECK_SCHEMA_VERSION = "1"
+FIXING_GUIDE_URL = (
+    "https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md"
+)
 KIND_LABELS = {
     "task": "to-do",
     "project": "project",
@@ -88,6 +91,8 @@ def check_text(
                 title = titles.get(ref.id)
                 shown = f'"{safe_title(title)}"' if title is not None else "(not found)"
                 lines.append(f"      {KIND_LABELS[ref.kind]:<9}{shown}")
+    lines.append("")
+    lines.append(f"How to fix these: {FIXING_GUIDE_URL}")
     return "\n".join(lines) + "\n"
 
 

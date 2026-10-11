@@ -19,6 +19,10 @@
   the titles.
 - The example label in the prompt, preview, README and design notes is now
   `Task k3f7az`; the old example contained a digit that real labels never have.
+- Two guides: `docs/GETTING_STARTED.md` (for people new to the command line) and
+  `docs/FIXING_PROBLEMS.md` (what each check means and how to fix it in Things).
+  The README links both, and the text output of `tidyline check` ends with a
+  link to the fixing guide. `check --json` is unchanged.
 - Compatibility note on the prompt and decode flow, and a privacy tip in the
   README: use a temporary or private chat with memory and custom instructions
   switched off.

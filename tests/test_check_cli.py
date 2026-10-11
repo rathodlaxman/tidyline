@@ -166,3 +166,35 @@ def test_outside_heading_json_refs(fixture_db, capsys):
         {"kind": "task", "id": U("t_level")},
         {"kind": "task", "id": U("t_door")},
     ]
+
+
+GUIDE_LINE = (
+    "How to fix these: "
+    "https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md"
+)
+
+
+def test_text_output_ends_with_the_fixing_guide_link(fixture_db, capsys):
+    run(fixture_db)
+    out = capsys.readouterr().out
+    assert out.endswith("\n\n" + GUIDE_LINE + "\n")
+    assert out.count(GUIDE_LINE) == 1
+
+
+def test_text_output_with_no_findings_still_ends_with_the_link(fixture_db, capsys):
+    edit(fixture_db, ("UPDATE TMTask SET trashed = 1 WHERE uuid = ?", (U("t_dup_b"),)))
+    assert run(fixture_db, "--only", "possible_duplicates") == 0
+    assert capsys.readouterr().out.endswith("  none\n\n" + GUIDE_LINE + "\n")
+
+
+def test_json_output_is_unchanged_by_the_link(fixture_db, capsys):
+    run(fixture_db, "--json")
+    out = capsys.readouterr().out
+    assert "How to fix" not in out and "FIXING_PROBLEMS" not in out
+    assert list(json.loads(out)) == [
+        "check_schema_version",
+        "checks",
+        "summary",
+        "findings",
+    ]
+    assert out == json.dumps(json.loads(out), indent=2, ensure_ascii=False) + "\n"
