@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## 0.2.2 - 2026-10-11
+
+- Fixed the SyntaxWarning that pip printed at install time (an invalid escape
+  in a docstring). A test now compiles every module with warnings as errors.
+- `tidyline` with no arguments prints a short, friendly help screen: the
+  commands in plain words, examples, which commands show your titles, and a
+  link to the getting-started guide. `tidyline --help` is unchanged.
+- The text output of `check` is easier to scan: each check has a heading with
+  its severity and count, and open to-dos inside a trashed project are grouped
+  under their project. Findings, counts, `check --json` and exit codes are the
+  same.
+- Piping output to a command that closes early (for example
+  `tidyline check --json | head`) ends quietly, with exit code 0 and no
+  traceback.
+- The last level of an `--out` folder is created for you, readable only by you
+  (mode 0700), when its parent exists. tidyline never creates a chain of
+  folders, never changes a folder that already exists (it warns if group or
+  others can read it), and still never overwrites a file. Do not use a folder
+  that is synced or backed up to a cloud service.
+
 ## 0.2.1 - 2026-10-11
 
 - `decode` is easier to read: bare codes such as `k3f7az` are replaced when

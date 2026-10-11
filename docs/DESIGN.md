@@ -53,6 +53,9 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-11 | `report` shows recurring-template counts only (live, leftover, recognised, assumed, and not recognised when any; "assumed" counts rules that rest on an unverified convention); titles are shown by `tidyline recurrence`. No other part of `report` prints a task, project, heading or area title. |
 | 2026-10-11 | Two user guides are part of the docs: `GETTING_STARTED.md` and `FIXING_PROBLEMS.md`. The README links both with absolute GitHub URLs (PyPI does not resolve relative links), and `tidyline check` (text output only, not `--json`) ends with one line linking the fixing guide. Things 3 steps in the guides are marked [checked] (read on a Cultured Code help page) or [not verified]. |
 | 2026-10-11 | Output folders (changes the 2026-10-10 exit-code row, where a missing `--out` folder was exit 2): tidyline creates the last level of an `--out` folder when it is missing. Only that one level, never a chain; only when the parent exists and is a folder, else exit 2 with a message that says what is wrong and what to do; created with mode 0700 (`prompt`: the `--out` folder itself; `report`, `export` and `decode`: the folder of the file); an existing folder is never changed, and a warning goes to stderr when group or others can read it; one line "Created folder PATH (readable only by you)." goes to stderr when a folder is made. The folder is made just before writing, not before the database is read, and is removed again if the write fails. `--out` stays required for `export` and has no default location anywhere. Existing files are still never overwritten (exit 2). |
+| 2026-10-11 | `tidyline` with no arguments prints a help screen (title with version, commands in plain words, examples, which commands show task titles, a first-time hint, and a link to `GETTING_STARTED.md`) and exits 0; colour only on a terminal and never with `NO_COLOR`. No new command; `--help` is argparse's output as before. The text is in `render/help_out.py`. |
+| 2026-10-11 | The text output of `check` changes layout only: a total line, then a heading per check (`id (severity, N findings)`), one line per finding, and for `open_in_trashed_project` one block per trashed project or heading (title and count of open to-dos) with the to-dos beneath it. `check --json`, finding ids, messages, counts and exit codes are unchanged. |
+| 2026-10-11 | A reader of standard output that closes early (`| head`) ends the run quietly with exit 0: `main` catches `BrokenPipeError` and points stdout at devnull, as the Python documentation recipe does. Files are written whole before anything is printed about them, so no partial file is left. |
 
 ## 4. Tested environment
 
@@ -286,6 +289,8 @@ src/tidyline/
   anonymise.py        levels (7.5)
   render/json_out.py  export (7.4)
   render/text.py      text report
+  render/check_out.py text and JSON output of `check`
+  render/help_out.py  the help screen shown with no arguments
   render/html/        v0.3
   llm/payload.py      the open-work payload for `prompt` (7.6)
   llm/prompt.py       v0.2: fill the audit template, write payload and prompt
@@ -309,14 +314,16 @@ The core returns data and never prints. The CLI only parses options and calls th
 |---|---|---|
 | `doctor` | Locate the database, check permissions and schema, show versions and whether they are tested | `--db` |
 | `report` | Text summary; HTML from v0.3 | `--html`, `--out`, `--include-completed`, `--no-color` |
-| `check` | Health checks only; exit code 1 if any warning | `--only`, `--json` |
+| `check` | Health checks only; exit code 1 if any warning. Text output: a total line, a heading per check with severity and count, one line per finding, open to-dos in a trashed project grouped under their project or heading | `--only`, `--json` |
 | `export` | JSON export | `--out`, `--anonymise {none,light,strict}` |
 | `recurrence` | List every repeating template with its readable rule, so it can be checked against what Things shows: one block per template (rule text or "not recognised", title, project or area, state live / leftover / not recognised) sorted by state, rule text and id, then a summary line. Exit 0 even when rules are not recognised. `--raw` adds the rule as stored (XML text, or hex and length for a binary plist), the decoded fields and, for an unrecognised rule, the reason, after a personal-data warning line. | `--raw`, `--db` |
 | `prompt` | Level 0: anonymised open-work payload (7.6) plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--out DIR`, `--copy` |
 | `decode` | Replace strict labels (`Task k3f7az`) in an LLM answer with the real titles from the current database. Reads the answer from a UTF-8 file of at most 5 MB; writes the decoded text to stdout, or to `--out` (mode 0600, never overwrites). Bare codes, long titles, `|` in tables, quotes and shared titles follow the decode rules in 7.5. A summary (labels and bare codes replaced, distinct items, ambiguous codes, unmatched; never titles) and a personal-data warning go to stderr. | `ANSWER_FILE`, `--out FILE`, `--db` |
 | `ask` | v0.4: levels 1 and 2, after preview and confirmation | `--provider`, `--model`, `--yes` |
 
-Global: `--db PATH`, `--version`, `--verbose`.
+Global: `--db PATH`, `--version`, `--verbose`. With no command, a help screen is printed (exit 0).
+
+`--out` (`report`, `export`, `prompt`, `decode`): the last folder level is created when missing (decisions log, 2026-10-11): mode 0700, parent must exist, existing folders untouched.
 
 ## 9. Milestones
 

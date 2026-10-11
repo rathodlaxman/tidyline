@@ -125,7 +125,7 @@ command for more detail when something fails.
 |---|---|---|
 | `doctor` | Finds the database and checks permissions, schema and versions. | `--db` |
 | `report` | Prints a text summary, or writes it to a new file. | `--out PATH`, `--include-completed`, `--no-color`, `--db` |
-| `check` | Runs the health checks. | `--only ID [ID ...]`, `--pattern REGEX [REGEX ...]`, `--json`, `--db` |
+| `check` | Runs the health checks. The text output has a heading per check, and open to-dos in a trashed project are grouped under their project. | `--only ID [ID ...]`, `--pattern REGEX [REGEX ...]`, `--json`, `--db` |
 | `export` | Writes a JSON export to a new file. | `--out PATH` (required), `--anonymise {none,light,strict}`, `--db` |
 | `recurrence` | Lists every repeating template with its readable rule. | `--raw`, `--db` |
 | `prompt` | Writes an anonymised payload and a filled audit prompt. | `--anonymise {light,strict}`, `--context FILE`, `--out DIR`, `--copy`, `--db` |
