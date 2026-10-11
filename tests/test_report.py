@@ -207,22 +207,35 @@ def test_completed_recency_uses_today(fixture_db):
 # --- recurrence -----------------------------------------------------------------
 
 
-def test_recurrence_summary_and_lists(report_text):
-    assert value(report_text, "Recognised") == "22"
-    assert value(report_text, "Not recognised") == "3"
-    assert value(report_text, "Assumed conventions") == "2"
-    assert "Live (24)" in report_text
-    assert "  - Pay the rent: Monthly on day 15 [verified]" in report_text
-    assert "  - Back up the laptop: Monthly on last day [assumed]" in report_text
-    assert "  - Mow the lawn: Weekly on Sat (paused) [verified]" in report_text
-    assert "recurring (rule unreadable) [unrecognised]" in report_text
+def test_recurrence_section_has_counts_only(report_text):
+    section = report_text.split("Recurring templates\n-------------------\n")[1]
+    section = section.split("\n\nRead warnings")[0]
+    assert section == (
+        "Live                          24\n"
+        "Leftover                      1\n"
+        "Not recognised                3\n"
+        "\n"
+        "Details: tidyline recurrence"
+    )
 
 
-def test_leftover_template_is_listed_apart(report_text):
-    live, _, leftover = report_text.partition("Leftover: project is trashed")
-    assert "Send the newsletter" not in live
-    assert leftover.startswith(" or missing (1)\n  - Send the newsletter: Monthly")
-    assert "Defrost the freezer" not in report_text  # the trashed template
+def test_not_recognised_row_is_left_out_when_zero(fixture_db):
+    conn = sqlite3.connect(fixture_db)
+    conn.execute("UPDATE TMTask SET trashed = 1 WHERE rt1_recurrenceRule IS NOT NULL")
+    conn.commit()
+    conn.close()
+    _, text = make_report(fixture_db)
+    assert "Not recognised" not in text
+    assert "Live                          0" in text
+
+
+def test_no_template_title_appears(fixture_db):
+    snapshot, text = make_report(fixture_db, include_completed=True)
+    titles = {t.title for t in snapshot.templates}
+    assert len(titles) > 10
+    assert [title for title in titles if title in text] == []
+    for title in ("Pay the rent", "Send the newsletter", "Defrost the freezer"):
+        assert title not in text
 
 
 # --- titles ---------------------------------------------------------------------
@@ -230,37 +243,14 @@ def test_leftover_template_is_listed_apart(report_text):
 
 def test_no_ordinary_title_appears(fixture_db):
     snapshot, text = make_report(fixture_db, include_completed=True)
-    allowed = {t.title for t in snapshot.templates}
-    ordinary = {t.title for t in snapshot.tasks if not t.is_template}
+    ordinary = {t.title for t in snapshot.tasks}
     ordinary |= {a.title for a in snapshot.areas} | {t.title for t in snapshot.tags}
     ordinary |= {i.title for i in snapshot.checklist_items}
-    ordinary -= allowed  # instances share their template's title
     assert len(ordinary) > 30
     leaked = [title for title in ordinary if title in text]
     assert leaked == []
     for note in ("Ask about the evening slots", "Comprar pimentón", "請求書"):
         assert note not in text
-
-
-def test_titles_are_made_terminal_safe(fixture_db):
-    conn = sqlite3.connect(fixture_db)
-    conn.execute(
-        "UPDATE TMTask SET title = ? WHERE uuid = ?",
-        ("Bad\x1b[31m\ntitle\x07", U("tpl_daily")),
-    )
-    conn.commit()
-    conn.close()
-    _, text = make_report(fixture_db)
-    assert "  - Bad?[31m title?: Daily [verified]" in text
-    assert "\x1b" not in text and "\x07" not in text
-
-
-def test_empty_title_is_marked(fixture_db):
-    conn = sqlite3.connect(fixture_db)
-    conn.execute("UPDATE TMTask SET title = '' WHERE uuid = ?", (U("tpl_daily"),))
-    conn.commit()
-    conn.close()
-    assert "  - (untitled): Daily" in make_report(fixture_db)[1]
 
 
 # --- warnings -----------------------------------------------------------------------

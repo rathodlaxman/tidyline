@@ -1,8 +1,9 @@
 """Plain-text report (DESIGN.md 9, v0.1). Returns a string; never prints.
 
-Counts only, except for recurring and leftover templates, which are listed
-with their titles. The health-check section lists every check with its finding
-count, nothing more; `tidyline check` gives the details.
+Counts only: no task, project, heading, area or template title appears. The
+recurring-templates section gives counts (`tidyline recurrence` shows the
+titles). The health-check section lists every check with its finding count,
+nothing more; `tidyline check` gives the details.
 """
 
 from __future__ import annotations
@@ -180,34 +181,17 @@ def _is_live(task: Task) -> bool:
 
 
 def _recurrence(out, snapshot: Snapshot) -> None:
+    """Counts only. Titles are shown by `tidyline recurrence`."""
     leftovers = set(snapshot.leftover_template_uuids)
-    templates = sorted(snapshot.templates, key=lambda t: (t.index, t.uuid))
-    live = [t for t in templates if t.uuid not in leftovers]
-    left = [t for t in templates if t.uuid in leftovers]
-    rules = [t.recurrence for t in templates]
+    templates = snapshot.templates
+    not_recognised = sum(1 for t in templates if not t.recurrence.recognised)
     out.heading("Recurring templates")
-    out.row("Recognised", sum(1 for r in rules if r.recognised))
-    out.row("Not recognised", sum(1 for r in rules if not r.recognised))
-    out.row("Assumed conventions", sum(1 for r in rules if r.confidence == "assumed"))
-
+    out.row("Live", sum(1 for t in templates if t.uuid not in leftovers))
+    out.row("Leftover", len(leftovers & {t.uuid for t in templates}))
+    if not_recognised:
+        out.row("Not recognised", not_recognised)
     out.line()
-    out.line(f"Live ({len(live)})")
-    for template in live:
-        out.line(_template_line(template))
-    if not live:
-        out.line("  none")
-    out.line()
-    out.line(f"Leftover: project is trashed or missing ({len(left)})")
-    for template in left:
-        out.line(_template_line(template))
-    if not left:
-        out.line("  none")
-
-
-def _template_line(template: Task) -> str:
-    rule = template.recurrence
-    paused = " (paused)" if template.recurrence_paused else ""
-    return f"  - {_clean(template.title)}: {rule.text}{paused} [{rule.confidence}]"
+    out.line("Details: tidyline recurrence")
 
 
 def _warnings(out, snapshot: Snapshot) -> None:

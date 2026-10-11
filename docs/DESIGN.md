@@ -50,6 +50,7 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-11 | In the `prompt` payload, the export's `warnings` are renamed `data_read_warnings`, so they are not read as problems with the user's system. |
 | 2026-10-11 | `exported_at` and all derived dates use local time with offset (was UTC in export). `export` and `prompt` follow one rule: `exported_at` is a local ISO 8601 timestamp with its UTC offset, "today" is its date, and every `created` and `modified` date and every completed-to-do window uses that local date. Part of `export_schema_version` 1.1 (not released before this change). |
 | 2026-10-11 | `decode` readability (replaces "titles go in exactly as stored"): bare codes are replaced when they match exactly one label, ambiguous ones are left and counted; titles are whitespace-collapsed and cut to 80 characters; `|` is escaped on table lines; titles are wrapped in double quotes unless already quoted; titles shared by items in the payload's scope get `(in Parent)` inside the quotes. All in one pass over the original text. Rules in 7.5. |
+| 2026-10-11 | `report` shows recurring-template counts only (live, leftover, and not recognised when any); titles are shown by `tidyline recurrence`. No other part of `report` prints a task, project, heading or area title. |
 
 ## 4. Tested environment
 

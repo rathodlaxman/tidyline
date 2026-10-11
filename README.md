@@ -98,8 +98,8 @@ tidyline decode ~/tidyline-out/answer.md --out ~/tidyline-out/answer-decoded.md
 ```
 
 - `doctor` finds the database and checks permissions, the schema and versions.
-- `report` prints a text summary. It shows counts only, except for repeating
-  templates, which are listed with their titles.
+- `report` prints a text summary. It shows counts only, including counts of
+  repeating templates. No title appears in it; `recurrence` shows the titles.
 - `check` runs the health checks.
 - `recurrence` lists every repeating template with its readable rule.
 - `export` writes a JSON export. Add `--anonymise light` or `--anonymise strict`
