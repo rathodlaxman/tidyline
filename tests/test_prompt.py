@@ -311,8 +311,8 @@ def test_preview_without_out_or_copy_writes_nothing(fixture_db, tmp_path, capsys
     out = capsys.readouterr().out
     assert "Anonymisation: strict" in out
     assert (
-        "Payload counts: 2 areas, 6 projects, 2 headings, 30 to-do rows (29 open, "
-        "1 inside trashed projects), 2 tags, 25 recurring templates, 17 findings" in out
+        "Payload counts: 2 areas, 6 projects, 2 headings, 32 to-do rows (29 open, "
+        "3 inside trashed projects), 2 tags, 25 recurring templates, 19 findings" in out
     )
     assert (
         "Left out (counted in the summary only):\n"

@@ -5,7 +5,10 @@ CHECK = "open_in_trashed_project"
 
 def test_hit(fixture_db):
     found = findings(fixture_db, CHECK)
-    assert ids(found) == [(U("t_in_trashed_project"), U("proj_trashed"))]
+    assert sorted(ids(found)) == sorted(
+        (U(key), U("proj_trashed"))
+        for key in ("t_in_trashed_project", "t_in_trashed_two", "t_in_trashed_three")
+    )
     finding = found[0]
     assert finding.severity == "warning"
     assert finding.message == "open to-do inside a trashed project"
@@ -27,7 +30,14 @@ def test_non_hits(fixture_db):
 def test_closed_to_do_in_a_trashed_project_is_not_flagged(fixture_db):
     edit(
         fixture_db,
-        ("UPDATE TMTask SET status = 3 WHERE uuid = ?", (U("t_in_trashed_project"),)),
+        *(
+            ("UPDATE TMTask SET status = 3 WHERE uuid = ?", (U(key),))
+            for key in (
+                "t_in_trashed_project",
+                "t_in_trashed_two",
+                "t_in_trashed_three",
+            )
+        ),
     )
     assert findings(fixture_db, CHECK) == []
 

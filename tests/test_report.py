@@ -87,7 +87,7 @@ def test_untested_versions_are_flagged(fixture_db):
 
 
 EXPECTED_CHECK_ROWS = [
-    ("open_in_trashed_project", "warning", 1),
+    ("open_in_trashed_project", "warning", 3),
     ("unfiled_open", "warning", 3),
     ("title_hygiene", "warning", 2),
     ("possible_duplicates", "warning", 1),
@@ -163,7 +163,7 @@ def test_counts_match_the_fixture(report_text):
         "Upcoming": 1,
         "Anytime": 18,
         "Someday": 4,
-        "Open, in a trashed project": 1,
+        "Open, in a trashed project": 3,
         "Completed to-dos": 5,
         "Cancelled to-dos": 1,
         "Trashed to-dos": 1,

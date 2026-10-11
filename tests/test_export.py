@@ -119,7 +119,7 @@ def test_counts(exported):
     assert len(exported["areas"]) == 2
     assert len(exported["projects"]) == 7
     assert len(exported["headings"]) == 3
-    assert len(exported["tasks"]) == 37  # every to-do, open or not; no templates
+    assert len(exported["tasks"]) == 39  # every to-do, open or not; no templates
     assert len(exported["recurring_templates"]) == 25  # trashed one ignored
 
 
@@ -286,9 +286,9 @@ def test_cli_writes_the_export(fixture_db, tmp_path, capsys, no_real_app):
     assert data["export_schema_version"] == "1.1"
     assert data["environment"]["database_version"] == 29
     assert data["environment"]["things_version"] is None
-    assert len(data["tasks"]) == 37
+    assert len(data["tasks"]) == 39
     captured = capsys.readouterr()
-    assert "Exported 37 tasks" in captured.out
+    assert "Exported 39 tasks" in captured.out
     assert "personal task data" in captured.err
 
 
@@ -414,7 +414,7 @@ def test_export_findings_equal_check_json_findings(fixture_db, exported, capsys)
     assert cli.main(["--db", str(fixture_db), "check", "--json"]) == 1
     from_check = json.loads(capsys.readouterr().out)["findings"]
     assert exported["findings"] == from_check
-    assert len(from_check) == 17
+    assert len(from_check) == 19
 
 
 def test_export_findings_have_ids_and_no_titles(exported):
@@ -501,7 +501,7 @@ def test_checks_run_lists_every_check_in_registry_order(exported):
         assert entry["severity"] == CHECKS[entry["check"]].SEVERITY
         counted = sum(f["check"] == entry["check"] for f in exported["findings"])
         assert entry["findings"] == counted
-    assert sum(c["findings"] for c in exported["checks_run"]) == 17
+    assert sum(c["findings"] for c in exported["checks_run"]) == 19
 
 
 def test_checks_run_keeps_a_check_with_zero_findings(fixture_db):

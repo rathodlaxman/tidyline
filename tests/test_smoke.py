@@ -107,7 +107,7 @@ def test_export(entry_point, env, fixture_db, tmp_path):
     assert stat.S_IMODE(out.stat().st_mode) == 0o600
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["export_schema_version"] == "1.1"
-    assert len(data["tasks"]) == 37
+    assert len(data["tasks"]) == 39
     assert "personal task data" in result.stderr
 
 

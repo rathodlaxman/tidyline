@@ -302,7 +302,7 @@ def test_task_rows(fixture_db):
     assert measure["checklist_count"] == 2
     assert (measure["created"], measure["modified"]) == ("2026-09-10", "2026-10-09")
     trashed = [t for t in tasks.values() if t["in_trashed_project"]]
-    assert [t["project"]["id"] for t in trashed] == [U("proj_trashed")]
+    assert [t["project"]["id"] for t in trashed] == [U("proj_trashed")] * 3
 
 
 def test_headings_only_for_listed_projects(fixture_db):

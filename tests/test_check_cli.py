@@ -8,6 +8,7 @@ from checks_helpers import U, edit
 
 from tidyline import cli
 from tidyline.checks import CHECK_IDS
+from tidyline.render.check_out import FIXING_GUIDE_URL
 
 
 @pytest.fixture(autouse=True)
@@ -23,13 +24,16 @@ def test_text_output_groups_by_check_and_shows_titles(fixture_db, capsys):
     assert run(fixture_db) == 1
     out = capsys.readouterr().out
     assert out.startswith(
-        "tidyline check: 10 checks, 17 findings (14 warnings, 3 info)"
+        "tidyline check: 10 checks, 19 findings (16 warnings, 3 info)"
     )
-    headers = re.findall(r"^(\w+) \((?:warning|info)\): \d+$", out, re.M)
+    headers = re.findall(r"^(\w+) \((?:warning|info), \d+ findings?\)$", out, re.M)
     assert headers == list(CHECK_IDS)
+    assert "open_in_trashed_project (warning, 3 findings)\n" in out
+    assert "possible_duplicates (warning, 1 finding)\n" in out
+    assert out.endswith(f"How to fix these: {FIXING_GUIDE_URL}\n")
     assert '      to-do    "Pay the electricity bill"' in out
     assert '      to-do    "Reconcile  receipts ·"' in out  # whitespace kept
-    assert '      project  "Old Newsletter"' in out
+    assert '  "Old Newsletter" (project, 3 open to-dos)' in out
 
 
 def test_json_output_has_ids_and_no_titles(fixture_db, capsys):
@@ -39,7 +43,7 @@ def test_json_output_has_ids_and_no_titles(fixture_db, capsys):
     assert list(data) == ["check_schema_version", "checks", "summary", "findings"]
     assert data["check_schema_version"] == "1"
     assert data["checks"] == list(CHECK_IDS)
-    assert data["summary"] == {"warning": 14, "info": 3}
+    assert data["summary"] == {"warning": 16, "info": 3}
     duplicate = [f for f in data["findings"] if f["check"] == "possible_duplicates"]
     assert duplicate == [
         {
@@ -76,7 +80,7 @@ def test_exit_0_when_no_warning(fixture_db, capsys):
     edit(fixture_db, ("UPDATE TMTask SET trashed = 1 WHERE uuid = ?", (U("t_dup_b"),)))
     assert run(fixture_db, "--only", "possible_duplicates") == 0
     out = capsys.readouterr().out
-    assert "possible_duplicates (warning): 0\n  none" in out
+    assert "possible_duplicates (warning, 0 findings)\n" in out
 
 
 def test_patterns_shown_on_screen_but_not_in_json(fixture_db, capsys):
@@ -150,7 +154,7 @@ def test_info_only_exits_0(fixture_db, capsys):
     assert run(fixture_db, "--only", *only) == 0
     out = capsys.readouterr().out
     assert out.startswith("tidyline check: 3 checks, 3 findings (0 warnings, 3 info)")
-    assert "leftover_templates (info): 1" in out
+    assert "leftover_templates (info, 1 finding)" in out
     assert '      template "Send the newsletter"' in out
     assert run(fixture_db, "--only", *only, "--json") == 0
     data = json.loads(capsys.readouterr().out)
@@ -198,3 +202,46 @@ def test_json_output_is_unchanged_by_the_link(fixture_db, capsys):
         "findings",
     ]
     assert out == json.dumps(json.loads(out), indent=2, ensure_ascii=False) + "\n"
+
+
+def test_text_groups_open_to_dos_under_their_trashed_project(fixture_db, capsys):
+    run(fixture_db)
+    out = capsys.readouterr().out
+    block = out.split("open_in_trashed_project (warning, 3 findings)\n")[1]
+    block = block.split("\n\n")[0].splitlines()[1:]  # skip the underline
+    assert block == [
+        '  "Old Newsletter" (project, 3 open to-dos)',
+        '      "Draft newsletter issue 3"',
+        '      "Plan newsletter issue 4"',
+        '      "Send the proofs for review"',
+    ]
+    assert out.count('"Old Newsletter"') == 1
+
+
+def test_text_groups_by_heading_when_the_heading_is_trashed(fixture_db, capsys):
+    edit(
+        fixture_db,
+        ("UPDATE TMTask SET trashed = 1 WHERE uuid = ?", (U("head_plan"),)),
+    )
+    run(fixture_db)
+    out = capsys.readouterr().out
+    assert "(heading, 2 open to-dos)\n" in out
+    assert "(project, 3 open to-dos)\n" in out
+
+
+def test_text_output_with_one_check_and_no_findings(fixture_db, capsys):
+    edit(
+        fixture_db,
+        *(
+            ("UPDATE TMTask SET status = 3 WHERE uuid = ?", (U(key),))
+            for key in (
+                "t_in_trashed_project",
+                "t_in_trashed_two",
+                "t_in_trashed_three",
+            )
+        ),
+    )
+    run(fixture_db, "--only", "open_in_trashed_project")
+    out = capsys.readouterr().out
+    assert "open_in_trashed_project (warning, 0 findings)\n" in out
+    assert "  none\n" in out

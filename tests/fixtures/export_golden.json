@@ -1124,6 +1124,60 @@
       "recurrence": null
     },
     {
+      "id": "4FWTBqe2zIDwZtWSHHGWXa",
+      "title": "Plan newsletter issue 4",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "0BRXWMOqSXexzIxvtDFVPA",
+        "title": "Old Newsletter"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "created": "2026-09-10",
+      "modified": "2026-10-09",
+      "tags": [],
+      "checklist": [],
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
+      "id": "qbujogBVSNFmzDvIpEq5KC",
+      "title": "Send the proofs for review",
+      "notes": null,
+      "area": null,
+      "project": {
+        "id": "0BRXWMOqSXexzIxvtDFVPA",
+        "title": "Old Newsletter"
+      },
+      "heading": null,
+      "effective_status": "anytime",
+      "start": "anytime",
+      "start_code": 1,
+      "start_date": null,
+      "deadline": null,
+      "status": "open",
+      "status_code": 0,
+      "trashed": false,
+      "completion_date": null,
+      "created": "2026-09-10",
+      "modified": "2026-10-09",
+      "tags": [],
+      "checklist": [],
+      "checklist_count": 0,
+      "recurring_template": null,
+      "recurrence": null
+    },
+    {
       "id": "WYXwlgPSBotgDxFB2efa8s",
       "title": "Pack the kitchen",
       "notes": null,
@@ -2354,7 +2408,7 @@
     {
       "check": "open_in_trashed_project",
       "severity": "warning",
-      "findings": 1
+      "findings": 3
     },
     {
       "check": "unfiled_open",
@@ -2411,6 +2465,36 @@
         {
           "kind": "task",
           "id": "I0M9dXG5x35F71zvT51f8I"
+        },
+        {
+          "kind": "project",
+          "id": "0BRXWMOqSXexzIxvtDFVPA"
+        }
+      ]
+    },
+    {
+      "check": "open_in_trashed_project",
+      "severity": "warning",
+      "message": "open to-do inside a trashed project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "4FWTBqe2zIDwZtWSHHGWXa"
+        },
+        {
+          "kind": "project",
+          "id": "0BRXWMOqSXexzIxvtDFVPA"
+        }
+      ]
+    },
+    {
+      "check": "open_in_trashed_project",
+      "severity": "warning",
+      "message": "open to-do inside a trashed project",
+      "refs": [
+        {
+          "kind": "task",
+          "id": "qbujogBVSNFmzDvIpEq5KC"
         },
         {
           "kind": "project",

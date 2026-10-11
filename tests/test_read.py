@@ -57,7 +57,7 @@ def test_counts_match_the_fixture(snapshot):
     assert len(snapshot.templates) == 25
     assert len(snapshot.instances) == 5  # 3 open, 2 completed
     # 29 open (FIXTURE_EXPECTATIONS), 1 in the trashed project, 7 closed or trashed
-    assert len(snapshot.todos) == bf.FIXTURE_EXPECTATIONS["open_todos"] + 1 + 7 == 37
+    assert len(snapshot.todos) == bf.FIXTURE_EXPECTATIONS["open_todos"] + 1 + 9 == 39
     assert snapshot.warnings == ()
 
 

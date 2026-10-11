@@ -24,6 +24,7 @@ KIND_LABELS = {
     "heading": "heading",
     "template": "template",
 }
+GROUPED_CHECK = "open_in_trashed_project"
 USER_PATTERN = re.compile(r"matches user pattern (\d+)")
 
 
@@ -81,19 +82,59 @@ def check_text(
     ]
     for check in checks:
         found = [f for f in findings if f.check == check]
-        lines.append("")
-        lines.append(f"{check} ({CHECKS[check].SEVERITY}): {len(found)}")
+        heading = f"{check} ({CHECKS[check].SEVERITY}, {_count(len(found), 'finding')})"
+        lines += ["", heading, "-" * len(heading)]
         if not found:
             lines.append("  none")
-        for finding in found:
-            lines.append(f"  - {_with_patterns(finding.message, patterns)}")
-            for ref in finding.refs:
-                title = titles.get(ref.id)
-                shown = f'"{safe_title(title)}"' if title is not None else "(not found)"
-                lines.append(f"      {KIND_LABELS[ref.kind]:<9}{shown}")
+        elif check == GROUPED_CHECK:
+            lines += _grouped_by_container(found, titles)
+        else:
+            lines += _one_line_each(found, titles, patterns)
     lines.append("")
     lines.append(f"How to fix these: {FIXING_GUIDE_URL}")
     return "\n".join(lines) + "\n"
+
+
+def _count(number: int, noun: str) -> str:
+    return f"{number} {noun}" + ("" if number == 1 else "s")
+
+
+def _shown(ref_id: str, titles: dict[str, str]) -> str:
+    title = titles.get(ref_id)
+    return f'"{safe_title(title)}"' if title is not None else "(not found)"
+
+
+def _one_line_each(
+    found: Sequence[Finding], titles: dict[str, str], patterns: Sequence[str]
+) -> list[str]:
+    lines = []
+    for finding in found:
+        lines.append(f"  - {_with_patterns(finding.message, patterns)}")
+        for ref in finding.refs:
+            lines.append(f"      {KIND_LABELS[ref.kind]:<9}{_shown(ref.id, titles)}")
+    return lines
+
+
+def _grouped_by_container(
+    found: Sequence[Finding], titles: dict[str, str]
+) -> list[str]:
+    """One block per trashed project (or heading), its open to-dos beneath it.
+    Each finding's refs are the to-do, then the trashed container."""
+    groups: dict[str, list[Finding]] = {}
+    kinds: dict[str, str] = {}
+    for finding in found:
+        container = finding.refs[1]
+        groups.setdefault(container.id, []).append(finding)
+        kinds[container.id] = KIND_LABELS[container.kind]
+    lines = []
+    for container_id, members in groups.items():
+        lines.append(
+            f"  {_shown(container_id, titles)} "
+            f"({kinds[container_id]}, {_count(len(members), 'open to-do')})"
+        )
+        for finding in members:
+            lines.append(f"      {_shown(finding.refs[0].id, titles)}")
+    return lines
 
 
 def safe_title(text: str) -> str:

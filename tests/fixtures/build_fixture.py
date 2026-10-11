@@ -631,6 +631,8 @@ def build_fixture(path: Path, today: dt.date) -> dict[str, str]:
             "Draft newsletter issue 3",
             project="proj_trashed",
         )
+        todo("t_in_trashed_two", "Plan newsletter issue 4", project="proj_trashed")
+        todo("t_in_trashed_three", "Send the proofs for review", project="proj_trashed")
         todo("t_in_done_project", "Pack the kitchen", heading="head_done", status=3)
         todo("t_photos_done", "Sort 2019 folder", project="proj_photos", status=3)
 
