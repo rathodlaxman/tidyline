@@ -1,6 +1,6 @@
 [project]
 name = "tidyline"
-version = "0.2.0"
+version = "0.2.1"
 description = "Offline, read-only audit of a Things 3 database on macOS."
 readme = "README.md"
 license = "MIT"

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.1 - 2026-10-11
+
 - `decode` is easier to read: bare codes such as `k3f7az` are replaced when
   they match one item, titles go in quotes, long titles are cut to 80
   characters, `|` is escaped in table rows, and titles shared by open items get
@@ -15,8 +17,16 @@
 - `exported_at` and every date derived from it use local time with its UTC
   offset, in both `export` and `prompt`.
 - `report` shows recurring-template counts only (live, leftover, recognised,
-  assumed, and not recognised when there are any); no template title appears. `recurrence` shows
-  the titles.
+  assumed, and not recognised when there are any); no template title appears.
+  `recurrence` shows the titles.
+- The audit prompt is revised for the new payload: it asks for a "Start here"
+  section first, full item names, one item per table row, a short answer (at
+  most 40 migration rows), and numbers only from the data, and it explains the
+  `summary`, `checks_run` and `created`/`modified` fields.
+- Corrected statements about `check` output: the text output lists real titles
+  on your own screen, so it is personal data; `check --json` has ids and fixed
+  messages only, and `report` is counts only. The README, DESIGN and both guides
+  now say so.
 - The example label in the prompt, preview, README and design notes is now
   `Task k3f7az`; the old example contained a digit that real labels never have.
 - Two guides: `docs/GETTING_STARTED.md` (for people new to the command line) and
