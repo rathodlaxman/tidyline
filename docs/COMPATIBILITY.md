@@ -55,6 +55,10 @@ automated tests, and no real data is stored in the repository.
 
 tidyline warns when it runs against a version it has not been tested with.
 
+## Things 3.23 and repeating to-dos
+
+Cultured Code changed how repeating to-dos behave in Things 3.23 (August 2026; source: https://culturedcode.com/things/blog/2026/08/repeating-to-dos-refined/, read 2026-10-11). tidyline's recurrence reading was checked on Things 3.24.1, which is after that change. Earlier versions were not tested.
+
 ## The prompt and decode flow
 
 The prompt and decode flow has been tried once each with two AI assistants on one real database. Answers differ between assistants and between runs and can contain mistakes. Check the numbers against `tidyline report` and check any change before making it in Things.

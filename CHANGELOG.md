@@ -29,6 +29,9 @@
   which can still reach the answer. The compatibility note records one test in
   which the answer used the user's first name, likely from the chat app's
   profile.
+- Compatibility note: Cultured Code changed how repeating to-dos behave in
+  Things 3.23 (August 2026). tidyline's recurrence reading was checked on Things
+  3.24.1, which is after that change; earlier versions were not tested.
 
 ## 0.2.0
 
