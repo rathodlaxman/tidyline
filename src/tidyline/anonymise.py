@@ -242,6 +242,62 @@ def _rewrite(
                     item["title"] = scrub(item["title"])
 
 
+# --- the prompt payload ----
+
+PAYLOAD_LISTS = (
+    ("areas", "area"),
+    ("projects", "project"),
+    ("headings", "heading"),
+    ("tasks", "task"),
+    ("tags", "tag"),
+    ("recurring_templates", "template"),
+)
+
+
+def anonymise_payload(
+    payload: dict[str, Any],
+    level: str,
+    labels: dict[str, dict[str, str]] | None = None,
+) -> dict[str, Any]:
+    """Return a new prompt payload at `light` or `strict`, by the same rules as
+    the export. At strict, `labels` (kind -> {id: label}) must cover the whole
+    database, as `decode.labels_by_kind` does, so that `decode` maps them back.
+    The input is not changed."""
+    if level not in ("light", "strict"):
+        raise ValueError(f"the payload must be light or strict, not {level!r}")
+    if level == "strict" and labels is None:
+        raise ValueError("strict needs labels for the whole database")
+    strict = level == "strict"
+    if strict:
+        assert labels is not None
+
+        def title_for(kind: str, ref: dict[str, Any]) -> str | None:
+            return labels[kind].get(ref["id"])
+    else:
+
+        def title_for(kind: str, ref: dict[str, Any]) -> str | None:
+            return scrub(ref.get("title"))
+
+    result = copy.deepcopy(payload)
+    result["anonymisation"] = level
+    for key, kind in PAYLOAD_LISTS:
+        for entry in result[key]:
+            entry["title"] = title_for(kind, entry)
+            if "notes" in entry:
+                entry["notes"] = None
+            for ref_kind, ref in _refs(entry):
+                if ref.get("title") is not None or strict:
+                    ref["title"] = title_for(ref_kind, ref)
+            if entry.get("recurrence"):
+                entry["recurrence"] = _clean_recurrence(
+                    entry["recurrence"], strict=strict
+                )
+    result["data_read_warnings"] = [
+        _clean_warning(w) for w in result.get("data_read_warnings", [])
+    ]
+    return result
+
+
 # --- technical fields ----
 
 _QUOTED = re.compile(r"""[bB]?(['"])(?:\\.|(?!\1).)*\1""")

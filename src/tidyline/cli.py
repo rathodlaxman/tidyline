@@ -23,8 +23,10 @@ from tidyline.db.schema import (
 )
 from tidyline.db.snapshot import SnapshotError, open_snapshot
 from tidyline.decode import decode_text, label_map
+from tidyline.llm.payload import build_payload
 from tidyline.llm.prompt import (
     KEPT,
+    LEFT_OUT,
     PAYLOAD_FILE,
     PROMPT_FILE,
     ContextError,
@@ -464,21 +466,12 @@ def prompt(args: argparse.Namespace) -> int:
     loaded = _load(args)
     if loaded is None:
         return EXIT_FAILURE
-    snapshot, schema_report, macos, things = loaded
-    payload = anonymise(
-        build_export(
-            snapshot,
-            today=dt.date.today(),
-            exported_at=dt.datetime.now(dt.timezone.utc).replace(microsecond=0),
-            tool_version=__version__,
-            environment={
-                "macos": macos,
-                "arch": platform.machine() or None,
-                "things_version": things,
-                "database_version": schema_report.database_version,
-            },
-        ),
-        args.anonymise,
+    snapshot = loaded[0]
+    payload = build_payload(
+        snapshot,
+        today=dt.date.today(),
+        exported_at=dt.datetime.now().astimezone().replace(microsecond=0),
+        level=args.anonymise,
     )
     result = build_prompt(payload, context)
 
@@ -615,6 +608,8 @@ def _prompt_preview(result, args, context, written, copied) -> str:
     lines.append("Removed or replaced at this level:")
     lines += [f"  - {item}" for item in result.removed]
     lines.append(f"Kept: {KEPT}")
+    lines.append("Left out (counted in the summary only):")
+    lines += [f"  - {item}" for item in LEFT_OUT]
     lines.append("")
     if context is not None:
         lines.append(f"Context from {args.context} (sent exactly as written):")

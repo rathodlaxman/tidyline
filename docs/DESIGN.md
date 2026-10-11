@@ -46,6 +46,8 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-11 | v0.2 release: the author shown on PyPI is the name only, with no email. Releases are uploaded by hand with `uv publish` using a project-scoped token. TestPyPI is used first. |
 | 2026-10-11 | `export_schema_version` 1.1 (additive): projects, headings and to-dos gain `created` and `modified` (`creationDate` and `userModificationDate` as ISO dates in the timezone of `exported_at`, null when absent); the export gains `checks_run`, one `{check, severity, findings}` entry per check in registry order, including checks with 0 findings. |
 | 2026-10-11 | The raw recurrence timestamps `ed`, `ia` and `sr` are withheld (null) at `strict`; `light` keeps them. `recurrence.text` is unchanged at every level. |
+| 2026-10-11 | The `prompt` payload is no longer the anonymised export. It holds open work only, plus a precomputed `summary` and `checks_run` (section 7.6), so the assistant does not count rows itself. Completed, cancelled and trashed to-dos, and completed or trashed projects that hold no open to-dos, are counted in the summary only. It is anonymised by the same rules and labels as the export, so `decode` still works. |
+| 2026-10-11 | In the `prompt` payload, the export's `warnings` are renamed `data_read_warnings`, so they are not read as problems with the user's system. |
 
 ## 4. Tested environment
 
@@ -220,6 +222,41 @@ Known limits of `decode`:
 - Only whole labels are replaced: a letter or digit next to a label means it is part of a longer word. Replacement is one pass, so a title that looks like a label is never replaced again.
 - Titles go in exactly as stored, without escaping. A title containing `|` splits a markdown table cell; `*` or a backtick can start emphasis or code.
 
+### 7.6 Prompt payload
+
+`prompt` writes this payload, not the export. It is built from the same snapshot and export entries, and anonymised by the same rules (7.5) and the same id-derived labels, so `decode` maps strict labels back.
+
+```
+{
+  "payload_schema_version": "1",
+  "anonymisation": "light | strict",
+  "exported_at": "...",
+  "scope": "Open work only: ...",
+  "summary": {...},
+  "areas": [...], "projects": [...], "headings": [...], "tasks": [...],
+  "tags": [...], "recurring_templates": [...],
+  "checks_run": [...], "findings": [...], "data_read_warnings": [...]
+}
+```
+
+Definitions:
+- An open to-do is a to-do (not a template) that is not completed, cancelled or trashed. It is in a trashed project when its project or heading is trashed. `open_todos` and `by_status` count open to-dos not in a trashed project; `open_in_trashed_project` counts the others.
+- A completed to-do has status completed and is not trashed; cancelled to-dos are not counted. The 14- and 30-day windows end on the local date of `exported_at`, that day included.
+- A to-do counts towards an area through its own area, or else its project's area. The task row's `area` stays the to-do's own column (7.4).
+- `by_status` has `inbox`, `today`, `this_evening`, `upcoming`, `anytime` and `someday` (7.1).
+
+Contents:
+- `summary`: `open_todos`, `by_status`, `open_in_trashed_project`, `areas` (count), `projects` {`open`, `someday`, `active`, `completed`, `trashed`}, `completed_todos` {`total`, `last_14_days`, `last_30_days`}, `recurring_templates` {`live`, `leftover`}, `tagged_open_todos`. `open` is `active` plus `someday` (untrashed, status open); `completed` counts untrashed completed projects; `trashed` counts trashed projects of any status.
+- `areas`: id, title, `open_projects`, `open_todos`, `by_status`, `completed_last_14_days`, `completed_last_30_days`, `completed_total`.
+- `projects`: open, untrashed projects, plus any other project that still holds an open to-do. Each has id, title, area, `state` (`active` or `someday`, from its start), deadline, created, modified, `open_todos`, `by_status`, `headings` and `empty_headings` (open, untrashed headings, and those with no open to-do), `live_templates`, `completed_last_30_days`, `completed_total`, `trashed`.
+- `headings`: open, untrashed headings of listed projects: id, title, project, `open_todos`.
+- `tasks`: open to-dos only, including those in a trashed project. Each has id, title, notes (null), area, project, heading, `effective_status`, start date, deadline, created, modified, tags (`{id, title}`), `checklist_count`, recurrence, `in_trashed_project`. No checklist items.
+- `tags`: id, title, `open_todos`, `completed_total`.
+- `recurring_templates`: the export's entries without notes; `instances` lists open instances only.
+- `checks_run` and `findings` as in the export; `data_read_warnings` is the export's `warnings`.
+
+No completed, cancelled or trashed to-do appears as a row or an id anywhere in the payload. The preview says what was left out and that it is counted in the summary only.
+
 ## 8. Architecture
 
 ```
@@ -237,6 +274,7 @@ src/tidyline/
   render/json_out.py  export (7.4)
   render/text.py      text report
   render/html/        v0.3
+  llm/payload.py      the open-work payload for `prompt` (7.6)
   llm/prompt.py       v0.2: fill the audit template, write payload and prompt
   llm/ollama.py       v0.4
   llm/cloud.py        v0.4
@@ -259,7 +297,7 @@ The core returns data and never prints. The CLI only parses options and calls th
 | `check` | Health checks only; exit code 1 if any warning | `--only`, `--json` |
 | `export` | JSON export | `--out`, `--anonymise {none,light,strict}` |
 | `recurrence` | List every repeating template with its readable rule, so it can be checked against what Things shows: one block per template (rule text or "not recognised", title, project or area, state live / leftover / not recognised) sorted by state, rule text and id, then a summary line. Exit 0 even when rules are not recognised. `--raw` adds the rule as stored (XML text, or hex and length for a binary plist), the decoded fields and, for an unrecognised rule, the reason, after a personal-data warning line. | `--raw`, `--db` |
-| `prompt` | Level 0: anonymised payload plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--out DIR`, `--copy` |
+| `prompt` | Level 0: anonymised open-work payload (7.6) plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--out DIR`, `--copy` |
 | `decode` | Replace strict labels (`Task k3f9az`) in an LLM answer with the real titles from the current database. Reads the answer from a UTF-8 file of at most 5 MB; writes the decoded text to stdout, or to `--out` (mode 0600, never overwrites). A summary (labels replaced, distinct, unmatched; never titles) and a personal-data warning go to stderr. | `ANSWER_FILE`, `--out FILE`, `--db` |
 | `ask` | v0.4: levels 1 and 2, after preview and confirmation | `--provider`, `--model`, `--yes` |
 

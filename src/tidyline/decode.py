@@ -36,6 +36,25 @@ class DecodeResult:
 
 def label_map(snapshot: Snapshot) -> dict[str, str]:
     """label -> stored title, for every item the strict export labels."""
+    ids, titles = _ids_and_titles(snapshot)
+    result = {}
+    for kind, kind_ids in ids.items():
+        for uuid, label in make_labels(kind, kind_ids).items():
+            if (kind, uuid) in titles:
+                result[label] = titles[kind, uuid]
+    return result
+
+
+def labels_by_kind(snapshot: Snapshot) -> dict[str, dict[str, str]]:
+    """kind -> {id: label}, grouped exactly as `label_map` groups them, so a
+    payload labelled with these decodes with `label_map`."""
+    ids, _ = _ids_and_titles(snapshot)
+    return {kind: make_labels(kind, kind_ids) for kind, kind_ids in ids.items()}
+
+
+def _ids_and_titles(
+    snapshot: Snapshot,
+) -> tuple[dict[str, set[str]], dict[tuple[str, str], str]]:
     ids: dict[str, set[str]] = {
         kind: set()
         for kind in ("area", "project", "heading", "task", "tag", "template")
@@ -72,13 +91,7 @@ def label_map(snapshot: Snapshot) -> dict[str, str]:
             add("template", item.recurrence_template_uuid)
             for tag in item.tag_uuids:
                 add("tag", tag)
-
-    result = {}
-    for kind, kind_ids in ids.items():
-        for uuid, label in make_labels(kind, kind_ids).items():
-            if (kind, uuid) in titles:
-                result[label] = titles[kind, uuid]
-    return result
+    return ids, titles
 
 
 def decode_text(text: str, labels: Mapping[str, str]) -> DecodeResult:

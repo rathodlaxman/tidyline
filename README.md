@@ -148,11 +148,14 @@ tidyline prompt --context my-context.txt --out ~/tidyline-out/prompt
   `Priorities:` and `Dates:`. It is added to the prompt exactly as you wrote it.
   A section you leave out stays as a visible placeholder, and the preview warns
   you.
-- `--out DIR` writes `tidyline_payload.json` (the anonymised export) and
-  `tidyline_prompt.md` (the filled prompt). `--copy` puts the prompt on the
-  clipboard with `pbcopy`. With neither option, nothing is written.
+- `--out DIR` writes `tidyline_payload.json` (your open work with ready-made
+  counts, anonymised) and `tidyline_prompt.md` (the filled prompt). `--copy`
+  puts the prompt on the clipboard with `pbcopy`. With neither option, nothing
+  is written.
+- The payload holds open work only. Completed, cancelled and trashed to-dos,
+  and completed or trashed projects, appear only as counts in its summary.
 - `prompt` always prints a preview first: the level, the counts, what was
-  removed or replaced, and your context text. The last line says nothing has
+  removed or replaced, what was left out, and your context text. The last line says nothing has
   been sent anywhere.
 - The text report is never part of the output.
 

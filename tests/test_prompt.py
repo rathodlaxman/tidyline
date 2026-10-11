@@ -17,9 +17,9 @@ import pytest
 from fixtures import build_fixture as bf
 
 from tidyline import cli
-from tidyline.anonymise import anonymise
 from tidyline.db.snapshot import open_snapshot
 from tidyline.llm import prompt as prompt_module
+from tidyline.llm.payload import build_payload
 from tidyline.llm.prompt import (
     CONTEXT_FIELDS,
     PART5_BODIES,
@@ -30,7 +30,6 @@ from tidyline.llm.prompt import (
     parse_context,
 )
 from tidyline.read import read_snapshot
-from tidyline.render.json_out import build_export
 
 U = bf.make_uuid
 FAKE_PII = (
@@ -81,14 +80,12 @@ def fold(text):
 def payload_of(path, level):
     with open_snapshot(path) as copy:
         snapshot = read_snapshot(copy)
-    export = build_export(
+    return build_payload(
         snapshot,
         today=dt.date(2026, 10, 10),
         exported_at=dt.datetime(2026, 10, 10, 12, tzinfo=dt.timezone.utc),
-        tool_version="test",
-        environment={},
+        level=level,
     )
-    return anonymise(export, level)
 
 
 def stored_strings(path):
@@ -238,7 +235,7 @@ def test_context_braces_are_not_treated_as_tokens(fixture_db):
 
 
 def test_none_payload_is_refused(fixture_db):
-    payload = payload_of(fixture_db, "none")
+    payload = {**payload_of(fixture_db, "strict"), "anonymisation": "none"}
     with pytest.raises(ValueError, match="anonymised"):
         build_prompt(payload)
 
@@ -314,9 +311,14 @@ def test_preview_without_out_or_copy_writes_nothing(fixture_db, tmp_path, capsys
     out = capsys.readouterr().out
     assert "Anonymisation: strict" in out
     assert (
-        "Payload counts: 2 areas, 7 projects, 3 headings, 37 tasks, "
+        "Payload counts: 2 areas, 6 projects, 2 headings, 30 open to-dos, 2 tags, "
         "25 recurring templates, 17 findings" in out
     )
+    assert (
+        "Left out (counted in the summary only):\n"
+        "  - completed, cancelled and trashed to-dos\n"
+        "  - completed and trashed projects, unless they still hold open to-dos\n"
+    ) in out
     assert "notes removed" in out
     assert "warning: these placeholders stay visible" in out
     assert "Nothing was written." in out

@@ -2,8 +2,8 @@
 
 Offline and pure: the only I/O is reading the packaged template through
 importlib.resources. Nothing here prints, reads the clock or opens a socket.
-The payload must already be anonymised (`light` or `strict`); the text report
-is never part of the output.
+The payload (`llm/payload.py`) must already be anonymised (`light` or
+`strict`); the text report is never part of the output.
 """
 
 from __future__ import annotations
@@ -70,6 +70,7 @@ REMOVED = {
         "notes removed",
         "checklist items replaced by a count",
         "free text in raw recurrence rules and read warnings replaced",
+        "raw recurrence timestamps (ed, ia, sr) withheld",
     ),
     "light": (
         "emails, phone numbers, URLs, money amounts and long numbers in titles "
@@ -78,7 +79,11 @@ REMOVED = {
         "free text in raw recurrence rules and read warnings replaced",
     ),
 }
-KEPT = "ids, structure, dates, status fields, recurrence text and findings"
+KEPT = "ids, structure, dates, effective status, recurrence text, counts and findings"
+LEFT_OUT = (
+    "completed, cancelled and trashed to-dos",
+    "completed and trashed projects, unless they still hold open to-dos",
+)
 
 _TOKEN = re.compile(r"\{\{([A-Z0-9_]+)\}\}")
 _LABEL = re.compile(r"^([A-Za-z]+)[ \t]*:(.*)$")
@@ -200,7 +205,8 @@ def build_prompt(
         "areas": len(payload["areas"]),
         "projects": len(payload["projects"]),
         "headings": len(payload["headings"]),
-        "tasks": len(payload["tasks"]),
+        "open to-dos": len(payload["tasks"]),
+        "tags": len(payload["tags"]),
         "recurring templates": len(payload["recurring_templates"]),
         "findings": len(payload["findings"]),
     }
