@@ -36,6 +36,7 @@ from tidyline.llm.prompt import (
 )
 from tidyline.read import ReadError, read_snapshot
 from tidyline.render.check_out import check_json, check_text
+from tidyline.render.help_out import render_help
 from tidyline.render.json_out import build_export
 from tidyline.render.recurrence_out import render_recurrence
 from tidyline.render.text import ReportOptions, render_report
@@ -224,7 +225,8 @@ def main(argv: list[str] | None = None) -> int:
         return decode(args)
     if args.command == "recurrence":
         return recurrence(args)
-    parser.print_help()
+    color = not os.environ.get("NO_COLOR") and sys.stdout.isatty()
+    print(render_help(__version__, color=color), end="")
     return 0
 
 

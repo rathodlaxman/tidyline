@@ -6,7 +6,10 @@ import pytest
 from pytest_socket import SocketBlockedError
 
 from tidyline import __version__
-from tidyline.cli import main
+from tidyline.cli import build_parser, main
+from tidyline.render.help_out import COMMANDS, render_help
+
+COMMAND_NAMES = [name for name, _ in COMMANDS]
 
 
 def test_version_flag(capsys):
@@ -16,9 +19,49 @@ def test_version_flag(capsys):
     assert capsys.readouterr().out == f"tidyline {__version__}\n"
 
 
-def test_no_command_prints_help(capsys):
+def test_no_command_prints_the_help_screen(capsys):
     assert main([]) == 0
-    assert "doctor" in capsys.readouterr().out
+    out = capsys.readouterr().out
+    assert out.startswith(f"tidyline {__version__}\n")
+    for command in COMMAND_NAMES:
+        assert f"  {command} " in out
+    assert "\x1b" not in out  # piped, so no colour codes
+    assert max(len(line) for line in out.splitlines()) <= 80
+    assert "New here? Run tidyline doctor, then tidyline report." in out
+    assert "Nothing is sent anywhere." in out
+    assert (
+        "Show them on screen or in the file: check, recurrence, export, decode." in out
+    )
+    assert "Never show them: report, check --json." in out
+    assert "docs/GETTING_STARTED.md" in out
+
+
+def test_help_screen_uses_colour_only_when_asked():
+    assert "\x1b[1m" in render_help("9.9", color=True)
+    assert "\x1b" not in render_help("9.9")
+
+
+def test_help_screen_colour_follows_terminal_and_no_color(capsys, monkeypatch):
+    monkeypatch.setattr(sys.stdout, "isatty", lambda: True, raising=False)
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    assert main([]) == 0
+    assert "\x1b[1m" in capsys.readouterr().out
+    monkeypatch.setenv("NO_COLOR", "1")
+    assert main([]) == 0
+    assert "\x1b" not in capsys.readouterr().out
+
+
+def test_help_flag_is_still_argparse_output(capsys):
+    with pytest.raises(SystemExit) as exit_info:
+        main(["--help"])
+    assert exit_info.value.code == 0
+    assert "usage: tidyline" in capsys.readouterr().out
+
+
+def test_help_screen_lists_every_registered_command():
+    parser = build_parser()
+    action = next(a for a in parser._actions if a.dest == "command")
+    assert set(COMMAND_NAMES) == set(action.choices)
 
 
 def test_sockets_are_blocked():
