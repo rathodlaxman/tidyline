@@ -125,7 +125,7 @@ command for more detail when something fails.
 |---|---|---|
 | `doctor` | Finds the database and checks permissions, schema and versions. | `--db` |
 | `report` | Prints a text summary, or writes it to a new file. | `--out PATH`, `--include-completed`, `--no-color`, `--db` |
-| `check` | Runs the health checks. The text output has a heading per check, and open to-dos in a trashed project are grouped under their project. | `--only ID [ID ...]`, `--pattern REGEX [REGEX ...]`, `--json`, `--db` |
+| `check` | Runs the health checks. The text output has a heading per check, and the items are grouped by project or area, with a count. | `--only ID [ID ...]`, `--pattern REGEX [REGEX ...]`, `--json`, `--db` |
 | `export` | Writes a JSON export to a new file. | `--out PATH` (required), `--anonymise {none,light,strict}`, `--db` |
 | `recurrence` | Lists every repeating template with its readable rule. | `--raw`, `--db` |
 | `prompt` | Writes an anonymised payload and a filled audit prompt. | `--anonymise {light,strict}`, `--context FILE`, `--out DIR`, `--copy`, `--db` |
@@ -138,6 +138,10 @@ exists. It never creates a chain of folders, never defaults to a location, and
 never changes a folder that already exists (it warns if group or others can read
 it). Do not use a folder that is synced or backed up to a cloud service for these
 files.
+
+Colour is used sparingly (bold, yellow and red from the terminal's own palette)
+and only when the output goes to a terminal. Set `NO_COLOR` to turn it off;
+`report` also has `--no-color`.
 
 Run `tidyline` with no arguments for a short help screen. `tidyline --help`
 gives the full option list.

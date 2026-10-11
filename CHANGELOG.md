@@ -16,6 +16,15 @@
 - Piping output to a command that closes early (for example
   `tidyline check --json | head`) ends quietly, with exit code 0 and no
   traceback.
+- Output is easier to read: the text output of `check` now groups every check
+  by project or area with a count and prints a message that is the same for
+  every finding once; `error:` is red, warnings yellow and privacy notes are
+  set apart with the "Keep it private" sentence in red; the help screen and
+  the `prompt` preview use bold for the lines to notice. Colour appears only
+  on a terminal and never with `NO_COLOR`.
+- The note after `report --out` now says the file holds counts only (it
+  said it contained recurring-task titles, which has not been true since
+  0.2.1). The `decode` warning uses the same "Keep it private" sentence.
 - The last level of an `--out` folder is created for you, readable only by you
   (mode 0700), when its parent exists. tidyline never creates a chain of
   folders, never changes a folder that already exists (it warns if group or

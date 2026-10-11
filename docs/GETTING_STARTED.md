@@ -58,7 +58,7 @@ This prints a summary: how many open to-dos you have, how many are in Inbox, Tod
 tidyline check
 ```
 
-This runs ten health checks. Each finding has a check name and a short message, and the screen lists the items it is about. The guide [FIXING_PROBLEMS.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md) explains each one and how to fix it in Things.
+This runs ten health checks. Each check has a heading with its name, severity and number of findings, and the items it found are listed under it, grouped by project or area where that helps. The guide [FIXING_PROBLEMS.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md) explains each one and how to fix it in Things.
 
 Unlike `report`, the text output of `check` shows the **real titles** of the items, on your own screen only. Do not paste it into a public place. `tidyline check --json` prints ids and fixed messages only, with no titles.
 
