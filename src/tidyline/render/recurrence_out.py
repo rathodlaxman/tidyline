@@ -11,13 +11,18 @@ from __future__ import annotations
 from tidyline.model import Snapshot, Task
 from tidyline.render.check_out import safe_title
 from tidyline.render.style import PLAIN, Style
+from tidyline.report_data import (
+    NOT_RECOGNISED,
+    TEMPLATE_STATES,
+    TemplatePlace,
+    TemplateRow,
+    template_rows,
+)
 
 RAW_WARNING = (
     "Raw rules may contain personal data. Check before pasting them into a "
     "public bug report."
 )
-NOT_RECOGNISED = "not recognised"
-STATES = ("live", "leftover", NOT_RECOGNISED)  # also the sort order
 MAX_RAW_BYTES = 10_000
 RULE_FIELDS = (
     "unit",
@@ -34,78 +39,42 @@ def render_recurrence(
     snapshot: Snapshot, *, raw: bool = False, style: Style = PLAIN
 ) -> str:
     tasks = {task.uuid: task for task in snapshot.tasks}
-    areas = {area.uuid: area.title for area in snapshot.areas}
-    leftovers = set(snapshot.leftover_template_uuids)
-
-    entries = []
-    for template in snapshot.templates:
-        entries.append((_state(template, leftovers), template))
-    entries.sort(
-        key=lambda item: (
-            STATES.index(item[0].split(",")[0]),
-            _headline(item[1]),
-            item[1].uuid,
-        )
-    )
+    rows = template_rows(snapshot)
 
     lines: list[str] = []
     if raw:
         lines += [f"{style.notice('warning:')} {RAW_WARNING}", ""]
-    for state, template in entries:
-        lines += _block(state, template, tasks, areas, raw)
+    for row in rows:
+        lines += _block(row)
+        if raw:
+            lines += _raw_lines(tasks[row.uuid])
         lines.append("")
-    counts = {name: 0 for name in STATES}
-    for state, _ in entries:
-        counts[state.split(",")[0]] += 1
+    counts = {name: 0 for name in TEMPLATE_STATES}
+    for row in rows:
+        counts[row.state.split(",")[0]] += 1
     lines.append(
-        f"{len(entries)} templates, {counts['live']} live, "
+        f"{len(rows)} templates, {counts['live']} live, "
         f"{counts['leftover']} leftover, {counts[NOT_RECOGNISED]} not recognised"
     )
     return "\n".join(lines) + "\n"
 
 
-def _state(template: Task, leftovers: set[str]) -> str:
-    """live, leftover or not recognised; the last wins when more than one applies."""
-    leftover = template.uuid in leftovers
-    if not template.recurrence.recognised:
-        return f"{NOT_RECOGNISED}, leftover" if leftover else NOT_RECOGNISED
-    return "leftover" if leftover else "live"
-
-
-def _headline(template: Task) -> str:
-    """The first line of a block, which is also what the blocks are sorted by."""
-    rule = template.recurrence
-    text = rule.text if rule.recognised else NOT_RECOGNISED
-    return f"{text} (paused)" if template.recurrence_paused else text
-
-
-def _block(state, template, tasks, areas, raw) -> list[str]:
-    lines = [
-        _headline(template),
-        f"  title:  {safe_title(template.title)}",
-        f"  in:     {_place(template, tasks, areas)}",
-        f"  state:  {state}",
+def _block(row: TemplateRow) -> list[str]:
+    return [
+        row.headline,
+        f"  title:  {safe_title(row.title)}",
+        f"  in:     {_place(row.place)}",
+        f"  state:  {row.state}",
     ]
-    if raw:
-        lines += _raw_lines(template)
-    return lines
 
 
-def _place(template: Task, tasks, areas) -> str:
-    project_uuid = template.project_uuid
-    if project_uuid is None and template.heading_uuid is not None:
-        heading = tasks.get(template.heading_uuid)
-        project_uuid = heading.project_uuid if heading else None
-    if project_uuid is not None:
-        project = tasks.get(project_uuid)
-        if project is None:
-            return "project (not found)"
-        trashed = " (trashed)" if project.trashed else ""
-        return f"project {safe_title(project.title)}{trashed}"
-    if template.area_uuid is not None:
-        title = areas.get(template.area_uuid)
-        return f"area {safe_title(title)}" if title is not None else "area (not found)"
-    return "no project or area"
+def _place(place: TemplatePlace) -> str:
+    if place.kind == "none":
+        return "no project or area"
+    if place.title is None:
+        return f"{place.kind} (not found)"
+    trashed = " (trashed)" if place.trashed else ""
+    return f"{place.kind} {safe_title(place.title)}{trashed}"
 
 
 def _raw_lines(template: Task) -> list[str]:

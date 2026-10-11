@@ -324,7 +324,9 @@ src/tidyline/
   read.py             builds a Snapshot (things.py + raw SQL)
   status.py           effective status (7.1)
   recurrence.py       decode and describe rules (7.2)
-  checks/             one module per check, a Finding type and a registry
+  checks/             one module per check, a Finding type and a registry;
+                      checks/groups.py groups findings for reading (text and HTML)
+  report_data.py      the counts, recurrence rows and check sections behind `report`
   anonymise.py        levels (7.5)
   render/json_out.py  export (7.4)
   render/text.py      text report

@@ -3,39 +3,30 @@
 Counts only: no task, project, heading, area or template title appears. The
 recurring-templates section gives counts (`tidyline recurrence` shows the
 titles). The health-check section lists every check with its finding count,
-nothing more; `tidyline check` gives the details.
+nothing more; `tidyline check` gives the details. The numbers come from
+`report_data`, which the HTML report uses too.
 """
 
 from __future__ import annotations
 
 import datetime as dt
 import unicodedata
-from collections import Counter
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from tidyline.checks import CHECKS, run_checks
-from tidyline.model import (
-    STATUS_CANCELLED,
-    STATUS_COMPLETED,
-    Snapshot,
-    Task,
-    TaskKind,
-)
+from tidyline.model import Snapshot
 from tidyline.render.style import Style
-from tidyline.status import Status, effective_status
+from tidyline.report_data import (
+    RECENT_DAYS,
+    STATUS_ORDER,
+    Counts,
+    RecurrenceCounts,
+    ReportData,
+    build_report,
+)
 
 MAX_WARNING_LINES = 20
-RECENT_DAYS = 30
-STATUS_ORDER = (
-    (Status.INBOX, "Inbox"),
-    (Status.TODAY, "Today"),
-    (Status.THIS_EVENING, "This Evening"),
-    (Status.UPCOMING, "Upcoming"),
-    (Status.ANYTIME, "Anytime"),
-    (Status.SOMEDAY, "Someday"),
-)
 
 
 @dataclass(frozen=True)
@@ -55,12 +46,15 @@ def render_report(
     """The report as text. `environment` has macos, things_version,
     database_version and tested (a bool)."""
     options = options or ReportOptions()
+    data = build_report(
+        snapshot, today=today, tool_version=tool_version, environment=environment
+    )
     out = _Writer(options.color)
     _header(out, today, tool_version, environment)
-    _counts(out, snapshot, today, options)
-    _recurrence(out, snapshot)
-    _warnings(out, snapshot)
-    _checks(out, snapshot, today)
+    _counts(out, data.counts, options)
+    _recurrence(out, data.recurrence)
+    _warnings(out, data.warnings)
+    _checks(out, data)
     return out.text()
 
 
@@ -98,80 +92,36 @@ def _header(out, today, tool_version, environment) -> None:
     )
 
 
-def _counts(out, snapshot: Snapshot, today: dt.date, options: ReportOptions) -> None:
-    tasks = {task.uuid: task for task in snapshot.tasks}
-
-    def project_of(task: Task) -> Task | None:
-        owner = task.project_uuid
-        if owner is None and task.heading_uuid is not None:
-            heading = tasks.get(task.heading_uuid)
-            owner = heading.project_uuid if heading else None
-        project = tasks.get(owner) if owner else None
-        return project if project and project.kind is TaskKind.PROJECT else None
-
-    by_status: Counter[Status] = Counter()
-    in_trashed_project = completed = cancelled = trashed = 0
-    completed_recent = completed_old = completed_undated = 0
-    cutoff = today - dt.timedelta(days=RECENT_DAYS)
-    for todo in snapshot.todos:
-        if todo.trashed:
-            trashed += 1
-            continue
-        parent = project_of(todo)
-        state = effective_status(todo, parent, today)
-        if state is Status.CLOSED:
-            if todo.status == STATUS_COMPLETED:
-                completed += 1
-                if todo.stopped is None:
-                    completed_undated += 1
-                elif todo.stopped.date() >= cutoff:
-                    completed_recent += 1
-                else:
-                    completed_old += 1
-            elif todo.status == STATUS_CANCELLED:
-                cancelled += 1
-        elif parent is not None and parent.trashed:
-            in_trashed_project += 1  # hidden in the app; not an open to-do
-        else:
-            by_status[state] += 1
-
-    projects = snapshot.projects
+def _counts(out, counts: Counts, options: ReportOptions) -> None:
     out.heading("Counts")
-    out.row("Areas", len(snapshot.areas))
-    out.row("Projects (open)", sum(1 for p in projects if _is_live(p)))
-    out.row("Open to-dos", sum(by_status.values()))
-    for state, label in STATUS_ORDER:
-        out.row(label, by_status[state], indent=2)
-    out.row("Open, in a trashed project", in_trashed_project)
-    out.row("Completed to-dos", completed)
-    out.row("Cancelled to-dos", cancelled)
-    out.row("Trashed to-dos", trashed)
+    out.row("Areas", counts.areas)
+    out.row("Projects (open)", counts.open_projects)
+    out.row("Open to-dos", counts.open_todos)
+    labels = dict(STATUS_ORDER)
+    for state, number in counts.by_status:
+        out.row(labels[state], number, indent=2)
+    out.row("Open, in a trashed project", counts.open_in_trashed_project)
+    out.row("Completed to-dos", counts.completed)
+    out.row("Cancelled to-dos", counts.cancelled)
+    out.row("Trashed to-dos", counts.trashed)
 
     if options.include_completed:
         out.line()
         out.line("Closed items")
-        out.row(f"Completed in last {RECENT_DAYS} days", completed_recent, indent=2)
-        out.row("Completed earlier", completed_old, indent=2)
-        out.row("Completed, no date", completed_undated, indent=2)
         out.row(
-            "Completed projects",
-            sum(1 for p in projects if not p.trashed and p.status == STATUS_COMPLETED),
-            indent=2,
+            f"Completed in last {RECENT_DAYS} days", counts.completed_recent, indent=2
         )
-        out.row(
-            "Cancelled projects",
-            sum(1 for p in projects if not p.trashed and p.status == STATUS_CANCELLED),
-            indent=2,
-        )
-        out.row("Trashed projects", sum(1 for p in projects if p.trashed), indent=2)
+        out.row("Completed earlier", counts.completed_earlier, indent=2)
+        out.row("Completed, no date", counts.completed_undated, indent=2)
+        out.row("Completed projects", counts.completed_projects, indent=2)
+        out.row("Cancelled projects", counts.cancelled_projects, indent=2)
+        out.row("Trashed projects", counts.trashed_projects, indent=2)
 
 
-def _checks(out, snapshot: Snapshot, today: dt.date) -> None:
-    findings = run_checks(snapshot, today)  # default options: no user patterns
+def _checks(out, data: ReportData) -> None:
     out.heading("Health checks")
-    for check_id, module in CHECKS.items():
-        count = sum(1 for f in findings if f.check == check_id)
-        out.row(check_id, f"{module.SEVERITY:<9}{count}")
+    for section in data.checks:
+        out.row(section.check, f"{section.severity:<9}{section.findings}")
     out.line()
     if out.style.enabled:
         out.line(f"Run {out.style.bold('tidyline check')} for details.")
@@ -179,41 +129,28 @@ def _checks(out, snapshot: Snapshot, today: dt.date) -> None:
         out.line("Run `tidyline check` for details.")
 
 
-def _is_live(task: Task) -> bool:
-    return not task.trashed and not task.is_closed
-
-
-def _recurrence(out, snapshot: Snapshot) -> None:
-    """Counts only. Titles are shown by `tidyline recurrence`.
-
-    Recognised rules were read and described; of those, Assumed ones rest on a
-    convention not yet seen on a real database (DESIGN.md 7.2), the rest were
-    verified against what Things shows."""
-    leftovers = set(snapshot.leftover_template_uuids)
-    templates = snapshot.templates
-    not_recognised = sum(1 for t in templates if not t.recurrence.recognised)
+def _recurrence(out, counts: RecurrenceCounts) -> None:
+    """Counts only. Titles are shown by `tidyline recurrence`."""
     out.heading("Recurring templates")
-    out.row("Live", sum(1 for t in templates if t.uuid not in leftovers))
-    out.row("Leftover", len(leftovers & {t.uuid for t in templates}))
-    out.row("Recognised", sum(1 for t in templates if t.recurrence.recognised))
-    out.row(
-        "Assumed", sum(1 for t in templates if t.recurrence.confidence == "assumed")
-    )
-    if not_recognised:
-        out.row("Not recognised", not_recognised)
+    out.row("Live", counts.live)
+    out.row("Leftover", counts.leftover)
+    out.row("Recognised", counts.recognised)
+    out.row("Assumed", counts.assumed)
+    if counts.not_recognised:
+        out.row("Not recognised", counts.not_recognised)
     out.line()
     out.line("Details: tidyline recurrence")
 
 
-def _warnings(out, snapshot: Snapshot) -> None:
+def _warnings(out, warnings: tuple[str, ...]) -> None:
     out.heading("Read warnings")
-    if not snapshot.warnings:
+    if not warnings:
         out.line("None.")
         return
-    out.line(f"{len(snapshot.warnings)} values could not be read cleanly:")
-    for warning in snapshot.warnings[:MAX_WARNING_LINES]:
+    out.line(f"{len(warnings)} values could not be read cleanly:")
+    for warning in warnings[:MAX_WARNING_LINES]:
         out.line(f"  - {_clean(warning)}")
-    extra = len(snapshot.warnings) - MAX_WARNING_LINES
+    extra = len(warnings) - MAX_WARNING_LINES
     if extra > 0:
         out.line(f"  ... and {extra} more")
 
