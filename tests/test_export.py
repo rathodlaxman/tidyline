@@ -13,6 +13,7 @@ import stat
 from pathlib import Path
 
 import pytest
+from checks_helpers import edit
 from fixtures import build_fixture as bf
 
 from tidyline import cli
@@ -47,6 +48,8 @@ TASK_KEYS = {
     "status_code",
     "trashed",
     "completion_date",
+    "created",
+    "modified",
     "tags",
     "checklist",
     "checklist_count",
@@ -100,10 +103,11 @@ def test_top_level_keys(exported):
         "headings",
         "tasks",
         "recurring_templates",
+        "checks_run",
         "findings",
         "warnings",
     ]
-    assert exported["export_schema_version"] == "1"
+    assert exported["export_schema_version"] == "1.1"
     assert exported["anonymisation"] == "none"
     assert exported["findings"]  # the checks ran; see the findings tests below
     assert exported["warnings"] == []
@@ -279,7 +283,7 @@ def test_cli_writes_the_export(fixture_db, tmp_path, capsys, no_real_app):
     out = tmp_path / "export.json"
     assert run_export(fixture_db, out) == 0
     data = json.loads(out.read_text(encoding="utf-8"))
-    assert data["export_schema_version"] == "1"
+    assert data["export_schema_version"] == "1.1"
     assert data["environment"]["database_version"] == 29
     assert data["environment"]["things_version"] is None
     assert len(data["tasks"]) == 37
@@ -425,7 +429,7 @@ def test_export_findings_have_ids_and_no_titles(exported):
 
 def test_export_has_no_keys_beyond_design_7_4(exported):
     assert "findings_summary" not in exported
-    assert exported["export_schema_version"] == "1"
+    assert exported["export_schema_version"] == "1.1"
 
 
 def test_export_findings_follow_registry_order(exported):
@@ -442,3 +446,69 @@ def test_cli_export_contains_the_findings(fixture_db, tmp_path, no_real_app):
     from tidyline.checks import CHECK_IDS
 
     assert {f["check"] for f in data["findings"]} == set(CHECK_IDS)
+
+
+# --- export_schema_version 1.1 additions ----
+
+
+def test_created_and_modified_are_local_dates(exported):
+    tasks = by_id(exported["tasks"])
+    # the fixture stamps rows 30 days and 1 day before 2026-10-10 09:00 UTC
+    assert tasks[U("t_measure")]["created"] == "2026-09-10"
+    assert tasks[U("t_measure")]["modified"] == "2026-10-09"
+    project = by_id(exported["projects"])[U("proj_garden")]
+    assert (project["created"], project["modified"]) == ("2026-09-10", "2026-10-09")
+    for entry in exported["tasks"] + exported["projects"] + exported["headings"]:
+        assert entry["created"] == "2026-09-10", entry["id"]
+
+
+def test_created_and_modified_null_when_absent(fixture_db):
+    edit(fixture_db, (
+        "UPDATE TMTask SET creationDate = NULL, userModificationDate = NULL "
+        "WHERE uuid = ?", (U("t_measure"),),
+    ))  # fmt: skip
+    task = by_id(export_fixture(fixture_db)["tasks"])[U("t_measure")]
+    assert (task["created"], task["modified"]) == (None, None)
+
+
+def test_created_uses_the_timezone_of_exported_at(fixture_db):
+    # 23:30 UTC on 2026-10-01 is already 2 October in India (UTC+5:30)
+    stamp = dt.datetime(2026, 10, 1, 23, 30, tzinfo=dt.timezone.utc).timestamp()
+    edit(fixture_db, (
+        "UPDATE TMTask SET creationDate = ? WHERE uuid = ?", (stamp, U("t_measure")),
+    ))  # fmt: skip
+    utc = by_id(export_fixture(fixture_db)["tasks"])[U("t_measure")]
+    assert utc["created"] == "2026-10-01"
+    with open_snapshot(fixture_db) as copy:
+        snapshot = read_snapshot(copy)
+    india = dt.timezone(dt.timedelta(hours=5, minutes=30))
+    data = build_export(
+        snapshot,
+        today=FIXED_TODAY,
+        exported_at=EXPORTED_AT.astimezone(india),
+        tool_version="test",
+        environment=ENVIRONMENT,
+    )
+    assert by_id(data["tasks"])[U("t_measure")]["created"] == "2026-10-02"
+
+
+def test_checks_run_lists_every_check_in_registry_order(exported):
+    from tidyline.checks import CHECK_IDS, CHECKS
+
+    assert [c["check"] for c in exported["checks_run"]] == list(CHECK_IDS)
+    for entry in exported["checks_run"]:
+        assert set(entry) == {"check", "severity", "findings"}
+        assert entry["severity"] == CHECKS[entry["check"]].SEVERITY
+        counted = sum(f["check"] == entry["check"] for f in exported["findings"])
+        assert entry["findings"] == counted
+    assert sum(c["findings"] for c in exported["checks_run"]) == 17
+
+
+def test_checks_run_keeps_a_check_with_zero_findings(fixture_db):
+    edit(fixture_db, ("UPDATE TMTask SET trashed = 1 WHERE uuid = ?", (U("t_dup_b"),)))
+    runs = {c["check"]: c for c in export_fixture(fixture_db)["checks_run"]}
+    assert runs["possible_duplicates"] == {
+        "check": "possible_duplicates",
+        "severity": "warning",
+        "findings": 0,
+    }

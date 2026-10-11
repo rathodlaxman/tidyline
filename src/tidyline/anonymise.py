@@ -16,8 +16,9 @@ At light and strict, free text that could hide in technical fields is removed
 too: string values inside a raw recurrence rule become `<text>`, quoted values
 in recurrence notes become `<text>`, the hex prefix of an unreadable rule is
 dropped (its length is kept), and non-number values quoted in read warnings
-become `<value>`. Ids, structure, dates, status fields, recurrence text and
-findings are kept at every level.
+become `<value>`. At strict, the raw rule's timestamps `ed`, `ia` and `sr` are
+withheld (null); light keeps them. Ids, structure, dates, status fields,
+recurrence text and findings are kept at every level.
 
 Known limitations:
 - light is a best-effort scrub. It cannot catch names, addresses or
@@ -166,7 +167,9 @@ def anonymise(export: dict[str, Any], level: str) -> dict[str, Any]:
         _rewrite(result, lambda kind, ref: labels[kind].get(ref["id"]), strict=True)
     for entry in result["tasks"] + result["recurring_templates"]:
         if entry.get("recurrence"):
-            entry["recurrence"] = _clean_recurrence(entry["recurrence"])
+            entry["recurrence"] = _clean_recurrence(
+                entry["recurrence"], strict=level == "strict"
+            )
     result["warnings"] = [_clean_warning(w) for w in result.get("warnings", [])]
     return result
 
@@ -245,10 +248,15 @@ _QUOTED = re.compile(r"""[bB]?(['"])(?:\\.|(?!\1).)*\1""")
 _NUMBER_VALUE = re.compile(r"-?\d+(?:\.\d+)?(?:e[+-]?\d+)?", re.I)
 
 
-def _clean_recurrence(recurrence: dict[str, Any]) -> dict[str, Any]:
+WITHHELD_RULE_FIELDS = ("ed", "ia", "sr")  # end, anchor and start timestamps
+
+
+def _clean_recurrence(recurrence: dict[str, Any], *, strict: bool) -> dict[str, Any]:
     raw = recurrence.get("raw")
     if isinstance(raw, dict):
         raw = {k: v for k, v in raw.items() if k != "_hex_prefix"}
+        if strict:
+            raw = {k: None if k in WITHHELD_RULE_FIELDS else v for k, v in raw.items()}
     return {
         **recurrence,
         "notes": [_QUOTED.sub("<text>", note) for note in recurrence.get("notes", [])],

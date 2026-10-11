@@ -44,6 +44,8 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-10 | `prompt` and `decode` (settled 2026-10-10): `prompt` always prints a preview (level, counts, what is removed, the context text if given) and writes `tidyline_payload.json` and `tidyline_prompt.md` into `--out DIR`; `--copy` puts the prompt text on the clipboard (macOS `pbcopy`, no dependency); with neither option nothing is written. `--context FILE` fills the three context fields of the template; the area list is filled from the anonymised area labels; unfilled placeholders stay visible and the preview warns. Only the anonymised payload and the filled template leave the tool; the text report is never included because it lists recurring task titles. The packaged template (`llm/audit_prompt.md`) is adapted from the maintainer's own template: one attached payload file, a short data note, and a level-dependent Part 5. At `strict` titles are hidden, so Part 5 (task wording) is replaced by an instruction to skip it; `light` keeps scrubbed titles and supports Part 5. New command `decode` maps labels back to titles using the current database, possible because labels derive from ids. |
 | 2026-10-10 | JSON export 7.4 open points settled: all rows included with flags (open, completed, cancelled, trashed); coded fields written as a name plus the raw code (`status` and `status_code`, `start` and `start_code`); `completion_date` is `stopDate` as ISO 8601 with UTC offset for completed and cancelled alike; areas, projects and headings use the same shape as tasks. Export file is created with mode 0600, an existing path is never overwritten, and `light` and `strict` are refused until v0.2. |
 | 2026-10-11 | v0.2 release: the author shown on PyPI is the name only, with no email. Releases are uploaded by hand with `uv publish` using a project-scoped token. TestPyPI is used first. |
+| 2026-10-11 | `export_schema_version` 1.1 (additive): projects, headings and to-dos gain `created` and `modified` (`creationDate` and `userModificationDate` as ISO dates in the timezone of `exported_at`, null when absent); the export gains `checks_run`, one `{check, severity, findings}` entry per check in registry order, including checks with 0 findings. |
+| 2026-10-11 | The raw recurrence timestamps `ed`, `ia` and `sr` are withheld (null) at `strict`; `light` keeps them. `recurrence.text` is unchanged at every level. |
 
 ## 4. Tested environment
 
@@ -182,18 +184,23 @@ All joins use UUIDs, never titles. Candidates for later, not committed: overdue 
 
 ```
 {
-  "export_schema_version": "1",
+  "export_schema_version": "1.1",
   "tool": {"name": "tidyline", "version": "..."},
   "exported_at": "...",
   "environment": {"macos": "...", "arch": "...", "things_version": "...", "database_version": 29},
   "anonymisation": "none | light | strict",
   "areas": [...], "projects": [...], "headings": [...], "tasks": [...],
   "recurring_templates": [...],
-  "findings": [...]
+  "checks_run": [...],
+  "findings": [...],
+  "warnings": [...]
 }
 ```
 
-Tasks carry: id, title, notes, area, project, heading (as ids plus titles), effective status, start, start date, deadline, status, completion date, tags, checklist items, recurrence text and raw rule.
+Tasks carry: id, title, notes, area, project, heading (as ids plus titles), effective status, start, start date, deadline, status, completion date, created, modified, tags, checklist items, recurrence text and raw rule. Projects and headings have the same shape without checklist and recurrence.
+
+- `created` and `modified` (added in 1.1) are `creationDate` and `userModificationDate` as ISO dates (`YYYY-MM-DD`) in the timezone of `exported_at`, or null when the column is empty or does not decode.
+- `checks_run` (added in 1.1) has one `{"check", "severity", "findings"}` entry per check, in registry order. `findings` is the number of findings; a check that found nothing is listed with 0.
 
 ### 7.5 Anonymisation levels
 
@@ -203,7 +210,7 @@ Tasks carry: id, title, notes, area, project, heading (as ids plus titles), effe
 | `light` | kept, with emails, phone numbers, URLs, money amounts and long digit runs replaced by placeholders | removed | kept, scrubbed the same way | structure, dates, tags, recurrence |
 | `strict` | replaced by stable labels derived from the id alone (kind plus a short base32 hash code of the id, such as `Task k3f9az`, `Project 7qm2xd`), so a label is the same in every export and for as long as the item exists, and says nothing about list order. Collisions are resolved deterministically | removed | replaced by count | structure, dates, recurrence, counts |
 
-Every key is present at every level. `notes` is null at `light` and `strict`; `checklist` is null at `strict` and every to-do has `checklist_count`. At `light` and `strict`, string values inside the raw recurrence rule and its notes become `<text>`, the hex prefix of an unreadable rule is dropped (its length is kept), and non-number values in read warnings become placeholders. Known limits: `light` is a best-effort scrub that cannot catch names, addresses or alphanumeric account numbers; ids are kept at every level, so anyone with the database can map labels back; dates, counts and findings still reveal habits.
+Every key is present at every level. `notes` is null at `light` and `strict`; `checklist` is null at `strict` and every to-do has `checklist_count`. At `strict`, the raw rule's timestamps `ed`, `ia` and `sr` are withheld (null); `light` keeps them. At `light` and `strict`, string values inside the raw recurrence rule and its notes become `<text>`, the hex prefix of an unreadable rule is dropped (its length is kept), and non-number values in read warnings become placeholders. Known limits: `light` is a best-effort scrub that cannot catch names, addresses or alphanumeric account numbers; ids are kept at every level, so anyone with the database can map labels back; dates, counts and findings still reveal habits.
 
 The URL-scheme auth token is never read or exported at any level.
 

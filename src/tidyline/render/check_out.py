@@ -37,6 +37,24 @@ def findings_json(findings: Sequence[Finding]) -> list[dict[str, Any]]:
     ]
 
 
+def checks_run_json(
+    findings: Sequence[Finding], checks: Sequence[str] | None = None
+) -> list[dict[str, Any]]:
+    """One entry per check that ran, in registry order, with its finding count.
+    A check with no findings is listed with 0."""
+    counts: dict[str, int] = {}
+    for finding in findings:
+        counts[finding.check] = counts.get(finding.check, 0) + 1
+    return [
+        {
+            "check": check,
+            "severity": CHECKS[check].SEVERITY,
+            "findings": counts.get(check, 0),
+        }
+        for check in (CHECKS if checks is None else checks)
+    ]
+
+
 def check_json(findings: Sequence[Finding], checks: Sequence[str]) -> dict[str, Any]:
     return {
         "check_schema_version": CHECK_SCHEMA_VERSION,

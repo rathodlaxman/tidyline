@@ -137,7 +137,7 @@ def test_none_export_still_contains_everything(plain):
 
 def test_strict_structure(strict, plain):
     assert strict["anonymisation"] == "strict"
-    assert strict["export_schema_version"] == "1"
+    assert strict["export_schema_version"] == "1.1"
     assert list(strict) == list(plain)
     tasks = {t["id"]: t for t in strict["tasks"]}
     lease = tasks[U("t_lease")]
@@ -314,12 +314,16 @@ def test_raw_rules_lose_strings_and_the_hex_prefix(plain, light, strict):
         assert "_hex_prefix" not in unreadable["raw"]
         assert unreadable["raw"]["_length"] == len(bf.INVALID_RULE_BLOB)
         assert unreadable["raw"]["_decode_error"] == "<text>"
-        daily = templates[U("tpl_daily")]["recurrence"]
-        plain_daily = {t["id"]: t for t in plain["recurring_templates"]}[
-            U("tpl_daily")
-        ]["recurrence"]
-        assert daily == plain_daily  # numbers only: unchanged
-        assert daily["text"] == "Daily"
+    plain_daily = {t["id"]: t for t in plain["recurring_templates"]}[U("tpl_daily")][
+        "recurrence"
+    ]
+    light_daily = {t["id"]: t for t in light["recurring_templates"]}[U("tpl_daily")]
+    assert light_daily["recurrence"] == plain_daily  # numbers only: unchanged
+    strict_daily = {t["id"]: t for t in strict["recurring_templates"]}[U("tpl_daily")]
+    assert strict_daily["recurrence"]["text"] == "Daily"
+    assert strict_daily["recurrence"]["raw"] == {
+        **plain_daily["raw"], "ed": None, "ia": None, "sr": None,
+    }  # fmt: skip
 
 
 def test_recurrence_notes_lose_quoted_values():
@@ -444,3 +448,57 @@ def test_cli_rejects_an_unknown_level(fixture_db, tmp_path, capsys):
         cli.main(["--db", str(fixture_db), "export", "--out", str(tmp_path / "x"),
                   "--anonymise", "medium"])  # fmt: skip
     assert error.value.code == 2
+
+
+# --- raw rule timestamps at strict ----
+
+
+def raw_timestamps(data):
+    """Every ed, ia and sr value in the raw rules of an export or payload."""
+    found = set()
+    for entry in data["tasks"] + data["recurring_templates"]:
+        raw = (entry.get("recurrence") or {}).get("raw") or {}
+        found.update(raw[key] for key in anon.WITHHELD_RULE_FIELDS if key in raw)
+    return found
+
+
+def test_strict_withholds_rule_timestamps(plain, light, strict):
+    values = raw_timestamps(plain) - {None}
+    assert len(values) > 10  # the fixture really has them
+    assert raw_timestamps(light) == raw_timestamps(plain)
+    assert raw_timestamps(strict) == {None}
+    text = dumped(strict)
+    for value in values:
+        assert json.dumps(value) not in text, value
+
+
+def test_withheld_rule_timestamps_break_nothing(fixture_db, plain, strict):
+    """A rule with null ed, ia and sr still parses and renders, and decode and
+    the checks never read the anonymised rule."""
+    from dataclasses import replace
+
+    from tidyline.checks import run_checks
+    from tidyline.decode import decode_text, label_map
+    from tidyline.recurrence import parse_rule
+    from tidyline.render.recurrence_out import render_recurrence
+
+    plain_rules = {t["id"]: t["recurrence"] for t in plain["recurring_templates"]}
+    with open_snapshot(fixture_db) as copy:
+        snapshot = read_snapshot(copy)
+    stripped = {}
+    for template in strict["recurring_templates"]:
+        rule = parse_rule(template["recurrence"]["raw"])
+        original = plain_rules[template["id"]]
+        if original["confidence"] != "unrecognised":
+            assert rule.recognised, template["id"]
+        stripped[template["id"]] = rule
+    tasks = tuple(
+        replace(t, recurrence=stripped[t.uuid]) if t.uuid in stripped else t
+        for t in snapshot.tasks
+    )
+    nulled = replace(snapshot, tasks=tasks)
+    assert "fields in the rule" in render_recurrence(nulled, raw=True)
+    assert render_recurrence(nulled)
+    run_checks(nulled, TODAY)
+    label = strict["tasks"][0]["title"]
+    assert decode_text(label, label_map(snapshot)).replaced == 1

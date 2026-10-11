@@ -27,10 +27,10 @@ from tidyline.model import (
     TaskKind,
 )
 from tidyline.recurrence import Rule
-from tidyline.render.check_out import findings_json
+from tidyline.render.check_out import checks_run_json, findings_json
 from tidyline.status import effective_status
 
-EXPORT_SCHEMA_VERSION = "1"
+EXPORT_SCHEMA_VERSION = "1.1"
 ENVIRONMENT_KEYS = ("macos", "arch", "things_version", "database_version")
 
 STATUS_NAMES = {
@@ -50,7 +50,8 @@ def build_export(
     environment: Mapping[str, Any],
 ) -> dict[str, Any]:
     """The export as a JSON-ready dict. `today` drives effective status and the
-    checks; the checks run with default options (no user patterns)."""
+    checks; the checks run with default options (no user patterns). `created`
+    and `modified` are dates in the timezone of `exported_at`."""
     if exported_at.tzinfo is None:
         raise ValueError("exported_at must be timezone-aware")
     tasks = {task.uuid: task for task in snapshot.tasks}
@@ -66,7 +67,8 @@ def build_export(
             }
         )
     leftovers = set(snapshot.leftover_template_uuids)
-    context = _Context(tasks, areas, tags, checklists, today)
+    context = _Context(tasks, areas, tags, checklists, today, exported_at.tzinfo)
+    findings = run_checks(snapshot, today)
 
     return {
         "export_schema_version": EXPORT_SCHEMA_VERSION,
@@ -82,18 +84,20 @@ def build_export(
             context.template(t, t.uuid in leftovers)
             for t in _ordered(snapshot.templates)
         ],
-        "findings": findings_json(run_checks(snapshot, today)),
+        "checks_run": checks_run_json(findings),
+        "findings": findings_json(findings),
         "warnings": list(snapshot.warnings),
     }
 
 
 class _Context:
-    def __init__(self, tasks, areas, tags, checklists, today):
+    def __init__(self, tasks, areas, tags, checklists, today, tz):
         self.tasks: Mapping[str, Task] = tasks
         self.areas: Mapping[str, str] = areas
         self.tags: Mapping[str, str] = tags
         self.checklists: Mapping[str, list] = checklists
         self.today: dt.date = today
+        self.tz: dt.tzinfo = tz
         self.instances: dict[str, list[str]] = {}
         for task in _ordered(tasks.values()):
             if task.recurrence_template_uuid is not None:
@@ -137,6 +141,8 @@ class _Context:
             **_status(task.status),
             "trashed": task.trashed,
             "completion_date": _timestamp(task.stopped),
+            "created": local_date(task.created, self.tz),
+            "modified": local_date(task.modified, self.tz),
             "tags": [self.ref(uuid, self.tags) for uuid in task.tag_uuids],
         }
         if task.kind is TaskKind.TODO:
@@ -180,6 +186,11 @@ def _start(code: int) -> dict[str, Any]:
 
 def _date(value: dt.date | None) -> str | None:
     return value.isoformat() if value is not None else None
+
+
+def local_date(value: dt.datetime | None, tz: dt.tzinfo) -> str | None:
+    """An aware timestamp as an ISO date in `tz`."""
+    return value.astimezone(tz).date().isoformat() if value is not None else None
 
 
 def _timestamp(value: dt.datetime | None) -> str | None:
