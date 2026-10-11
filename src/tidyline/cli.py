@@ -209,6 +209,24 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Run the command. If the reader of standard output has gone (for example
+    `tidyline check --json | head`), stop quietly with exit code 0.
+
+    Files are written whole before anything is printed about them, and a failed
+    write removes its own file, so a closed pipe never leaves a partial file."""
+    try:
+        code = _run(argv)
+        sys.stdout.flush()  # buffered output fails here, not in print()
+        return code
+    except BrokenPipeError:
+        # The recipe from the Python documentation: point stdout at devnull so
+        # the flush at interpreter exit does not raise a second time.
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, sys.stdout.fileno())
+        return EXIT_OK
+
+
+def _run(argv: list[str] | None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "doctor":
