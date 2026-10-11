@@ -49,6 +49,7 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-11 | The `prompt` payload is no longer the anonymised export. It holds open work only, plus a precomputed `summary` and `checks_run` (section 7.6), so the assistant does not count rows itself. Completed, cancelled and trashed to-dos, and completed or trashed projects that hold no open to-dos, are counted in the summary only. It is anonymised by the same rules and labels as the export, so `decode` still works. |
 | 2026-10-11 | In the `prompt` payload, the export's `warnings` are renamed `data_read_warnings`, so they are not read as problems with the user's system. |
 | 2026-10-11 | `exported_at` and all derived dates use local time with offset (was UTC in export). `export` and `prompt` follow one rule: `exported_at` is a local ISO 8601 timestamp with its UTC offset, "today" is its date, and every `created` and `modified` date and every completed-to-do window uses that local date. Part of `export_schema_version` 1.1 (not released before this change). |
+| 2026-10-11 | `decode` readability (replaces "titles go in exactly as stored"): bare codes are replaced when they match exactly one label, ambiguous ones are left and counted; titles are whitespace-collapsed and cut to 80 characters; `|` is escaped on table lines; titles are wrapped in double quotes unless already quoted; titles shared by items in the payload's scope get `(in Parent)` inside the quotes. All in one pass over the original text. Rules in 7.5. |
 
 ## 4. Tested environment
 
@@ -221,8 +222,15 @@ The URL-scheme auth token is never read or exported at any level.
 Known limits of `decode`:
 - Labels exist only in `strict` output. `light` output keeps real titles and needs no decoding.
 - `decode` needs the same database the prompt was made from. A label whose item was deleted since, or that comes from another database, stays unchanged and is counted as unmatched. A kind word followed by a six-character lowercase word (for example "Project review") looks like a label and is also counted as unmatched.
-- Only whole labels are replaced: a letter or digit next to a label means it is part of a longer word. Replacement is one pass, so a title that looks like a label is never replaced again.
-- Titles go in exactly as stored, without escaping. A title containing `|` splits a markdown table cell; `*` or a backtick can start emphasis or code.
+- Only whole labels and whole bare codes are replaced: a letter or digit next to one means it is part of a longer word (underscores and markdown characters do not). Lowercase only. Replacement is one pass over the original text, so a title that looks like a label or contains a code is never replaced again.
+
+Decode rules (settled 2026-10-11):
+- Bare codes: a code written without its kind word (`k3f9az`, or a collision form such as `abcdef-ghij`) is replaced when it is the code of exactly one label. A code shared by several labels is left unchanged and counted as ambiguous. A six-letter word that equals no code is left alone and not counted.
+- Length and whitespace: whitespace runs and newlines in a title collapse to one space; a title over 80 characters becomes its first 79 characters plus "…".
+- Tables: on a line whose first non-space character is `|`, a `|` in an inserted title (or location) is written `\|`. Elsewhere titles go in unescaped; `*` or a backtick in a title can still start emphasis or code.
+- Quotes: a title goes in straight double quotes, unless the label in the answer is directly surrounded by quote characters (`"` `“` `”` `'`) or backticks.
+- Shared titles: when two or more items still in the payload's scope (7.6: not completed, cancelled or trashed themselves; open to-dos in trashed projects and recurring templates count) share a title after whitespace is collapsed, each gets its location inside the quotes: `"Title (in Parent)"`. Parent is the project for to-dos and headings, the area for projects and for to-dos with no project, nothing for areas and tags; it is shortened to 40 characters. A completed or trashed twin adds no location.
+- The summary on stderr gives counts only: labels replaced, bare codes replaced, distinct items, ambiguous bare codes, unmatched label-like strings.
 
 ### 7.6 Prompt payload
 
@@ -300,7 +308,7 @@ The core returns data and never prints. The CLI only parses options and calls th
 | `export` | JSON export | `--out`, `--anonymise {none,light,strict}` |
 | `recurrence` | List every repeating template with its readable rule, so it can be checked against what Things shows: one block per template (rule text or "not recognised", title, project or area, state live / leftover / not recognised) sorted by state, rule text and id, then a summary line. Exit 0 even when rules are not recognised. `--raw` adds the rule as stored (XML text, or hex and length for a binary plist), the decoded fields and, for an unrecognised rule, the reason, after a personal-data warning line. | `--raw`, `--db` |
 | `prompt` | Level 0: anonymised open-work payload (7.6) plus filled audit prompt, with preview | `--anonymise {light,strict}` (default strict), `--context FILE`, `--out DIR`, `--copy` |
-| `decode` | Replace strict labels (`Task k3f9az`) in an LLM answer with the real titles from the current database. Reads the answer from a UTF-8 file of at most 5 MB; writes the decoded text to stdout, or to `--out` (mode 0600, never overwrites). A summary (labels replaced, distinct, unmatched; never titles) and a personal-data warning go to stderr. | `ANSWER_FILE`, `--out FILE`, `--db` |
+| `decode` | Replace strict labels (`Task k3f9az`) in an LLM answer with the real titles from the current database. Reads the answer from a UTF-8 file of at most 5 MB; writes the decoded text to stdout, or to `--out` (mode 0600, never overwrites). Bare codes, long titles, `|` in tables, quotes and shared titles follow the decode rules in 7.5. A summary (labels and bare codes replaced, distinct items, ambiguous codes, unmatched; never titles) and a personal-data warning go to stderr. | `ANSWER_FILE`, `--out FILE`, `--db` |
 | `ask` | v0.4: levels 1 and 2, after preview and confirmation | `--provider`, `--model`, `--yes` |
 
 Global: `--db PATH`, `--version`, `--verbose`.

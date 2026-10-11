@@ -170,11 +170,25 @@ tidyline decode ~/tidyline-out/answer.md
 ```
 
 `decode` recomputes each label from the current database, so it needs no
-mapping file. Labels it cannot match stay as they are, and it reports how many.
-It needs the same database the prompt was made from, and `light` output needs no
-decoding. Titles go in exactly as stored, so a title containing `|` can break a
-markdown table cell. The decoded text contains real titles, so treat it as
-personal data.
+mapping file. It needs the same database the prompt was made from, and `light`
+output needs no decoding.
+
+- It replaces whole labels such as `Task k3f9az`, and bare codes such as
+  `k3f9az` when the code belongs to exactly one item. A code shared by several
+  items is left as it is.
+- Titles go in double quotes, unless the answer already quoted the label or put
+  it in backticks.
+- Long titles are cut to 80 characters, and line breaks in titles become
+  spaces.
+- In a markdown table row, a `|` inside a title is written `\|`, so the table
+  keeps its shape.
+- When two open items share a title, each gets its project or area:
+  `"Sort the mail (in Household)"`.
+- It reports how many labels and codes it replaced, and how many it left
+  because they were ambiguous or matched nothing. The report never shows
+  titles.
+
+The decoded text contains real titles, so treat it as personal data.
 
 ## Health checks
 
