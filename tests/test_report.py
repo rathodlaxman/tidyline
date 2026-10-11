@@ -289,7 +289,22 @@ def test_colour_only_on_headings_when_enabled(fixture_db):
     _, text = make_report(fixture_db, color=True)
     assert "\x1b[1mCounts\x1b[0m" in text
     plain = ESCAPE.sub("", text)
-    assert plain == make_report(fixture_db)[1]
+    # the footer is the one place the words differ: no backticks on a terminal
+    assert (
+        plain.replace("Run tidyline check for", "Run `tidyline check` for")
+        == (make_report(fixture_db)[1])
+    )
+
+
+def test_footer_command_is_bold_without_backticks_when_styled(fixture_db):
+    _, text = make_report(fixture_db, color=True)
+    assert text.endswith("Run \x1b[1mtidyline check\x1b[0m for details.\n")
+    assert "`" not in text.splitlines()[-1]
+
+
+def test_footer_keeps_backticks_when_plain(fixture_db):
+    _, text = make_report(fixture_db)
+    assert text.endswith("Run `tidyline check` for details.\n")
 
 
 # --- CLI ------------------------------------------------------------------------------

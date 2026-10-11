@@ -37,13 +37,29 @@ def test_no_command_prints_the_help_screen(capsys):
     assert "docs/GETTING_STARTED.md" in out
 
 
+def test_help_screen_blank_lines_when_plain():
+    lines = render_help("9.9").split("\n")
+    new_here = lines.index("New here? Run tidyline doctor, then tidyline report.")
+    assert lines[new_here + 1] == "" and lines[new_here + 2] == "Step-by-step guide:"
+    more = lines.index(
+        "More detail on any command: tidyline COMMAND --help, or tidyline --help."
+    )
+    assert lines[more - 1] == "" and lines[more - 2].startswith("  https://")
+    assert lines[-1] == "" and "\x1b" not in "\n".join(lines)
+
+
 def test_help_screen_uses_colour_only_when_asked():
     styled = render_help("9.9", Style(True))
+    bold, underline, reset = "\x1b[1m", "\x1b[4m", "\x1b[0m"
+    assert f"{bold}tidyline 9.9{reset}\n" in styled
+    for heading in ("Commands", "Examples", "Your task titles"):
+        assert f"\n{underline}{heading}{reset}\n" in styled
     assert (
-        "\x1b[1mNew here? Run tidyline doctor, then tidyline report.\x1b[0m" in styled
+        f"{bold}New here?{reset} Run tidyline doctor, then tidyline report.\n" in styled
     )
-    assert "\x1b[1mStep-by-step guide:\x1b[0m" in styled
-    assert styled.count("\x1b[1m") == 2  # nothing else is styled
+    assert f"{bold}Step-by-step guide:{reset}\n" in styled
+    assert styled.count(bold) == 3 and styled.count(underline) == 3
+    assert styled.count(reset) == 6  # nothing else is styled
     assert "\x1b" not in render_help("9.9")
 
 

@@ -173,7 +173,10 @@ def _checks(out, snapshot: Snapshot, today: dt.date) -> None:
         count = sum(1 for f in findings if f.check == check_id)
         out.row(check_id, f"{module.SEVERITY:<9}{count}")
     out.line()
-    out.line("Run `tidyline check` for details.")
+    if out.style.enabled:
+        out.line(f"Run {out.style.bold('tidyline check')} for details.")
+    else:
+        out.line("Run `tidyline check` for details.")
 
 
 def _is_live(task: Task) -> bool:

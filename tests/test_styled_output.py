@@ -161,3 +161,24 @@ def test_report_no_color_still_works_on_a_terminal(monkeypatch, fixture_db):
         monkeypatch, ["--db", str(fixture_db), "report", "--no-color"]
     )
     assert "\x1b" not in plain
+
+
+def test_help_screen_escape_codes_on_a_terminal_only(monkeypatch):
+    _, out, _ = run_on_terminal(monkeypatch, [])
+    assert f"{BOLD}New here?{RESET} Run tidyline doctor" in out
+    assert "\x1b[4mCommands\x1b[0m" in out
+
+
+def test_help_screen_has_no_codes_under_no_color(monkeypatch):
+    monkeypatch.setenv("NO_COLOR", "1")
+    _, out, _ = run_on_terminal(monkeypatch, [])
+    assert "\x1b" not in out and "New here? Run tidyline doctor" in out
+
+
+def test_report_footer_follows_the_terminal(monkeypatch, fixture_db):
+    argv = ["--db", str(fixture_db), "report"]
+    _, out, _ = run_on_terminal(monkeypatch, argv)
+    assert out.endswith(f"Run {BOLD}tidyline check{RESET} for details.\n")
+    monkeypatch.setenv("NO_COLOR", "1")
+    _, out, _ = run_on_terminal(monkeypatch, argv)
+    assert out.endswith("Run `tidyline check` for details.\n")

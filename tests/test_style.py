@@ -12,13 +12,14 @@ class FakeTerminal(io.StringIO):
 
 def test_plain_when_piped():
     style = style_for(io.StringIO(), {})
-    for method in (style.bold, style.notice, style.danger):
+    for method in (style.bold, style.underline, style.notice, style.danger):
         assert method("text") == "text"
 
 
 def test_escape_codes_on_a_terminal():
     style = style_for(FakeTerminal(), {})
     assert style.bold("a") == "\x1b[1ma\x1b[0m"
+    assert style.underline("a") == "\x1b[4ma\x1b[0m"
     assert style.notice("a") == "\x1b[1;33ma\x1b[0m"
     assert style.danger("a") == "\x1b[1;31ma\x1b[0m"
 

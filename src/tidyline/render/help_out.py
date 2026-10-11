@@ -30,11 +30,11 @@ def render_help(version: str, style: Style = PLAIN) -> str:
     """The help screen as text, at most 80 characters wide."""
 
     width = max(len(name) for name, _ in COMMANDS) + 2
-    lines = [f"tidyline {version}", ""]
+    lines = [style.bold(f"tidyline {version}"), ""]
     lines.append("Check your Things 3 setup for problems. Unofficial, read-only.")
-    lines += ["", "Commands"]
+    lines += ["", style.underline("Commands")]
     lines += [f"  {name:<{width}}{what}" for name, what in COMMANDS]
-    lines += ["", "Examples"]
+    lines += ["", style.underline("Examples")]
     example_width = max(len(command) for command, _ in EXAMPLES) + 2
     for command, note in EXAMPLES:
         if 2 + example_width + len(note) <= 80:
@@ -43,15 +43,17 @@ def render_help(version: str, style: Style = PLAIN) -> str:
             lines += [f"  {command}", f"      {note}"]
     lines += [
         "",
-        "Your task titles",
+        style.underline("Your task titles"),
         "  Show them on screen or in the file: check, recurrence, export, decode.",
         "  Never show them: report, check --json.",
         "  export and prompt hide them with --anonymise strict.",
         "  Nothing is sent anywhere.",
         "",
-        style.bold("New here? Run tidyline doctor, then tidyline report."),
+        f"{style.bold('New here?')} Run tidyline doctor, then tidyline report.",
+        "",
         style.bold("Step-by-step guide:"),
         f"  {GUIDE_URL}",
+        "",
         "More detail on any command: tidyline COMMAND --help, or tidyline --help.",
     ]
     return "\n".join(lines) + "\n"
