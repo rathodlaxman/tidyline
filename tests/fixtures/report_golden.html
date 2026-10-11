@@ -124,6 +124,13 @@ tr.marked td:first-child { box-shadow: inset 4px 0 0 var(--warn-fg); }
 }
 .review p { margin: 0; }
 .review p + p { margin-top: 4px; }
+.review ol { margin: 6px 0 0; padding-left: 22px; }
+.review li + li { margin-top: 6px; }
+.review pre {
+  margin: 4px 0 0; padding: 6px 10px; border: 1px solid var(--info-fg);
+  border-radius: 6px; max-width: 100%; overflow-x: auto;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
 @media (max-width: 600px) {
   .scroll.cards { overflow-x: visible; border: 0; border-radius: 0; }
   .cards table, .cards tbody, .cards tr, .cards td {
@@ -361,7 +368,14 @@ footer p { margin: 4px 0; }
 </section>
 <aside class="review">
 <p><strong>Want a deeper review?</strong></p>
-<p>tidyline itself does not write recommendations. To get a review from an AI assistant, run <code>tidyline prompt</code>, paste the result into the assistant, then run <code>tidyline decode</code> on its answer.</p>
+<p>tidyline itself does not write recommendations. To get a review from an AI assistant:</p>
+<ol>
+<li>Create the prompt, with your titles replaced by labels, and put it on the clipboard:
+<pre><code>tidyline prompt --anonymise strict --copy</code></pre></li>
+<li>Paste it into your AI assistant of choice and ask it to answer in the format the prompt describes.</li>
+<li>Save the assistant&#x27;s answer to a file, then turn the labels back into your real titles on this computer:
+<pre><code>tidyline decode answer.md</code></pre></li>
+</ol>
 </aside>
 </main>
 <footer>

@@ -11,6 +11,7 @@ import datetime as dt
 import html
 import os
 import re
+import shlex
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -38,7 +39,7 @@ ALLOWED_TAGS = {
     "html", "head", "meta", "title", "style", "body", "div", "header", "h1",
     "h2", "h3", "dl", "dt", "dd", "p", "strong", "main", "section", "span",
     "ul", "li", "details", "summary", "code", "bdi", "a", "table", "thead",
-    "tbody", "tr", "th", "td", "footer", "aside",
+    "tbody", "tr", "th", "td", "footer", "aside", "ol", "pre",
 }  # fmt: skip
 
 
@@ -366,14 +367,46 @@ def test_tables_stack_as_cards_at_phone_width():
     assert "attr(data-label)" in narrow and "overflow-x: visible" in narrow
 
 
-def test_review_box_points_at_prompt_and_decode_without_links(fixture_db):
+def review_box(source):
+    return re.search(r'<aside class="review">.*?</aside>', source, re.S).group(0)
+
+
+def test_review_box_shows_real_commands_without_links(fixture_db):
     source = html_of(fixture_db)
-    box = re.search(r'<aside class="review">.*?</aside>', source, re.S).group(0)
+    box = review_box(source)
     assert "Want a deeper review?" in box
-    assert "<code>tidyline prompt</code>" in box
-    assert "<code>tidyline decode</code>" in box
     assert "does not write recommendations" in box
     assert "href" not in box and "http" not in box
     assert source.index(box) < source.index("<footer>")
-    commands = build_parser()._subparsers._group_actions[0].choices
-    assert {"prompt", "decode"} <= set(commands)
+
+    shown = [
+        html.unescape(code)
+        for code in re.findall(r"<pre><code>(.*?)</code></pre>", box, re.S)
+    ]
+    parser = build_parser()
+    subcommands = parser._subparsers._group_actions[0].choices
+    used = []
+    for command in shown:
+        words = shlex.split(command)
+        assert words[0] == "tidyline", command
+        assert words[1] in subcommands, command
+        options = {
+            option
+            for action in subcommands[words[1]]._actions
+            for option in action.option_strings
+        }
+        assert {w for w in words[2:] if w.startswith("-")} <= options, command
+        args = parser.parse_args(words[1:])  # exits on an unknown flag or value
+        assert args.command == words[1]
+        used.append(words[1])
+    assert used == ["prompt", "decode"]
+
+
+def test_review_box_is_escaped(fixture_db, monkeypatch):
+    hostile = '<script>alert("x")</script> & </pre>'
+    monkeypatch.setattr(html_out, "REVIEW_HEADING", hostile)
+    monkeypatch.setattr(html_out, "REVIEW_TEXT", hostile)
+    monkeypatch.setattr(html_out, "REVIEW_STEPS", ((hostile, hostile),))
+    box = review_box(html_of(fixture_db))
+    assert "<script>" not in box and "</pre> &" not in box
+    assert box.count(html.escape(hostile, quote=True)) == 4

@@ -43,8 +43,26 @@ FOOTER = (
 REVIEW_HEADING = "Want a deeper review?"
 REVIEW_TEXT = (
     "tidyline itself does not write recommendations. To get a review from an AI "
-    "assistant, run <code>tidyline prompt</code>, paste the result into the "
-    "assistant, then run <code>tidyline decode</code> on its answer."
+    "assistant:"
+)
+# (step, example command or None). The commands must parse with the real CLI;
+# a test checks them against build_parser().
+REVIEW_STEPS = (
+    (
+        "Create the prompt, with your titles replaced by labels, and put it on "
+        "the clipboard:",
+        "tidyline prompt --anonymise strict --copy",
+    ),
+    (
+        "Paste it into your AI assistant of choice and ask it to answer in the "
+        "format the prompt describes.",
+        None,
+    ),
+    (
+        "Save the assistant's answer to a file, then turn the labels back into "
+        "your real titles on this computer:",
+        "tidyline decode answer.md",
+    ),
 )
 NOT_AFFILIATED = "tidyline is unofficial and not affiliated with Cultured Code."
 STATUS_CLASSES = {
@@ -181,6 +199,13 @@ tr.marked td:first-child { box-shadow: inset 4px 0 0 var(--warn-fg); }
 }
 .review p { margin: 0; }
 .review p + p { margin-top: 4px; }
+.review ol { margin: 6px 0 0; padding-left: 22px; }
+.review li + li { margin-top: 6px; }
+.review pre {
+  margin: 4px 0 0; padding: 6px 10px; border: 1px solid var(--info-fg);
+  border-radius: 6px; max-width: 100%; overflow-x: auto;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
 @media (max-width: 600px) {
   .scroll.cards { overflow-x: visible; border: 0; border-radius: 0; }
   .cards table, .cards tbody, .cards tr, .cards td {
@@ -511,11 +536,17 @@ def _warnings(warnings: Sequence[str]) -> str:
 
 
 def _review() -> str:
-    """Points at `prompt` and `decode`; plain text, no link (DESIGN.md 7.7)."""
+    """Points at `prompt` and `decode` with example commands; plain text, no
+    link (DESIGN.md 7.7)."""
+    steps = []
+    for text, command in REVIEW_STEPS:
+        example = f"\n<pre><code>{_e(command)}</code></pre>" if command else ""
+        steps.append(f"<li>{_e(text)}{example}</li>")
     return (
         '<aside class="review">\n'
         f"<p><strong>{_e(REVIEW_HEADING)}</strong></p>\n"
-        f"<p>{REVIEW_TEXT}</p>\n"
+        f"<p>{_e(REVIEW_TEXT)}</p>\n"
+        "<ol>\n" + "\n".join(steps) + "\n</ol>\n"
         "</aside>"
     )
 

@@ -318,7 +318,7 @@ Later decisions for the HTML report:
 | Date | Decision |
 |---|---|
 | 2026-10-11 | Narrow screens: up to 600px wide, the repeating to-dos table and the "Closed items" table are shown as stacked cards, one per row: the first cell (the title, or the item) on its own line, then each other cell as a label and value pair taken from the cell's `data-label` attribute (the column name, HTML-escaped). The horizontal scroll box is removed on those tables at that width; above 600px the normal table layout is kept. Checked: no horizontal scroll at 360px. |
-| 2026-10-11 | The report does not embed AI recommendations in 0.3.0. A plain-text "Want a deeper review?" box before the footer says tidyline does not write recommendations and points to `tidyline prompt` and `tidyline decode`; it has no link. Embedding a review (for example `report --review FILE`, or an `ask` command) is deferred and needs the owner's approval, because it changes the CLI surface. |
+| 2026-10-11 | The report does not embed AI recommendations in 0.3.0. A plain-text "Want a deeper review?" box before the footer says tidyline does not write recommendations and points to `tidyline prompt` and `tidyline decode` in three numbered steps, with example commands in monospace blocks (`tidyline prompt --anonymise strict --copy`, then `tidyline decode answer.md`) that a test parses against the real CLI; it has no link, script or copy button. Embedding a review (for example `report --review FILE`, or an `ask` command) is deferred and needs the owner's approval, because it changes the CLI surface. |
 
 ## 8. Architecture
 
