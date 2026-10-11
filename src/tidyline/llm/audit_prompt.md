@@ -37,7 +37,7 @@ These rules apply to the whole answer.
 
 1. **Start here.** Begin your answer with a section called "Start here": the five most important actions, in order. For each one give a single line saying what to do, roughly how long it takes, and where in Things to do it. Put this before everything else.
 2. **Plain language.** Write for someone who has never used GTD. Explain any abbreviation or technical term the first time you use it.
-3. **Full names, always.** Refer to every item by its complete name exactly as given in the data, in text and in tables. If a name looks like "Task k3f9az", write all of it. Never write only part of a name, never shorten it and never rename it.
+3. **Full names, always.** Refer to every item by its complete name exactly as given in the data, in text and in tables. If a name looks like "Task k3f7az", write all of it. Never write only part of a name, never shorten it and never rename it.
 4. **One item per row.** In every table, put one item per row and never several items in one cell. Write locations as Area > Project > Heading. When many items need the same change, use one row that says which group, how many items, and how to select them in Things.
 5. **Everything in this answer.** Do not refer to downloads, CSV ledgers, spreadsheets or attachments. Write everything in this reply.
 6. **Use only numbers from the data.** When you calculate something (a rate, days left, a share), show the calculation in brackets. If two numbers disagree, say so.

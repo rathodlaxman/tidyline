@@ -6,7 +6,7 @@ Ids are grouped by kind the way the strict export groups them, including ids
 that items refer to, so collision suffixes come out the same.
 
 Rules (DESIGN.md 7.5):
-- Whole labels ("Task k3f9az") are replaced, and so are bare codes ("k3f9az")
+- Whole labels ("Task k3f7az") are replaced, and so are bare codes ("k3f7az")
   that belong to exactly one label. A bare code shared by several labels is
   left as it is and counted as ambiguous. Lowercase only; a letter or digit
   next to a label or code means it is part of a longer word. Everything is
@@ -232,7 +232,7 @@ def decode_text(
             used.add(found)
             return insert(found, match.start(), match.end())
         code, rest = found, ""
-        if code not in codes and "-" in code:  # "k3f9az-done": only the code
+        if code not in codes and "-" in code:  # "k3f7az-done": only the code
             code, rest = found[: found.index("-")], found[found.index("-") :]
         owners = codes.get(code)
         if not owners:

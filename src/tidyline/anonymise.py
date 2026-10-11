@@ -7,7 +7,7 @@ Levels:
   `<amount>`, `<phone>` and `<number>`. Dates such as 2026-10-10 survive.
   Notes are removed (null). Checklist item titles are scrubbed the same way.
 - `strict`: every title and name becomes a label derived from the item's id
-  alone (`Task k3f9az`, `Project 7qm2xd`, `Area x3k2qa`, ...), so a label never
+  alone (`Task k3f7az`, `Project 7qm2xd`, `Area x3k2qa`, ...), so a label never
   changes when other items are added, removed or reordered. Notes are removed
   (null) and checklists are replaced by their count (`checklist` null,
   `checklist_count` kept).
@@ -150,7 +150,7 @@ LABEL_PATTERN = re.compile(
     + rf") {_CODE_PART}"
     + r"(?![^\W_])"
 )
-# The code part of a label on its own ("k3f9az"), as assistants often write it.
+# The code part of a label on its own ("k3f7az"), as assistants often write it.
 BARE_CODE_PATTERN = re.compile(rf"(?<![^\W_]){_CODE_PART}(?![^\W_])")
 
 

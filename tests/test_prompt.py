@@ -171,7 +171,7 @@ def test_part5_by_level(fixture_db):
 def test_data_note_by_level(fixture_db):
     strict = build_prompt(payload_of(fixture_db, "strict")).text
     light = build_prompt(payload_of(fixture_db, "light")).text
-    assert '"Task k3f9az"' in strict and "checklist_count" in strict
+    assert '"Task k3f7az"' in strict and "checklist_count" in strict
     assert "<email>" in light and "Notes are removed." in light
 
 

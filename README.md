@@ -17,7 +17,7 @@ Anonymised exports reduce the risk. They cannot remove all of it.
 - `light` keeps titles but replaces emails, phone numbers, URLs, money amounts
   and long digit runs with placeholders. It removes notes. It is a best-effort
   scrub. It cannot catch names, addresses or alphanumeric account numbers.
-- `strict` replaces every title and name with a label such as `Task k3f9az`. It
+- `strict` replaces every title and name with a label such as `Task k3f7az`. It
   removes notes and replaces checklist items with a count. Only `strict`
   removes all titles.
 - At every level, ids are kept. Anyone who also has your database can map them
@@ -158,6 +158,8 @@ tidyline prompt --context my-context.txt --out ~/tidyline-out/prompt
   removed or replaced, what was left out, and your context text. The last line says nothing has
   been sent anywhere.
 - The text report is never part of the output.
+- Use a temporary or private chat with memory and custom instructions switched
+  off, so the assistant does not mix in things it remembers about you.
 
 At `strict`, titles are hidden, so the assistant cannot judge how your tasks are
 worded. The prompt tells it to skip that part. Use `--anonymise light` if you
@@ -173,8 +175,8 @@ tidyline decode ~/tidyline-out/answer.md
 mapping file. It needs the same database the prompt was made from, and `light`
 output needs no decoding.
 
-- It replaces whole labels such as `Task k3f9az`, and bare codes such as
-  `k3f9az` when the code belongs to exactly one item. A code shared by several
+- It replaces whole labels such as `Task k3f7az`, and bare codes such as
+  `k3f7az` when the code belongs to exactly one item. A code shared by several
   items is left as it is.
 - Titles go in double quotes, unless the answer already quoted the label or put
   it in backticks.

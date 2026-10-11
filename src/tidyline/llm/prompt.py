@@ -22,7 +22,7 @@ PROMPT_FILE = "tidyline_prompt.md"
 DATA_NOTES = {
     "strict": (
         'Titles and names in this file are replaced by labels such as "Task '
-        'k3f9az", "Project 7qm2xd" or "Area x3k2qa". Notes are removed, and '
+        'k3f7az", "Project 7qm2xd" or "Area x3k2qa". Notes are removed, and '
         "checklist items are replaced by a count (`checklist_count`). Refer to "
         "items by their label."
     ),
@@ -67,7 +67,7 @@ NO_AREAS = "(no areas)"
 
 REMOVED = {
     "strict": (
-        'titles and names replaced by labels such as "Task k3f9az"',
+        'titles and names replaced by labels such as "Task k3f7az"',
         "notes removed",
         "checklist items replaced by a count",
         "free text in raw recurrence rules and read warnings replaced",
