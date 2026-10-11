@@ -8,9 +8,11 @@ An offline, read-only command-line tool that audits a Things 3 database on macOS
 
 ## Your data is personal
 
-The Things database, the JSON export, the text report and any decoded file
-contain your personal data: task titles, notes, checklists and dates. Never
-commit them to a repository, and never post them in a public issue.
+The Things database, the JSON export, the text output of `check` and
+`recurrence`, and any decoded file contain your personal data: task titles,
+notes, checklists and dates. Never commit them to a repository, and never post
+them in a public issue. `report` prints counts only, and `check --json` prints
+ids and fixed messages only; neither shows titles.
 
 Anonymised exports reduce the risk. They cannot remove all of it.
 
@@ -202,9 +204,10 @@ The decoded text contains real titles, so treat it as personal data.
 ## Health checks
 
 `tidyline check` exits with 1 if any warning is found. Info findings do not
-change the exit code. Findings carry ids and fixed messages, never titles. The
-text output shows titles on your own screen only. `check --json` prints ids
-only.
+change the exit code. The findings themselves carry ids and fixed messages.
+The text output looks up the titles and shows them on your own screen, so do
+not paste it into a public place. `check --json` prints ids and fixed messages
+only, with no titles.
 
 | Check | Severity | What it finds |
 |---|---|---|

@@ -113,7 +113,7 @@ AI answers vary between assistants and between runs, and they can be wrong. tidy
 
 - Output files are readable only by you.
 - tidyline will not overwrite an existing file. If it refuses, pick a new name or folder.
-- Do not put exports, reports or decoded answers into any public place. They contain personal data.
+- Do not put exports, the text output of `check` or `recurrence`, or decoded answers into any public place. They contain personal data. `report` and `check --json` show no titles.
 
 ## 7. If something goes wrong
 

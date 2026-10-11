@@ -181,7 +181,7 @@ Definitions (settled 2026-10-10):
 - Leftover templates (info): live templates whose project is trashed or missing.
 - Someday inside active project (info): in-scope to-do with effective status Someday in a project that is open and not Someday.
 - Outside any heading (info): one finding per project that has at least one non-trashed heading, with the project as the first ref and each in-scope open to-do directly under it, with no heading, as the other refs.
-- Findings carry ids and fixed-wording messages only, never titles, notes or user pattern text. `check --json` has `check_schema_version` "1".
+- Findings carry ids and fixed-wording messages only, never titles, notes or user pattern text. The text output of `check` looks the titles up and shows them (with the user's own pattern next to "matches user pattern N") on the user's own screen, so it is personal data. `check --json` has ids and fixed messages only, and `check_schema_version` "1".
 - Exit codes: 0 success, 1 `check` found at least one warning, 2 usage error (including an unusable `--out` path found before any work: path exists, folder missing), 3 the run failed (database could not be found or read, schema check failed, output could not be written). All commands.
 
 All joins use UUIDs, never titles. Candidates for later, not committed: overdue deadlines, Inbox size, stale tasks.
