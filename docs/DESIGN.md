@@ -332,7 +332,7 @@ src/tidyline/
   render/text.py      text report
   render/check_out.py text and JSON output of `check`
   render/help_out.py  the help screen shown with no arguments
-  render/html/        v0.3
+  render/html_out.py  the HTML report (7.7): one self-contained file, stdlib only
   llm/payload.py      the open-work payload for `prompt` (7.6)
   llm/prompt.py       v0.2: fill the audit template, write payload and prompt
   llm/ollama.py       v0.4

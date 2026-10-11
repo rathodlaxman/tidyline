@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; style-src &#x27;unsafe-inline&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>tidyline report, 2026-10-10</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff; --card: #f4f4f6; --fg: #1d1d1f; --muted: #55555a;
+  --border: #d2d2d7; --link: #0050a8;
+  --warn-bg: #fff1cc; --warn-fg: #5c3a00;
+  --info-bg: #e3edff; --info-fg: #0a3f8a;
+  --mark-bg: #fff6e0;
+  --s-inbox: #8e8e93; --s-today: #e0a100; --s-evening: #5e5ce6;
+  --s-upcoming: #e8572a; --s-anytime: #0a84ff; --s-someday: #a2845e;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e; --card: #2a2a2d; --fg: #f2f2f7; --muted: #b8b8bf;
+    --border: #48484a; --link: #7ab8ff;
+    --warn-bg: #443100; --warn-fg: #ffd970;
+    --info-bg: #10284d; --info-fg: #b3d1ff;
+    --mark-bg: #3a2f14;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px; line-height: 1.5;
+}
+.page { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 1.75rem; margin: 0 0 12px; }
+h2 { font-size: 1.25rem; margin: 32px 0 12px; }
+code, .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em; overflow-wrap: anywhere;
+}
+a { color: var(--link); }
+.muted { color: var(--muted); }
+.facts { display: flex; flex-wrap: wrap; gap: 4px 24px; margin: 0; }
+.facts div { display: flex; gap: 6px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; }
+.private {
+  margin: 16px 0 0; padding: 12px 14px; border-radius: 8px;
+  background: var(--warn-bg); color: var(--warn-fg);
+}
+.lead { font-size: 1.1rem; margin: 0; }
+.tiles { display: flex; flex-wrap: wrap; gap: 12px; }
+.tile {
+  flex: 1 1 150px; padding: 12px 14px; border-radius: 8px;
+  background: var(--card); border: 1px solid var(--border);
+}
+.tile .number { display: block; font-size: 1.75rem; font-weight: 600; }
+.bar {
+  display: flex; height: 22px; border-radius: 6px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--card);
+}
+.bar span { flex-basis: 0; min-width: 2px; }
+.legend {
+  display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none;
+  padding: 0; margin: 10px 0 0;
+}
+.legend li { display: flex; align-items: center; gap: 6px; }
+.swatch {
+  display: inline-block; width: 12px; height: 12px; border-radius: 3px;
+  border: 1px solid var(--border);
+}
+.inbox { background: var(--s-inbox); } .today { background: var(--s-today); }
+.evening { background: var(--s-evening); }
+.upcoming { background: var(--s-upcoming); }
+.anytime { background: var(--s-anytime); }
+.someday { background: var(--s-someday); }
+.check {
+  border: 1px solid var(--border); border-radius: 8px; margin: 0 0 10px;
+  background: var(--card);
+}
+.check > summary, .check.empty { padding: 10px 14px; }
+.check > summary { cursor: pointer; }
+.check-body { padding: 0 14px 12px; }
+.check-name { font-weight: 600; }
+.badge {
+  display: inline-block; padding: 0 8px; border-radius: 999px;
+  font-size: 0.85em; font-weight: 600;
+}
+.badge.warning { background: var(--warn-bg); color: var(--warn-fg); }
+.badge.info { background: var(--info-bg); color: var(--info-fg); }
+.message { margin: 4px 0 8px; font-style: italic; }
+.place { margin: 10px 0 2px; font-weight: 600; }
+.place .muted { font-weight: 400; }
+ul.items { margin: 0; padding-left: 22px; }
+ul.items li { margin: 2px 0; overflow-wrap: anywhere; }
+.t { white-space: pre-wrap; }
+.t::before { content: "\201C"; }
+.t::after { content: "\201D"; }
+.note { color: var(--muted); }
+.fix { margin: 10px 0 0; }
+.counts { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 0 0 12px; }
+.counts div { display: flex; gap: 6px; }
+.counts dt { color: var(--muted); }
+.counts dd { margin: 0; font-weight: 600; }
+.scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; min-width: 560px; }
+th, td {
+  text-align: left; vertical-align: top; padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+}
+th { background: var(--card); }
+tr:last-child td { border-bottom: 0; }
+tr.marked td { background: var(--mark-bg); }
+tr.marked td:first-child { box-shadow: inset 4px 0 0 var(--warn-fg); }
+.closed { margin-top: 14px; }
+.closed table { min-width: 0; }
+footer {
+  margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border);
+  color: var(--muted); font-size: 0.9rem;
+}
+footer p { margin: 4px 0; }
+@media print {
+  body { background: none; }
+  .tile, .check, .private, th, tr.marked td { background: none; }
+  .check, .tile { box-shadow: none; break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+<h1>tidyline report</h1>
+<dl class="facts"><div><dt>Date</dt><dd>2026-10-10</dd></div><div><dt>tidyline</dt><dd>0.3.0</dd></div><div><dt>Things</dt><dd>3.24.1</dd></div><div><dt>Database version</dt><dd>29</dd></div><div><dt>macOS</dt><dd>27.0.1</dd></div><div><dt>Tested versions</dt><dd>yes</dd></div></dl>
+<p class="private"><strong>Personal data.</strong> This file contains your task titles and the names of your projects and areas. Keep it private and do not commit or share it.</p>
+</header>
+<main>
+<section id="first" aria-labelledby="first-h">
+<h2 id="first-h">Look at this first</h2>
+<p class="lead">16 warnings across 7 checks; the largest group is <code>open_in_trashed_project</code> (3).</p>
+</section>
+<section id="glance" aria-labelledby="glance-h">
+<h2 id="glance-h">At a glance</h2>
+<div class="tiles">
+<div class="tile"><span class="number">29</span>Open to-dos</div>
+<div class="tile"><span class="number">5</span>Open projects</div>
+<div class="tile"><span class="number">2</span>Areas</div>
+<div class="tile"><span class="number">5</span>Completed in the last 30 days</div>
+<div class="tile"><span class="number">24</span>Live repeating to-dos</div>
+</div>
+</section>
+<section id="where" aria-labelledby="where-h">
+<h2 id="where-h">Where your open to-dos sit</h2>
+<div class="bar" role="img" aria-label="Open to-dos by list: Inbox 1, Today 4, This Evening 1, Upcoming 1, Anytime 18, Someday 4"><span class="inbox" style="flex-grow: 1" title="Inbox: 1"></span><span class="today" style="flex-grow: 4" title="Today: 4"></span><span class="evening" style="flex-grow: 1" title="This Evening: 1"></span><span class="upcoming" style="flex-grow: 1" title="Upcoming: 1"></span><span class="anytime" style="flex-grow: 18" title="Anytime: 18"></span><span class="someday" style="flex-grow: 4" title="Someday: 4"></span></div>
+<ul class="legend">
+<li><span class="swatch inbox"></span>Inbox <strong>1</strong></li>
+<li><span class="swatch today"></span>Today <strong>4</strong></li>
+<li><span class="swatch evening"></span>This Evening <strong>1</strong></li>
+<li><span class="swatch upcoming"></span>Upcoming <strong>1</strong></li>
+<li><span class="swatch anytime"></span>Anytime <strong>18</strong></li>
+<li><span class="swatch someday"></span>Someday <strong>4</strong></li>
+</ul>
+</section>
+<section id="checks" aria-labelledby="checks-h">
+<h2 id="checks-h">Health checks</h2>
+<details class="check" open>
+<summary><span class="badge warning">warning</span> <code class="check-name">open_in_trashed_project</code> <span class="muted">3 findings</span></summary>
+<div class="check-body">
+<div class="group">
+<p class="place"><bdi class="t">Old Newsletter</bdi> <span class="muted">(project, 3 open to-dos)</span></p>
+<ul class="items">
+<li><bdi class="t">Draft newsletter issue 3</bdi></li>
+<li><bdi class="t">Plan newsletter issue 4</bdi></li>
+<li><bdi class="t">Send the proofs for review</bdi></li>
+</ul>
+</div>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#1-open_in_trashed_project-warning" rel="noopener noreferrer">How to fix open_in_trashed_project</a></p>
+</div>
+</details>
+<details class="check" open>
+<summary><span class="badge warning">warning</span> <code class="check-name">unfiled_open</code> <span class="muted">3 findings</span></summary>
+<div class="check-body">
+<p class="message">open to-do with no area and no project</p>
+<ul class="items">
+<li><bdi class="t">Sort the loose cables</bdi></li>
+<li><bdi class="t">Ｂuy a ﬁrst-birthday card for Zoé</bdi></li>
+<li><bdi class="t">Müll rausbringen und Gelbe Säcke holen</bdi></li>
+</ul>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#2-unfiled_open-warning" rel="noopener noreferrer">How to fix unfiled_open</a></p>
+</div>
+</details>
+<details class="check" open>
+<summary><span class="badge warning">warning</span> <code class="check-name">title_hygiene</code> <span class="muted">2 findings</span></summary>
+<div class="check-body">
+<div class="group">
+<p class="place"><bdi class="t">Admin</bdi> <span class="muted">(project, 1 to-do)</span></p>
+<ul class="items">
+<li><bdi class="t">Reconcile  receipts ·</bdi> <span class="note">&mdash; stray middle dot at the end; doubled spaces</span></li>
+</ul>
+</div>
+<div class="group">
+<p class="place"><bdi class="t">Side Studio</bdi> <span class="muted">(area, 1 to-do)</span></p>
+<ul class="items">
+<li><bdi class="t"> Update portfolio site</bdi> <span class="note">&mdash; leading whitespace</span></li>
+</ul>
+</div>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#3-title_hygiene-warning" rel="noopener noreferrer">How to fix title_hygiene</a></p>
+</div>
+</details>
+<details class="check" open>
+<summary><span class="badge warning">warning</span> <code class="check-name">possible_duplicates</code> <span class="muted">1 finding</span></summary>
+<div class="check-body">
+<ul class="items">
+<li><bdi class="t">Pay the electricity bill</bdi> = <bdi class="t">pay the electricity bill.</bdi></li>
+</ul>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#4-possible_duplicates-warning" rel="noopener noreferrer">How to fix possible_duplicates</a></p>
+</div>
+</details>
+<details class="check" open>
+<summary><span class="badge warning">warning</span> <code class="check-name">dated_in_someday_project</code> <span class="muted">3 findings</span></summary>
+<div class="check-body">
+<p class="message">to-do with a start date inside a Someday project</p>
+<div class="group">
+<p class="place"><bdi class="t">Learn Pottery</bdi> <span class="muted">(project, 3 to-dos)</span></p>
+<ul class="items">
+<li><bdi class="t">Buy clay</bdi></li>
+<li><bdi class="t">Choose a glaze palette</bdi></li>
+<li><bdi class="t">Book wheel class</bdi></li>
+</ul>
+</div>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#5-dated_in_someday_project-warning" rel="noopener noreferrer">How to fix dated_in_someday_project</a></p>
+</div>
+</details>
+<details class="check" open>
+<summary><span class="badge warning">warning</span> <code class="check-name">active_project_no_open_tasks</code> <span class="muted">1 finding</span></summary>
+<div class="check-body">
+<p class="message">active project with no open to-dos</p>
+<div class="group">
+<p class="place"><bdi class="t">Side Studio</bdi> <span class="muted">(area, 1 project)</span></p>
+<ul class="items">
+<li><bdi class="t">Photo Archive Cleanup</bdi></li>
+</ul>
+</div>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#6-active_project_no_open_tasks-warning" rel="noopener noreferrer">How to fix active_project_no_open_tasks</a></p>
+</div>
+</details>
+<details class="check" open>
+<summary><span class="badge warning">warning</span> <code class="check-name">recurrence_not_recognised</code> <span class="muted">3 findings</span></summary>
+<div class="check-body">
+<ul class="items">
+<li><bdi class="t">Check the smoke alarms</bdi> <span class="note">&mdash; recurrence rule not recognised</span></li>
+<li><bdi class="t">Empty the dehumidifier</bdi> <span class="note">&mdash; recurrence rule not recognised</span></li>
+<li><bdi class="t">Rinse the compost caddy</bdi> <span class="note">&mdash; recurrence rule could not be read</span></li>
+</ul>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#7-recurrence_not_recognised-warning" rel="noopener noreferrer">How to fix recurrence_not_recognised</a></p>
+</div>
+</details>
+<details class="check">
+<summary><span class="badge info">info</span> <code class="check-name">leftover_templates</code> <span class="muted">1 finding</span></summary>
+<div class="check-body">
+<ul class="items">
+<li><bdi class="t">Send the newsletter</bdi> <span class="note">&mdash; recurring template whose project is trashed</span></li>
+</ul>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#8-leftover_templates-info" rel="noopener noreferrer">How to fix leftover_templates</a></p>
+</div>
+</details>
+<details class="check">
+<summary><span class="badge info">info</span> <code class="check-name">someday_in_active_project</code> <span class="muted">1 finding</span></summary>
+<div class="check-body">
+<p class="message">Someday to-do inside an active project</p>
+<div class="group">
+<p class="place"><bdi class="t">Garden Shed Rebuild</bdi> <span class="muted">(project, 1 to-do)</span></p>
+<ul class="items">
+<li><bdi class="t">Paint the shed door</bdi></li>
+</ul>
+</div>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#9-someday_in_active_project-info" rel="noopener noreferrer">How to fix someday_in_active_project</a></p>
+</div>
+</details>
+<details class="check">
+<summary><span class="badge info">info</span> <code class="check-name">outside_heading</code> <span class="muted">1 finding</span></summary>
+<div class="check-body">
+<div class="group">
+<p class="place"><bdi class="t">Garden Shed Rebuild</bdi> <span class="muted">(project, 2 open to-dos outside any heading)</span></p>
+<ul class="items">
+<li><bdi class="t">Buy a spirit level</bdi></li>
+<li><bdi class="t">Paint the shed door</bdi></li>
+</ul>
+</div>
+<p class="fix"><a href="https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md#10-outside_heading-info" rel="noopener noreferrer">How to fix outside_heading</a></p>
+</div>
+</details>
+</section>
+<section id="repeating" aria-labelledby="repeating-h">
+<h2 id="repeating-h">Repeating to-dos</h2>
+<dl class="counts"><div><dt>Live</dt><dd>24</dd></div><div><dt>Leftover</dt><dd>1</dd></div><div><dt>Recognised</dt><dd>22</dd></div><div><dt>Assumed</dt><dd>2</dd></div><div><dt>Not recognised</dt><dd>3</dd></div></dl>
+<div class="scroll"><table>
+<thead><tr><th>Title</th><th>Place</th><th>Rule</th><th>Confidence</th></tr></thead>
+<tbody>
+<tr><td><bdi class="t">Descale the kettle</bdi></td><td>area <bdi class="t">Household</bdi></td><td>1 year after completion</td><td>verified</td></tr>
+<tr><td><bdi class="t">Take out the recycling</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Daily</td><td>verified</td></tr>
+<tr><td><bdi class="t">Wash the bedding</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Every 2 weeks on Sun</td><td>verified</td></tr>
+<tr><td><bdi class="t">Clean the oven</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Every 3 months on day 5</td><td>verified</td></tr>
+<tr><td><bdi class="t">Service the bicycle</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Every 6 months on day 14</td><td>verified</td></tr>
+<tr><td><bdi class="t">Review the budget sheet</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on day 1</td><td>verified</td></tr>
+<tr><td><bdi class="t">Send the course invoice</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on day 1 (has an end date)</td><td>verified</td></tr>
+<tr><td><bdi class="t">Order printer ink</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on day 14 (starts 7 days before deadline)</td><td>verified</td></tr>
+<tr><td><bdi class="t">Pay the rent</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Monthly on day 15</td><td>verified</td></tr>
+<tr class="marked"><td><bdi class="t">Back up the laptop</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on last day</td><td><strong>assumed</strong></td></tr>
+<tr class="marked"><td><bdi class="t">Call the family</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Monthly on the first Sun</td><td><strong>assumed</strong></td></tr>
+<tr><td><bdi class="t">Tidy the workshop</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on the last Sun</td><td>verified</td></tr>
+<tr><td><bdi class="t">Water the balcony herbs</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Fri</td><td>verified</td></tr>
+<tr><td><bdi class="t">Check the tyre pressure</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Weekly on Sat</td><td>verified</td></tr>
+<tr><td><bdi class="t">Practise the scales</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Weekly on Sat (ends after 12 times)</td><td>verified</td></tr>
+<tr><td><bdi class="t">Mow the lawn</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Sat (paused)</td><td>verified</td></tr>
+<tr><td><bdi class="t">Plan the week ahead</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Sun</td><td>verified</td></tr>
+<tr><td><bdi class="t">Rotate the pantry stock</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Sun</td><td>verified</td></tr>
+<tr><td><bdi class="t">Review the garden plan</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Sun</td><td>verified</td></tr>
+<tr><td><bdi class="t">Renew the domain name</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Yearly on Feb 28</td><td>verified</td></tr>
+<tr><td><bdi class="t">Set the year&#x27;s goals</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Yearly on Jan 1</td><td>verified</td></tr>
+<tr><td><bdi class="t">Send the newsletter</bdi></td><td>project <bdi class="t">Old Newsletter</bdi> (trashed)</td><td>Monthly on day 1</td><td>verified</td></tr>
+<tr class="marked"><td><bdi class="t">Empty the dehumidifier</bdi></td><td>area <bdi class="t">Household</bdi></td><td>not recognised</td><td><strong>not recognised</strong></td></tr>
+<tr class="marked"><td><bdi class="t">Check the smoke alarms</bdi></td><td>area <bdi class="t">Household</bdi></td><td>not recognised</td><td><strong>not recognised</strong></td></tr>
+<tr class="marked"><td><bdi class="t">Rinse the compost caddy</bdi></td><td>area <bdi class="t">Household</bdi></td><td>not recognised</td><td><strong>not recognised</strong></td></tr>
+</tbody></table></div>
+</section>
+<section id="warnings" aria-labelledby="warnings-h">
+<h2 id="warnings-h">Read warnings</h2>
+<p>None.</p>
+</section>
+</main>
+<footer>
+<p>Made offline by tidyline 0.3.0 from a private copy of the database. Nothing was sent anywhere and nothing in Things was changed.</p>
+<p>tidyline is unofficial and not affiliated with Cultured Code.</p>
+</footer>
+</div>
+</body>
+</html>
