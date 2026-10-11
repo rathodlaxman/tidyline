@@ -361,13 +361,6 @@ def test_piped_output_has_no_colour(fixture_db, capsys, no_real_app):
     assert not ESCAPE.search(capsys.readouterr().out)
 
 
-def test_html_is_not_available_yet(fixture_db, tmp_path, capsys, no_real_app):
-    out = tmp_path / "report.html"
-    assert run_report(fixture_db, "--html", "--out", str(out)) == 2
-    assert not out.exists()
-    assert "arrives in v0.3" in capsys.readouterr().err
-
-
 def test_out_writes_a_private_file_and_reminds(
     fixture_db, tmp_path, capsys, no_real_app
 ):

@@ -37,6 +37,7 @@ from tidyline.llm.prompt import (
 from tidyline.read import ReadError, read_snapshot
 from tidyline.render.check_out import check_json, check_text
 from tidyline.render.help_out import render_help
+from tidyline.render.html_out import render_html
 from tidyline.render.json_out import build_export
 from tidyline.render.recurrence_out import render_recurrence
 from tidyline.render.style import stderr_style, stdout_style
@@ -56,6 +57,8 @@ REPORT_FILE_NOTE = (
     "note: this file holds counts only, with no titles. It is still personal "
     "data about your Things setup. " + KEEP_PRIVATE
 )
+# The HTML report shows titles (DESIGN.md 7.7).
+HTML_REPORT_NOTE = "note: this file contains your task titles. " + KEEP_PRIVATE
 
 THINGS_INFO_PLIST = Path("/Applications/Things3.app/Contents/Info.plist")
 
@@ -108,7 +111,9 @@ def build_parser() -> argparse.ArgumentParser:
         help="none (default), light (scrub titles, drop notes) or strict "
         "(replace titles with labels)",
     )
-    report = commands.add_parser("report", help="print or write the text report")
+    report = commands.add_parser(
+        "report", help="print or write the report (text, or HTML with --html)"
+    )
     report.add_argument(
         "--db",
         metavar="PATH",
@@ -116,7 +121,9 @@ def build_parser() -> argparse.ArgumentParser:
         help="path to the Things database",
     )
     report.add_argument(
-        "--html", action="store_true", help="HTML report (arrives in v0.3)"
+        "--html",
+        action="store_true",
+        help="write the HTML report, with task titles, to --out FILE",
     )
     report.add_argument(
         "--out", metavar="PATH", help="write to this file (must not exist)"
@@ -364,10 +371,11 @@ def export(args: argparse.Namespace) -> int:
 
 
 def report(args: argparse.Namespace) -> int:
-    if args.html:
+    if args.html and args.out is None:
         _error(
-            "the HTML report arrives in v0.3. Nothing was written. Run "
-            "`tidyline report` for the text report."
+            "--html needs --out FILE, because the HTML report is written to a "
+            "file. Nothing was written. For example: tidyline report --html "
+            "--out ~/tidyline-out/report.html"
         )
         return EXIT_USAGE
     out = None
@@ -386,17 +394,32 @@ def report(args: argparse.Namespace) -> int:
         return EXIT_FAILURE
     snapshot, schema_report, macos, things = loaded
 
+    environment = {
+        "macos": macos,
+        "things_version": things,
+        "database_version": schema_report.database_version,
+        "tested": is_tested(macos, things, schema_report.database_version),
+    }
+    if args.html:  # --no-color has nothing to switch off in the file
+        page = render_html(
+            snapshot,
+            today=dt.date.today(),
+            tool_version=__version__,
+            environment=environment,
+            include_completed=args.include_completed,
+        )
+        if not _write_out(out, page):
+            return EXIT_FAILURE
+        print(f"Wrote the HTML report to {out}")
+        _privacy_note(HTML_REPORT_NOTE)
+        return 0
+
     color = out is None and not args.no_color and stdout_style().enabled
     text = render_report(
         snapshot,
         today=dt.date.today(),
         tool_version=__version__,
-        environment={
-            "macos": macos,
-            "things_version": things,
-            "database_version": schema_report.database_version,
-            "tested": is_tested(macos, things, schema_report.database_version),
-        },
+        environment=environment,
         options=ReportOptions(include_completed=args.include_completed, color=color),
     )
     if out is None:

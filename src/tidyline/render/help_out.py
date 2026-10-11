@@ -45,7 +45,7 @@ def render_help(version: str, style: Style = PLAIN) -> str:
         "",
         style.underline("Your task titles"),
         "  Show them on screen or in the file: check, recurrence, export, decode.",
-        "  Never show them: report, check --json.",
+        "  Never show them: report (text), check --json. report --html shows them.",
         "  export and prompt hide them with --anonymise strict.",
         "  Nothing is sent anywhere.",
         "",

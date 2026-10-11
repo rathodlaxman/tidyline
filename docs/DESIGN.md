@@ -354,7 +354,7 @@ The core returns data and never prints. The CLI only parses options and calls th
 | Command | Purpose | Main options |
 |---|---|---|
 | `doctor` | Locate the database, check permissions and schema, show versions and whether they are tested | `--db` |
-| `report` | Text summary; HTML from v0.3 | `--html`, `--out`, `--include-completed`, `--no-color` |
+| `report` | Text summary, counts only. `--html --out FILE` writes the HTML report, which shows titles (7.7) | `--html`, `--out`, `--include-completed`, `--no-color` |
 | `check` | Health checks only; exit code 1 if any warning. Text output: a total line, a heading per check with severity and count, items grouped by project, area or trashed project with a count (decisions log, 2026-10-11) | `--only`, `--json` |
 | `export` | JSON export | `--out`, `--anonymise {none,light,strict}` |
 | `recurrence` | List every repeating template with its readable rule, so it can be checked against what Things shows: one block per template (rule text or "not recognised", title, project or area, state live / leftover / not recognised) sorted by state, rule text and id, then a summary line. Exit 0 even when rules are not recognised. `--raw` adds the rule as stored (XML text, or hex and length for a binary plist), the decoded fields and, for an unrecognised rule, the reason, after a personal-data warning line. | `--raw`, `--db` |

@@ -33,7 +33,9 @@ def test_no_command_prints_the_help_screen(capsys):
     assert (
         "Show them on screen or in the file: check, recurrence, export, decode." in out
     )
-    assert "Never show them: report, check --json." in out
+    assert (
+        "Never show them: report (text), check --json. report --html shows them." in out
+    )
     assert "docs/GETTING_STARTED.md" in out
 
 
