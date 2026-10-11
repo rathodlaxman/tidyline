@@ -48,6 +48,7 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-11 | The raw recurrence timestamps `ed`, `ia` and `sr` are withheld (null) at `strict`; `light` keeps them. `recurrence.text` is unchanged at every level. |
 | 2026-10-11 | The `prompt` payload is no longer the anonymised export. It holds open work only, plus a precomputed `summary` and `checks_run` (section 7.6), so the assistant does not count rows itself. Completed, cancelled and trashed to-dos, and completed or trashed projects that hold no open to-dos, are counted in the summary only. It is anonymised by the same rules and labels as the export, so `decode` still works. |
 | 2026-10-11 | In the `prompt` payload, the export's `warnings` are renamed `data_read_warnings`, so they are not read as problems with the user's system. |
+| 2026-10-11 | `exported_at` and all derived dates use local time with offset (was UTC in export). `export` and `prompt` follow one rule: `exported_at` is a local ISO 8601 timestamp with its UTC offset, "today" is its date, and every `created` and `modified` date and every completed-to-do window uses that local date. Part of `export_schema_version` 1.1 (not released before this change). |
 
 ## 4. Tested environment
 
@@ -201,6 +202,7 @@ All joins use UUIDs, never titles. Candidates for later, not committed: overdue 
 
 Tasks carry: id, title, notes, area, project, heading (as ids plus titles), effective status, start, start date, deadline, status, completion date, created, modified, tags, checklist items, recurrence text and raw rule. Projects and headings have the same shape without checklist and recurrence.
 
+- `exported_at` is local time as ISO 8601 with its UTC offset (since 1.1; it was UTC before). "Today" for effective status and the checks is its date.
 - `created` and `modified` (added in 1.1) are `creationDate` and `userModificationDate` as ISO dates (`YYYY-MM-DD`) in the timezone of `exported_at`, or null when the column is empty or does not decode.
 - `checks_run` (added in 1.1) has one `{"check", "severity", "findings"}` entry per check, in registry order. `findings` is the number of findings; a check that found nothing is listed with 0.
 

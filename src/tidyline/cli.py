@@ -295,10 +295,11 @@ def export(args: argparse.Namespace) -> int:
         return EXIT_FAILURE
     snapshot, report, macos, things = loaded
 
+    now = _local_now()
     data = build_export(
         snapshot,
-        today=dt.date.today(),
-        exported_at=dt.datetime.now(dt.timezone.utc).replace(microsecond=0),
+        today=now.date(),
+        exported_at=now,
         tool_version=__version__,
         environment={
             "macos": macos,
@@ -467,10 +468,11 @@ def prompt(args: argparse.Namespace) -> int:
     if loaded is None:
         return EXIT_FAILURE
     snapshot = loaded[0]
+    now = _local_now()
     payload = build_payload(
         snapshot,
-        today=dt.date.today(),
-        exported_at=dt.datetime.now().astimezone().replace(microsecond=0),
+        today=now.date(),
+        exported_at=now,
         level=args.anonymise,
     )
     result = build_prompt(payload, context)
@@ -598,6 +600,12 @@ def decode(args: argparse.Namespace) -> int:
         file=sys.stderr,
     )
     return EXIT_OK
+
+
+def _local_now() -> dt.datetime:
+    """Now in local time with its UTC offset. `exported_at` and every date
+    derived from it (created, modified, completed windows) use this."""
+    return dt.datetime.now().astimezone().replace(microsecond=0)
 
 
 def _prompt_preview(result, args, context, written, copied) -> str:

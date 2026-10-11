@@ -2,6 +2,7 @@ import datetime as dt
 import os
 import sqlite3
 import tempfile
+import time
 from pathlib import Path
 
 import pytest
@@ -51,6 +52,26 @@ def never_touch_library(monkeypatch):
     monkeypatch.setattr(os, "scandir", spy_scandir)
     yield
     assert [t for t in touched if REAL_LIBRARY in t] == []
+
+
+def set_timezone(name):
+    """Set the process timezone (a POSIX TZ string such as "IST-5:30")."""
+    os.environ["TZ"] = name
+    time.tzset()
+
+
+@pytest.fixture(autouse=True)
+def pinned_timezone():
+    """Run every test in UTC unless it sets another zone, so local-time results
+    never depend on the machine running the tests."""
+    saved = os.environ.get("TZ")
+    set_timezone("UTC0")
+    yield set_timezone
+    if saved is None:
+        del os.environ["TZ"]
+    else:
+        os.environ["TZ"] = saved
+    time.tzset()
 
 
 @pytest.fixture
