@@ -329,4 +329,4 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 - Whether `ts` 0 can mean a deadline on the same day, and whether `ed` ordinary values correspond to "ends on date" in the dialog.
 - Whether an evening task can carry a past date or sit in a Someday project.
 - Rule 5 also applies to Someday tasks (7.1 order): a Someday task with no start date and an overdue deadline is Today. Not seen on real data.
-- In the export, a task's `area` is its own column and is not inherited from its project. Decide in v0.2 whether consumers need an inherited area.
+- In the export, a task's `area` is its own column and is not inherited from its project. Deferred to v0.3: decide when building the HTML report whether consumers need an inherited area.
