@@ -22,7 +22,7 @@ from tidyline.db.schema import (
     tested_versions_text,
 )
 from tidyline.db.snapshot import SnapshotError, open_snapshot
-from tidyline.decode import decode_text, label_map
+from tidyline.decode import DecodeResult, decode_text, label_items, label_map
 from tidyline.llm.payload import build_payload
 from tidyline.llm.prompt import (
     KEPT,
@@ -577,16 +577,10 @@ def decode(args: argparse.Namespace) -> int:
         loaded = _load(args)
         if loaded is None:
             return EXIT_FAILURE
-        result = decode_text(text, label_map(loaded[0]))
+        snapshot = loaded[0]
+        result = decode_text(text, label_map(snapshot), label_items(snapshot))
         decoded = result.text
-        summary = (
-            f"Decoded: {result.replaced} labels replaced ({result.distinct} distinct)."
-        )
-        if result.unmatched:
-            summary += (
-                f" {len(result.unmatched)} distinct label-like strings matched "
-                "nothing in this database and were left as they are."
-            )
+        summary = _decode_summary(result)
 
     if out is None:
         print(decoded, end="")
@@ -601,6 +595,25 @@ def decode(args: argparse.Namespace) -> int:
         file=sys.stderr,
     )
     return EXIT_OK
+
+
+def _decode_summary(result: DecodeResult) -> str:
+    """Counts only, never titles or codes."""
+    lines = [
+        f"Decoded: {result.replaced} labels replaced, {result.bare_replaced} bare "
+        f"codes replaced ({result.distinct} distinct items)."
+    ]
+    if result.ambiguous:
+        lines.append(
+            f"{len(result.ambiguous)} distinct bare codes were ambiguous (each "
+            "matches several items) and were left as they are."
+        )
+    if result.unmatched:
+        lines.append(
+            f"{len(result.unmatched)} distinct label-like strings matched nothing "
+            "in this database and were left as they are."
+        )
+    return "\n".join(lines)
 
 
 def _local_now() -> dt.datetime:

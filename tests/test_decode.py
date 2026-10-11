@@ -70,8 +70,8 @@ def test_round_trip_through_a_strict_export(fixture_db, labels, mapping):
     )
     result = decode_text(answer, mapping)
     assert result.text == (
-        "Move Measure the plot under Build in Garden Shed Rebuild (Household). "
-        "Tag it errand. Review Pay the rent.\n"
+        'Move "Measure the plot" under "Build" in "Garden Shed Rebuild" '
+        '("Household"). Tag it "errand". Review "Pay the rent".\n'
     )
     assert (result.replaced, result.distinct, result.unmatched) == (6, 6, ())
 
@@ -98,18 +98,18 @@ def test_labels_in_markdown(labels, mapping):
     lease = "Renew the lease at www.example.com/flat-12"
     photos = "Photo Archive Cleanup"
     assert result.text == (
-        f"{lease} starts the line\n"
-        f"- **{lease}** and `{photos}`\n"
-        f"| {lease} | {photos} |\n"
-        f'"{photos}" ends the line: {lease}\n'
-        f"_{photos}_"
+        f'"{lease}" starts the line\n'
+        f'- **"{lease}"** and `{photos}`\n'
+        f'| "{lease}" | "{photos}" |\n'
+        f'"{photos}" ends the line: "{lease}"\n'
+        f'_"{photos}"_'
     )
     assert (result.replaced, result.distinct) == (8, 2)
 
 
 def test_label_in_underscore_italics_is_replaced(labels, mapping):
     project = labels[U("proj_photos")]
-    assert decode_text(f"_{project}_", mapping).text == "_Photo Archive Cleanup_"
+    assert decode_text(f"_{project}_", mapping).text == '_"Photo Archive Cleanup"_'
 
 
 def test_unknown_labels_stay_and_are_counted(mapping):
@@ -123,29 +123,33 @@ def test_unknown_labels_stay_and_are_counted(mapping):
 def test_longer_words_containing_a_label_are_not_touched(labels, mapping):
     task = labels[U("t_lease")]
     kind, code = task.split(" ")
-    answer = f"My{task} / {task}x / {task}2 / {kind}s {code} / {kind} {code}9"
+    answer = f"{task}x / {task}2 / {kind} {code}9 / x{code} / {code}s / {kind}{code}"
     result = decode_text(answer, mapping)
     assert result.text == answer
-    assert result.replaced == 0
+    assert (result.replaced, result.bare_replaced) == (0, 0)
 
 
 def test_a_title_that_looks_like_a_label_is_not_replaced_again(labels):
     first, second = labels[U("t_lease")], labels[U("t_level")]
     result = decode_text(f"{first} then {second}", {first: second, second: "Level"})
-    assert result.text == f"{second} then Level"
+    assert result.text == f'"{second}" then "Level"'
     assert result.replaced == 2
+
+
+def quoted_parts(text):
+    return " / ".join(f'"{part}"' for part in text.split(" / "))
 
 
 def test_unicode_titles_round_trip(fixture_db, labels, mapping):
     answer = " / ".join(labels[U(k)] for k in ("t_card", "t_ja", "t_de", "t_es"))
     result = decode_text(answer, mapping)
-    assert result.text == (
+    assert result.text == quoted_parts(
         "Ｂuy a ﬁrst-birthday card for Zoé / 請求書の写真を整理する / "
         "Müll rausbringen und Gelbe Säcke holen / Comprar pimentón y azafrán"
     )
 
 
-def test_markdown_characters_in_titles_go_in_unescaped(fixture_db):
+def test_pipe_in_a_title_is_escaped_in_a_table_row(fixture_db):
     conn = sqlite3.connect(fixture_db)
     conn.execute(
         "UPDATE TMTask SET title = ? WHERE uuid = ?",
@@ -156,9 +160,9 @@ def test_markdown_characters_in_titles_go_in_unescaped(fixture_db):
     label = labels_by_id(strict_export(fixture_db))[U("t_level")]
     row = f"| {label} | MOVE |"
     result = decode_text(row, label_map(snapshot_of(fixture_db)))
-    # Known limit (see decode.py): the "|" splits the table cell in two.
-    assert result.text == "| Fix a|b *now* `cmd` | MOVE |"
-    assert result.text.count("|") == 4
+    # "|" is escaped on a table line; other markdown characters are not.
+    assert result.text == '| "Fix a\\|b *now* `cmd`" | MOVE |'
+    assert result.text.replace("\\|", "").count("|") == 3
 
 
 def test_label_pattern_matches_what_make_labels_writes():
@@ -194,8 +198,11 @@ def test_cli_prints_decoded_text_and_summary(fixture_db, tmp_path, labels, capsy
     )
     assert run(fixture_db, str(answer)) == 0
     captured = capsys.readouterr()
-    assert captured.out == "Do Buy a spirit level first. Skip Task aaaaaa.\n"
-    assert "Decoded: 1 labels replaced (1 distinct)." in captured.err
+    assert captured.out == 'Do "Buy a spirit level" first. Skip Task aaaaaa.\n'
+    assert (
+        "Decoded: 1 labels replaced, 0 bare codes replaced (1 distinct items)."
+        in captured.err
+    )
     assert "1 distinct label-like strings matched nothing" in captured.err
     assert "personal data" in captured.err
     assert "Buy a spirit level" not in captured.err  # titles never in the report
@@ -205,7 +212,7 @@ def test_cli_prints_decoded_text_and_summary(fixture_db, tmp_path, labels, capsy
 def test_cli_db_after_the_command(fixture_db, tmp_path, labels, capsys):
     answer = write_answer(tmp_path, labels[U("t_level")])
     assert cli.main(["decode", str(answer), "--db", str(fixture_db)]) == 0
-    assert capsys.readouterr().out == "Buy a spirit level"
+    assert capsys.readouterr().out == '"Buy a spirit level"'
 
 
 def test_cli_out_writes_a_private_file(fixture_db, tmp_path, labels, capsys):
@@ -217,7 +224,7 @@ def test_cli_out_writes_a_private_file(fixture_db, tmp_path, labels, capsys):
     finally:
         os.umask(old)
     assert stat.S_IMODE(out.stat().st_mode) == 0o600
-    assert out.read_text(encoding="utf-8") == "Buy a spirit level\n"
+    assert out.read_text(encoding="utf-8") == '"Buy a spirit level"\n'
     captured = capsys.readouterr()
     assert "Wrote the decoded answer to" in captured.out
     assert "Buy a spirit level" not in captured.out

@@ -139,14 +139,19 @@ _FULL_CODE_LENGTH = 52  # base32 of a sha256 digest, without padding
 # for a collision "-" plus the longer code. Used by `decode` to find labels. A
 # letter or digit next to it means it is part of a longer word; punctuation and
 # markdown marks, including "_", do not.
+_CODE_PART = (
+    rf"{_CODE}{{{LABEL_LENGTH}}}"
+    + rf"(?:-(?:{_CODE}{{{_FULL_CODE_LENGTH - LABEL_LENGTH}}}"
+    + rf"|{_CODE}{{{COLLISION_SUFFIX_LENGTH}}}))?"
+)
 LABEL_PATTERN = re.compile(
     r"(?<![^\W_])(?:"
     + "|".join(sorted(KIND_LABELS.values(), key=len, reverse=True))
-    + rf") {_CODE}{{{LABEL_LENGTH}}}"
-    + rf"(?:-(?:{_CODE}{{{_FULL_CODE_LENGTH - LABEL_LENGTH}}}"
-    + rf"|{_CODE}{{{COLLISION_SUFFIX_LENGTH}}}))?"
+    + rf") {_CODE_PART}"
     + r"(?![^\W_])"
 )
+# The code part of a label on its own ("k3f9az"), as assistants often write it.
+BARE_CODE_PATTERN = re.compile(rf"(?<![^\W_]){_CODE_PART}(?![^\W_])")
 
 
 # --- the export ----

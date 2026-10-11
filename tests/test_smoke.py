@@ -152,7 +152,7 @@ def test_decode(entry_point, env, fixture_db, tmp_path):
     answer.write_text(f"Keep **{label}** as it is.\n", encoding="utf-8")
     result = run(entry_point, env, "--db", str(fixture_db), "decode", str(answer))
     assert result.returncode == 0, result.stderr
-    assert result.stdout == "Keep **Household** as it is.\n"
+    assert result.stdout == 'Keep **"Household"** as it is.\n'
     assert "1 labels replaced" in result.stderr
 
 
