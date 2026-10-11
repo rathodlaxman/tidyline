@@ -306,11 +306,19 @@ Sections, in order:
 5. "Health checks": every check in registry order, warnings first then info. A check with no findings is one "No findings" row. Items are grouped exactly as the text `check` output groups them (7.3 and the 2026-10-11 layout row), titles shown, the per-finding message after the title, and the message shared by all findings once at the top. One link per check with findings to its section of the fixing guide. The report runs the checks with default options (no `--pattern`).
 6. "Repeating to-dos": the counts of the text report (live, leftover, recognised, assumed, and not recognised when any), then a table of every template in the order of `tidyline recurrence`: title, place, rule text, confidence. Assumed and not-recognised rows are marked in words and by a row style.
 7. "Read warnings": "None." or the list, as in the text report.
-8. Footer: "Made offline by tidyline X from a private copy of the database. Nothing was sent anywhere and nothing in Things was changed." and the not-affiliated line.
+8. "Want a deeper review?" box (see the dated rows below).
+9. Footer: "Made offline by tidyline X from a private copy of the database. Nothing was sent anywhere and nothing in Things was changed." and the not-affiliated line.
 
 Numbers: every number comes from the same core functions the text `report` and `check` use (counts, recurrence counts, check grouping); there is no second implementation of counting or grouping. Tests compare the numbers in the HTML with the text report.
 
 Tests, all against the synthetic fixture: a golden snapshot of the whole file; hostile titles (markup, quotes, ampersands, `javascript:`, unusual Unicode) in a project, a heading, a to-do, an area and a template, all escaped and no `<script>` element; no external resources; numbers equal to the text report; file mode 0600; existing file refused; missing `--out` refused; a run against a database with sockets blocked.
+
+Later decisions for the HTML report:
+
+| Date | Decision |
+|---|---|
+| 2026-10-11 | Narrow screens: up to 600px wide, the repeating to-dos table and the "Closed items" table are shown as stacked cards, one per row: the first cell (the title, or the item) on its own line, then each other cell as a label and value pair taken from the cell's `data-label` attribute (the column name, HTML-escaped). The horizontal scroll box is removed on those tables at that width; above 600px the normal table layout is kept. Checked: no horizontal scroll at 360px. |
+| 2026-10-11 | The report does not embed AI recommendations in 0.3.0. A plain-text "Want a deeper review?" box before the footer says tidyline does not write recommendations and points to `tidyline prompt` and `tidyline decode`; it has no link. Embedding a review (for example `report --review FILE`, or an `ask` command) is deferred and needs the owner's approval, because it changes the CLI surface. |
 
 ## 8. Architecture
 

@@ -40,6 +40,12 @@ FOOTER = (
     "Made offline by tidyline {version} from a private copy of the database. "
     "Nothing was sent anywhere and nothing in Things was changed."
 )
+REVIEW_HEADING = "Want a deeper review?"
+REVIEW_TEXT = (
+    "tidyline itself does not write recommendations. To get a review from an AI "
+    "assistant, run <code>tidyline prompt</code>, paste the result into the "
+    "assistant, then run <code>tidyline decode</code> on its answer."
+)
 NOT_AFFILIATED = "tidyline is unofficial and not affiliated with Cultured Code."
 STATUS_CLASSES = {
     "Inbox": "inbox",
@@ -169,6 +175,34 @@ tr.marked td { background: var(--mark-bg); }
 tr.marked td:first-child { box-shadow: inset 4px 0 0 var(--warn-fg); }
 .closed { margin-top: 14px; }
 .closed table { min-width: 0; }
+.review {
+  margin: 32px 0 0; padding: 12px 14px; border-radius: 8px;
+  background: var(--info-bg); color: var(--info-fg);
+}
+.review p { margin: 0; }
+.review p + p { margin-top: 4px; }
+@media (max-width: 600px) {
+  .scroll.cards { overflow-x: visible; border: 0; border-radius: 0; }
+  .cards table, .cards tbody, .cards tr, .cards td {
+    display: block; width: 100%; min-width: 0;
+  }
+  .cards thead {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .cards tr {
+    margin: 0 0 10px; padding: 8px 12px; border: 1px solid var(--border);
+    border-radius: 8px; background: var(--card);
+  }
+  .cards tr.marked { background: var(--mark-bg); }
+  .cards td, .cards tr:last-child td { padding: 2px 0; border: 0; }
+  .cards tr.marked td { background: none; }
+  .cards tr.marked td:first-child { box-shadow: none; }
+  .cards td:first-child { font-weight: 600; }
+  .cards td + td::before {
+    content: attr(data-label) ": "; color: var(--muted); font-weight: 400;
+  }
+}
 footer {
   margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border);
   color: var(--muted); font-size: 0.9rem;
@@ -176,7 +210,7 @@ footer {
 footer p { margin: 4px 0; }
 @media print {
   body { background: none; }
-  .tile, .check, .private, th, tr.marked td { background: none; }
+  .tile, .check, .private, .review, th, tr.marked td { background: none; }
   .check, .tile { box-shadow: none; break-inside: avoid; }
 }
 """
@@ -218,6 +252,7 @@ def render_html(
         _checks(data.checks),
         _repeating(data),
         _warnings(data.warnings),
+        _review(),
         "</main>",
         _footer(data),
         "</div>",
@@ -316,10 +351,10 @@ def _glance(data: ReportData, include_completed: bool) -> str:
         ]
         body += (
             '\n<div class="closed"><h3>Closed items</h3>\n'
-            '<div class="scroll"><table>\n'
+            '<div class="scroll cards"><table>\n'
             "<thead><tr><th>Item</th><th>Count</th></tr></thead>\n<tbody>\n"
             + "\n".join(
-                f"<tr><td>{_e(label)}</td><td>{number}</td></tr>"
+                f"<tr>{_cell('Item', _e(label))}{_cell('Count', str(number))}</tr>"
                 for label, number in rows
             )
             + "\n</tbody></table></div></div>"
@@ -429,8 +464,9 @@ def _repeating(data: ReportData) -> str:
     body = f'<dl class="counts">{figures}</dl>'
     if data.templates:
         body += (
-            '\n<div class="scroll"><table>\n<thead><tr><th>Title</th><th>Place</th>'
-            "<th>Rule</th><th>Confidence</th></tr></thead>\n<tbody>\n"
+            '\n<div class="scroll cards"><table>\n'
+            "<thead><tr><th>Title</th><th>Place</th><th>Rule</th>"
+            "<th>Confidence</th></tr></thead>\n<tbody>\n"
             + "\n".join(_template_row(row) for row in data.templates)
             + "\n</tbody></table></div>"
         )
@@ -443,9 +479,15 @@ def _template_row(row: TemplateRow) -> str:
     shown = f"<strong>{_e(confidence)}</strong>" if marked else _e(confidence)
     attribute = ' class="marked"' if marked else ""
     return (
-        f"<tr{attribute}><td>{_title(row.title)}</td><td>{_place(row.place)}</td>"
-        f"<td>{_e(row.headline)}</td><td>{shown}</td></tr>"
+        f"<tr{attribute}>{_cell('Title', _title(row.title))}"
+        f"{_cell('Place', _place(row.place))}{_cell('Rule', _e(row.headline))}"
+        f"{_cell('Confidence', shown)}</tr>"
     )
+
+
+def _cell(label: str, content: str) -> str:
+    """A table cell that names its column, for the stacked cards at phone width."""
+    return f'<td data-label="{_e(label)}">{content}</td>'
 
 
 def _place(place: TemplatePlace) -> str:
@@ -466,6 +508,16 @@ def _warnings(warnings: Sequence[str]) -> str:
             + "\n</ul>"
         )
     return _section("warnings", "Read warnings", body)
+
+
+def _review() -> str:
+    """Points at `prompt` and `decode`; plain text, no link (DESIGN.md 7.7)."""
+    return (
+        '<aside class="review">\n'
+        f"<p><strong>{_e(REVIEW_HEADING)}</strong></p>\n"
+        f"<p>{REVIEW_TEXT}</p>\n"
+        "</aside>"
+    )
 
 
 def _footer(data: ReportData) -> str:

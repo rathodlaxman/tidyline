@@ -18,6 +18,7 @@ import pytest
 from checks_helpers import U, edit, set_title, snapshot_of
 
 from tidyline.checks import CHECK_IDS
+from tidyline.cli import build_parser
 from tidyline.render import html_out
 from tidyline.render.check_out import FIXING_GUIDE_URL, safe_title
 from tidyline.render.html_out import CSS, fixing_link, github_slug, render_html
@@ -37,7 +38,7 @@ ALLOWED_TAGS = {
     "html", "head", "meta", "title", "style", "body", "div", "header", "h1",
     "h2", "h3", "dl", "dt", "dd", "p", "strong", "main", "section", "span",
     "ul", "li", "details", "summary", "code", "bdi", "a", "table", "thead",
-    "tbody", "tr", "th", "td", "footer",
+    "tbody", "tr", "th", "td", "footer", "aside",
 }  # fmt: skip
 
 
@@ -338,3 +339,41 @@ def test_text_contrast_is_at_least_4_5(theme):
     for text, background in pairs:
         ratio = contrast(colours[text], colours[background])
         assert ratio >= 4.5, (theme, text, background, round(ratio, 2))
+
+
+# --- phone width and the review pointer ------------------------------------------
+
+
+def test_every_table_cell_names_its_column(hostile_db):
+    page = Page(html_of(hostile_db, include_completed=True))
+    cells = [attrs for tag, attrs in page.tags if tag == "td"]
+    assert cells
+    labels = {attrs.get("data-label") for attrs in cells}
+    assert labels == {"Item", "Count", "Title", "Place", "Rule", "Confidence"}
+    assert safe_title(HOSTILE["template"]) in page.all_text()
+
+
+def test_data_label_is_escaped():
+    cell = html_out._cell('"><script>alert(1)</script>', "x")
+    assert cell == (
+        '<td data-label="&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;">x</td>'
+    )
+
+
+def test_tables_stack_as_cards_at_phone_width():
+    assert "@media (max-width: 600px)" in CSS
+    narrow = CSS.split("@media (max-width: 600px)", 1)[1]
+    assert "attr(data-label)" in narrow and "overflow-x: visible" in narrow
+
+
+def test_review_box_points_at_prompt_and_decode_without_links(fixture_db):
+    source = html_of(fixture_db)
+    box = re.search(r'<aside class="review">.*?</aside>', source, re.S).group(0)
+    assert "Want a deeper review?" in box
+    assert "<code>tidyline prompt</code>" in box
+    assert "<code>tidyline decode</code>" in box
+    assert "does not write recommendations" in box
+    assert "href" not in box and "http" not in box
+    assert source.index(box) < source.index("<footer>")
+    commands = build_parser()._subparsers._group_actions[0].choices
+    assert {"prompt", "decode"} <= set(commands)

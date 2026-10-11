@@ -118,6 +118,34 @@ tr.marked td { background: var(--mark-bg); }
 tr.marked td:first-child { box-shadow: inset 4px 0 0 var(--warn-fg); }
 .closed { margin-top: 14px; }
 .closed table { min-width: 0; }
+.review {
+  margin: 32px 0 0; padding: 12px 14px; border-radius: 8px;
+  background: var(--info-bg); color: var(--info-fg);
+}
+.review p { margin: 0; }
+.review p + p { margin-top: 4px; }
+@media (max-width: 600px) {
+  .scroll.cards { overflow-x: visible; border: 0; border-radius: 0; }
+  .cards table, .cards tbody, .cards tr, .cards td {
+    display: block; width: 100%; min-width: 0;
+  }
+  .cards thead {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .cards tr {
+    margin: 0 0 10px; padding: 8px 12px; border: 1px solid var(--border);
+    border-radius: 8px; background: var(--card);
+  }
+  .cards tr.marked { background: var(--mark-bg); }
+  .cards td, .cards tr:last-child td { padding: 2px 0; border: 0; }
+  .cards tr.marked td { background: none; }
+  .cards tr.marked td:first-child { box-shadow: none; }
+  .cards td:first-child { font-weight: 600; }
+  .cards td + td::before {
+    content: attr(data-label) ": "; color: var(--muted); font-weight: 400;
+  }
+}
 footer {
   margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border);
   color: var(--muted); font-size: 0.9rem;
@@ -125,7 +153,7 @@ footer {
 footer p { margin: 4px 0; }
 @media print {
   body { background: none; }
-  .tile, .check, .private, th, tr.marked td { background: none; }
+  .tile, .check, .private, .review, th, tr.marked td { background: none; }
   .check, .tile { box-shadow: none; break-inside: avoid; }
 }
 </style>
@@ -297,40 +325,44 @@ footer p { margin: 4px 0; }
 <section id="repeating" aria-labelledby="repeating-h">
 <h2 id="repeating-h">Repeating to-dos</h2>
 <dl class="counts"><div><dt>Live</dt><dd>24</dd></div><div><dt>Leftover</dt><dd>1</dd></div><div><dt>Recognised</dt><dd>22</dd></div><div><dt>Assumed</dt><dd>2</dd></div><div><dt>Not recognised</dt><dd>3</dd></div></dl>
-<div class="scroll"><table>
+<div class="scroll cards"><table>
 <thead><tr><th>Title</th><th>Place</th><th>Rule</th><th>Confidence</th></tr></thead>
 <tbody>
-<tr><td><bdi class="t">Descale the kettle</bdi></td><td>area <bdi class="t">Household</bdi></td><td>1 year after completion</td><td>verified</td></tr>
-<tr><td><bdi class="t">Take out the recycling</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Daily</td><td>verified</td></tr>
-<tr><td><bdi class="t">Wash the bedding</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Every 2 weeks on Sun</td><td>verified</td></tr>
-<tr><td><bdi class="t">Clean the oven</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Every 3 months on day 5</td><td>verified</td></tr>
-<tr><td><bdi class="t">Service the bicycle</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Every 6 months on day 14</td><td>verified</td></tr>
-<tr><td><bdi class="t">Review the budget sheet</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on day 1</td><td>verified</td></tr>
-<tr><td><bdi class="t">Send the course invoice</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on day 1 (has an end date)</td><td>verified</td></tr>
-<tr><td><bdi class="t">Order printer ink</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on day 14 (starts 7 days before deadline)</td><td>verified</td></tr>
-<tr><td><bdi class="t">Pay the rent</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Monthly on day 15</td><td>verified</td></tr>
-<tr class="marked"><td><bdi class="t">Back up the laptop</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on last day</td><td><strong>assumed</strong></td></tr>
-<tr class="marked"><td><bdi class="t">Call the family</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Monthly on the first Sun</td><td><strong>assumed</strong></td></tr>
-<tr><td><bdi class="t">Tidy the workshop</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Monthly on the last Sun</td><td>verified</td></tr>
-<tr><td><bdi class="t">Water the balcony herbs</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Fri</td><td>verified</td></tr>
-<tr><td><bdi class="t">Check the tyre pressure</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Weekly on Sat</td><td>verified</td></tr>
-<tr><td><bdi class="t">Practise the scales</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Weekly on Sat (ends after 12 times)</td><td>verified</td></tr>
-<tr><td><bdi class="t">Mow the lawn</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Sat (paused)</td><td>verified</td></tr>
-<tr><td><bdi class="t">Plan the week ahead</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Sun</td><td>verified</td></tr>
-<tr><td><bdi class="t">Rotate the pantry stock</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Sun</td><td>verified</td></tr>
-<tr><td><bdi class="t">Review the garden plan</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Weekly on Sun</td><td>verified</td></tr>
-<tr><td><bdi class="t">Renew the domain name</bdi></td><td>area <bdi class="t">Side Studio</bdi></td><td>Yearly on Feb 28</td><td>verified</td></tr>
-<tr><td><bdi class="t">Set the year&#x27;s goals</bdi></td><td>area <bdi class="t">Household</bdi></td><td>Yearly on Jan 1</td><td>verified</td></tr>
-<tr><td><bdi class="t">Send the newsletter</bdi></td><td>project <bdi class="t">Old Newsletter</bdi> (trashed)</td><td>Monthly on day 1</td><td>verified</td></tr>
-<tr class="marked"><td><bdi class="t">Empty the dehumidifier</bdi></td><td>area <bdi class="t">Household</bdi></td><td>not recognised</td><td><strong>not recognised</strong></td></tr>
-<tr class="marked"><td><bdi class="t">Check the smoke alarms</bdi></td><td>area <bdi class="t">Household</bdi></td><td>not recognised</td><td><strong>not recognised</strong></td></tr>
-<tr class="marked"><td><bdi class="t">Rinse the compost caddy</bdi></td><td>area <bdi class="t">Household</bdi></td><td>not recognised</td><td><strong>not recognised</strong></td></tr>
+<tr><td data-label="Title"><bdi class="t">Descale the kettle</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">1 year after completion</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Take out the recycling</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Daily</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Wash the bedding</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Every 2 weeks on Sun</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Clean the oven</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Every 3 months on day 5</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Service the bicycle</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Every 6 months on day 14</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Review the budget sheet</bdi></td><td data-label="Place">area <bdi class="t">Side Studio</bdi></td><td data-label="Rule">Monthly on day 1</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Send the course invoice</bdi></td><td data-label="Place">area <bdi class="t">Side Studio</bdi></td><td data-label="Rule">Monthly on day 1 (has an end date)</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Order printer ink</bdi></td><td data-label="Place">area <bdi class="t">Side Studio</bdi></td><td data-label="Rule">Monthly on day 14 (starts 7 days before deadline)</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Pay the rent</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Monthly on day 15</td><td data-label="Confidence">verified</td></tr>
+<tr class="marked"><td data-label="Title"><bdi class="t">Back up the laptop</bdi></td><td data-label="Place">area <bdi class="t">Side Studio</bdi></td><td data-label="Rule">Monthly on last day</td><td data-label="Confidence"><strong>assumed</strong></td></tr>
+<tr class="marked"><td data-label="Title"><bdi class="t">Call the family</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Monthly on the first Sun</td><td data-label="Confidence"><strong>assumed</strong></td></tr>
+<tr><td data-label="Title"><bdi class="t">Tidy the workshop</bdi></td><td data-label="Place">area <bdi class="t">Side Studio</bdi></td><td data-label="Rule">Monthly on the last Sun</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Water the balcony herbs</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Weekly on Fri</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Check the tyre pressure</bdi></td><td data-label="Place">area <bdi class="t">Side Studio</bdi></td><td data-label="Rule">Weekly on Sat</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Practise the scales</bdi></td><td data-label="Place">area <bdi class="t">Side Studio</bdi></td><td data-label="Rule">Weekly on Sat (ends after 12 times)</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Mow the lawn</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Weekly on Sat (paused)</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Plan the week ahead</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Weekly on Sun</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Rotate the pantry stock</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Weekly on Sun</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Review the garden plan</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Weekly on Sun</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Renew the domain name</bdi></td><td data-label="Place">area <bdi class="t">Side Studio</bdi></td><td data-label="Rule">Yearly on Feb 28</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Set the year&#x27;s goals</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">Yearly on Jan 1</td><td data-label="Confidence">verified</td></tr>
+<tr><td data-label="Title"><bdi class="t">Send the newsletter</bdi></td><td data-label="Place">project <bdi class="t">Old Newsletter</bdi> (trashed)</td><td data-label="Rule">Monthly on day 1</td><td data-label="Confidence">verified</td></tr>
+<tr class="marked"><td data-label="Title"><bdi class="t">Empty the dehumidifier</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">not recognised</td><td data-label="Confidence"><strong>not recognised</strong></td></tr>
+<tr class="marked"><td data-label="Title"><bdi class="t">Check the smoke alarms</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">not recognised</td><td data-label="Confidence"><strong>not recognised</strong></td></tr>
+<tr class="marked"><td data-label="Title"><bdi class="t">Rinse the compost caddy</bdi></td><td data-label="Place">area <bdi class="t">Household</bdi></td><td data-label="Rule">not recognised</td><td data-label="Confidence"><strong>not recognised</strong></td></tr>
 </tbody></table></div>
 </section>
 <section id="warnings" aria-labelledby="warnings-h">
 <h2 id="warnings-h">Read warnings</h2>
 <p>None.</p>
 </section>
+<aside class="review">
+<p><strong>Want a deeper review?</strong></p>
+<p>tidyline itself does not write recommendations. To get a review from an AI assistant, run <code>tidyline prompt</code>, paste the result into the assistant, then run <code>tidyline decode</code> on its answer.</p>
+</aside>
 </main>
 <footer>
 <p>Made offline by tidyline 0.3.0 from a private copy of the database. Nothing was sent anywhere and nothing in Things was changed.</p>
