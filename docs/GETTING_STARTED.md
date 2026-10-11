@@ -83,7 +83,7 @@ Only do this if you want to. tidyline never contacts an AI service. You carry th
 
 2. The payload holds **open work only**, plus ready-made counts. Finished and trashed to-dos appear only as numbers.
 
-3. Open a **temporary or private chat** in the assistant, with memory and custom instructions switched off. Otherwise the assistant may mix in things it remembers about you. Attach the payload file and paste the prompt.
+3. Open a **private chat** (in Claude, an incognito chat) with memory switched off, and also check the assistant's profile and personal-preference settings. Claude's help says incognito chats do not use memory but can still use profile information such as custom styles and personal preferences ([source](https://support.claude.com/en/articles/12260368-use-incognito-chats), read 2026-10-11). Clear or pause those settings if you do not want them to appear in the answer. Other assistants have similar settings; check yours. Then attach the payload file and paste the prompt.
 
 4. Save the assistant's answer into a text file, for example `~/tidyline-out/answer.md`.
 

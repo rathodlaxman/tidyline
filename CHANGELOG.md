@@ -24,8 +24,11 @@
   The README links both, and the text output of `tidyline check` ends with a
   link to the fixing guide. `check --json` is unchanged.
 - Compatibility note on the prompt and decode flow, and a privacy tip in the
-  README: use a temporary or private chat with memory and custom instructions
-  switched off.
+  README and the getting started guide: use a private chat with memory switched
+  off, and also check the assistant's profile and personal-preference settings,
+  which can still reach the answer. The compatibility note records one test in
+  which the answer used the user's first name, likely from the chat app's
+  profile.
 
 ## 0.2.0
 

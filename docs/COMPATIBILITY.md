@@ -59,6 +59,8 @@ tidyline warns when it runs against a version it has not been tested with.
 
 The prompt and decode flow has been tried once each with two AI assistants on one real database. Answers differ between assistants and between runs and can contain mistakes. Check the numbers against `tidyline report` and check any change before making it in Things.
 
+In one test, an answer began with the user's first name and said the user had named a risk that the prompt did not mention, although the user had typed neither into the prompt. The likely cause is the chat app's profile information; this was not confirmed.
+
 ## Reporting a mismatch
 
 If a rule is described wrongly, or marked as not recognised:
