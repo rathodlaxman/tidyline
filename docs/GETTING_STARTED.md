@@ -72,12 +72,13 @@ This lists your repeating to-dos with a plain-English description of each one ("
 
 Only do this if you want to. tidyline never contacts an AI service. You carry the files across yourself.
 
-1. Create a folder for the output and make the files:
+1. Make the files:
 
    ```
-   mkdir -p -m 700 ~/tidyline-out
    tidyline prompt --anonymise strict --out ~/tidyline-out
    ```
+
+   tidyline creates the folder `~/tidyline-out` for you, readable only by you, if it does not exist. Do not use a folder that is synced or backed up to a cloud service for these files.
 
    tidyline first shows a **preview** of what will be in the file and what has been left out. Read it. Nothing has been sent anywhere. It then writes two files into the folder: a prompt (the instructions for the assistant) and a payload (your data, with titles replaced by labels like "Task k7f3az").
 
@@ -111,7 +112,8 @@ AI answers vary between assistants and between runs, and they can be wrong. tidy
 
 ## 6. Files tidyline writes
 
-- Output files are readable only by you.
+- Output files are readable only by you. If the `--out` folder does not exist, tidyline creates the last level of it, also readable only by you, and tells you. It never creates more than one level; if the parent is missing it stops and says so. It does not change a folder that already exists, but warns if other users can read it.
+- Do not use a folder that is synced or backed up to a cloud service (iCloud Drive, Dropbox and similar) for these files.
 - tidyline will not overwrite an existing file. If it refuses, pick a new name or folder.
 - Do not put exports, the text output of `check` or `recurrence`, or decoded answers into any public place. They contain personal data. `report` and `check --json` show no titles.
 

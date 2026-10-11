@@ -246,10 +246,14 @@ def test_cli_out_refuses_overwrite_before_reading(
     assert "already exists" in capsys.readouterr().err
 
 
-def test_cli_out_missing_folder(fixture_db, tmp_path, capsys):
+def test_cli_out_creates_the_last_folder_level(fixture_db, tmp_path, capsys):
     answer = write_answer(tmp_path, "Task aaaaaa")
-    assert run(fixture_db, str(answer), "--out", str(tmp_path / "no" / "x.md")) == 2
-    assert "does not exist" in capsys.readouterr().err
+    out = tmp_path / "new" / "x.md"
+    assert run(fixture_db, str(answer), "--out", str(out)) == 0
+    assert out.is_file()
+    assert f"Created folder {out.parent} (readable only by you)." in (
+        capsys.readouterr().err
+    )
 
 
 def test_cli_write_failure_exits_3(fixture_db, tmp_path, monkeypatch, capsys):

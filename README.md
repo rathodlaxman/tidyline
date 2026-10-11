@@ -86,10 +86,10 @@ terminal app, then quit and reopen the terminal.
 These examples use the installed `tidyline` command. In a source checkout, run
 `uv run tidyline` instead, from the folder you cloned. Write outputs outside any
 git folder, so they cannot be committed by accident. The examples use
-`~/tidyline-out/`, which must exist first:
+`~/tidyline-out/`. tidyline creates that folder for you the first time, readable
+only by you:
 
 ```
-mkdir -p -m 700 ~/tidyline-out
 tidyline doctor
 tidyline report
 tidyline check
@@ -132,7 +132,15 @@ command for more detail when something fails.
 | `decode` | Replaces `strict` labels in an answer with your real titles. | `ANSWER_FILE`, `--out FILE`, `--db` |
 
 Files written with `--out` get mode 0600, and an existing file is never
-overwritten.
+overwritten. If the `--out` folder does not exist, tidyline creates its last
+level with mode 0700 and says so on stderr, as long as the parent folder
+exists. It never creates a chain of folders, never defaults to a location, and
+never changes a folder that already exists (it warns if group or others can read
+it). Do not use a folder that is synced or backed up to a cloud service for these
+files.
+
+Run `tidyline` with no arguments for a short help screen. `tidyline --help`
+gives the full option list.
 
 Exit codes:
 
@@ -140,7 +148,7 @@ Exit codes:
 |---|---|
 | 0 | Success. For `check`: no warnings. |
 | 1 | Only `check` uses this: at least one warning-level finding. |
-| 2 | Usage error, such as a bad option, a bad regular expression or an output path that already exists. |
+| 2 | Usage error, such as a bad option, a bad regular expression, an output file that already exists, or an output folder that cannot be used (its parent is missing, or something that is not a folder is in the way). |
 | 3 | The run failed: the database could not be found or read, or a file could not be written. |
 
 ## Using an AI assistant without sending anything automatically

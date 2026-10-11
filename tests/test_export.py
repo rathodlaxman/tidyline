@@ -329,9 +329,11 @@ def test_cli_stdout_is_not_supported(fixture_db, capsys, no_real_app):
     assert "not supported" in capsys.readouterr().err
 
 
-def test_cli_missing_folder(fixture_db, tmp_path, capsys, no_real_app):
-    assert run_export(fixture_db, tmp_path / "no" / "export.json") == 2
-    assert "does not exist" in capsys.readouterr().err
+def test_cli_creates_the_last_folder_level(fixture_db, tmp_path, capsys, no_real_app):
+    out = tmp_path / "new" / "export.json"
+    assert run_export(fixture_db, out) == 0
+    assert out.is_file()
+    assert "Created folder" in capsys.readouterr().err
 
 
 def test_cli_out_is_required(capsys):

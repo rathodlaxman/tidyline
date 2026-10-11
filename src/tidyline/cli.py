@@ -469,12 +469,7 @@ def prompt(args: argparse.Namespace) -> int:
     out_dir = None
     if args.out is not None:
         out_dir = Path(args.out).expanduser()
-        if out_dir.exists() and not out_dir.is_dir():
-            print(
-                f"error: {out_dir} exists and is not a folder. Choose a folder for "
-                "--out.",
-                file=sys.stderr,
-            )
+        if not _check_out_folder(out_dir):
             return EXIT_USAGE
         taken = [n for n in (PAYLOAD_FILE, PROMPT_FILE) if (out_dir / n).exists()]
         if taken:
@@ -506,10 +501,9 @@ def prompt(args: argparse.Namespace) -> int:
             (out_dir / PAYLOAD_FILE, compact_json(payload)),
             (out_dir / PROMPT_FILE, result.text),
         )
+        created = False
         try:
-            if not out_dir.exists():
-                out_dir.mkdir(parents=True, mode=0o700)
-                os.chmod(out_dir, 0o700)  # exact mode whatever the umask
+            created = _make_out_folder(out_dir)
             for path, text in files:
                 _write_private(path, text + "\n")
                 written.append((path, path.stat().st_size))
@@ -517,6 +511,8 @@ def prompt(args: argparse.Namespace) -> int:
             for path, _ in written:
                 path.unlink(missing_ok=True)
             written = []
+            if created:
+                _remove_empty(out_dir)
             code = EXIT_FAILURE
             problem = (
                 f"could not write into {out_dir}: {error.strerror or error}. Nothing "
@@ -687,7 +683,8 @@ def _prompt_preview(result, args, context, written, copied) -> str:
 
 
 def _prepare_out(argument: str) -> Path | None:
-    """Check an --out path before any work is done; print why if it is unusable."""
+    """Check an --out file path before any work is done; print why if it is
+    unusable. The folder is only checked here; `_write_out` creates it."""
     out = Path(argument).expanduser()
     if out.exists() or out.is_symlink():
         print(
@@ -696,14 +693,73 @@ def _prepare_out(argument: str) -> Path | None:
             file=sys.stderr,
         )
         return None
-    if not out.parent.is_dir():
-        print(
-            f"error: the folder {out.parent} does not exist. Create it, or choose "
-            "another --out path.",
-            file=sys.stderr,
-        )
+    if not _check_out_folder(out.parent):
         return None
     return out
+
+
+def _check_out_folder(folder: Path) -> bool:
+    """An --out folder is usable when it exists, or when only its last level is
+    missing (`_make_out_folder` creates that one level, never a chain). Print
+    why and return False otherwise. An existing folder that group or others can
+    read gets a warning on stderr and is left as it is."""
+    if folder.is_dir():
+        if folder.stat().st_mode & 0o044:
+            print(
+                f"warning: the folder {folder} can be read by other users on this "
+                "Mac. tidyline leaves its permissions as they are. Use a folder "
+                "that only you can read (chmod 700) for personal data.",
+                file=sys.stderr,
+            )
+        return True
+    if folder.exists() or folder.is_symlink():
+        print(
+            f"error: {folder} exists and is not a folder, so nothing was written. "
+            "Choose a folder for --out.",
+            file=sys.stderr,
+        )
+        return False
+    parent = folder.parent
+    if parent.is_dir():
+        return True
+    if parent.exists() or parent.is_symlink():
+        print(
+            f"error: {parent} exists and is not a folder, so tidyline cannot create "
+            f"{folder.name} in it. Choose another --out path.",
+            file=sys.stderr,
+        )
+        return False
+    print(
+        f"error: the folder {folder} does not exist, and neither does {parent}. "
+        "tidyline creates only the last folder level. Create the parent folder "
+        "yourself, or choose another --out path.",
+        file=sys.stderr,
+    )
+    return False
+
+
+def _make_out_folder(folder: Path) -> bool:
+    """Create the last level of `folder` with mode 0700 if it is missing and say
+    so on stderr. Never creates parents and never changes an existing folder.
+    Returns True when it created the folder."""
+    if folder.is_dir():
+        return False
+    try:
+        folder.mkdir(mode=0o700)  # no parents: a missing parent is an error
+    except FileExistsError:
+        if folder.is_dir():  # made by someone else a moment ago: leave it alone
+            return False
+        raise
+    os.chmod(folder, 0o700)  # exact mode whatever the umask; we just made it
+    print(f"Created folder {folder} (readable only by you).", file=sys.stderr)
+    return True
+
+
+def _remove_empty(folder: Path) -> None:
+    try:
+        folder.rmdir()
+    except OSError:
+        pass
 
 
 def _load(args: argparse.Namespace):
@@ -739,7 +795,9 @@ def _load(args: argparse.Namespace):
 
 
 def _write_out(out: Path, text: str) -> bool:
+    created = False
     try:
+        created = _make_out_folder(out.parent)
         _write_private(out, text)
     except FileExistsError:
         print(
@@ -747,6 +805,8 @@ def _write_out(out: Path, text: str) -> bool:
             "Choose a new --out path.",
             file=sys.stderr,
         )
+        if created:
+            _remove_empty(out.parent)
         return False
     except OSError as error:
         print(
@@ -754,6 +814,8 @@ def _write_out(out: Path, text: str) -> bool:
             "folder is writable, or choose another --out path.",
             file=sys.stderr,
         )
+        if created:
+            _remove_empty(out.parent)
         return False
     return True
 

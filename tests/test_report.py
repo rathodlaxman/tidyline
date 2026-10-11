@@ -398,9 +398,11 @@ def test_out_dash_is_rejected(fixture_db, capsys, no_real_app):
     assert "not supported" in capsys.readouterr().err
 
 
-def test_out_missing_folder(fixture_db, tmp_path, capsys, no_real_app):
-    assert run_report(fixture_db, "--out", str(tmp_path / "no" / "r.txt")) == 2
-    assert "does not exist" in capsys.readouterr().err
+def test_out_creates_the_last_folder_level(fixture_db, tmp_path, capsys, no_real_app):
+    out = tmp_path / "new" / "r.txt"
+    assert run_report(fixture_db, "--out", str(out)) == 0
+    assert out.is_file()
+    assert "Created folder" in capsys.readouterr().err
 
 
 def test_missing_database(tmp_path, capsys, no_real_app):

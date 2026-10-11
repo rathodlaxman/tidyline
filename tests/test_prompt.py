@@ -330,7 +330,7 @@ def test_preview_without_out_or_copy_writes_nothing(fixture_db, tmp_path, capsys
 
 
 def test_out_writes_private_files(fixture_db, tmp_path, capsys):
-    target = tmp_path / "new" / "dir"
+    target = tmp_path / "dir"
     old = os.umask(0)
     try:
         assert run(fixture_db, "--out", str(target)) == 0
