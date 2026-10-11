@@ -15,7 +15,7 @@ Rules (DESIGN.md 7.5):
 - A title has its whitespace collapsed to single spaces and is cut to 79
   characters plus "…" when longer than 80.
 - On a markdown table line (first non-space character "|"), "|" in a title is
-  written as "\|".
+  written as "\\|".
 - A title is put in straight double quotes, unless the label is already
   directly between quote characters or backticks.
 - When two or more items still in the payload's scope share a title, each gets
