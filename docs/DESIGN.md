@@ -63,6 +63,7 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-11 | Homebrew tap: `rathodlaxman/tidyline` (repository `homebrew-tidyline`). A later stage of v0.3, not built yet. |
 | 2026-10-12 | Build backend: **hatchling** (replaces `uv_build`, from 0.3.1). `uv_build` is written in Rust, and an installer that builds every package from source (Homebrew's Python formulas do) then needs a Rust compiler and its toolchain just to build tidyline. Hatchling and its dependencies are pure Python. Packaging only: the wheel holds the same files, and no runtime dependency, CLI, JSON or report behaviour changes. The sdist holds `src`, `README.md`, `LICENSE` and `pyproject.toml`, plus the `.gitignore` and `PKG-INFO` that hatchling always adds. |
 | 2026-10-12 | Homebrew tap (supersedes the 2026-10-11 Homebrew tap row): the existing repository `rathodlaxman/homebrew-tap`, installed with `brew install rathodlaxman/tap/tidyline`. No separate `homebrew-tidyline` repository. |
+| 2026-10-12 | The Homebrew tap is published. The formula lives in `Formula/tidyline.rb` of `github.com/rathodlaxman/homebrew-tap`, next to `recap.rb`. It installs the PyPI sdists of tidyline and things.py into a `python@3.14` virtualenv (no Rust build dependency since 0.3.1), and its test runs only `tidyline --version` and `tidyline --help`, never a command that opens the Things database. A new tidyline release needs the formula's `url` and `sha256` updated from PyPI's JSON. |
 
 ## 4. Tested environment
 
@@ -398,12 +399,12 @@ Done when:
 - The README states the limitations, non-affiliation and personal-data warning. COMPATIBILITY.md lists tested versions.
 - CI runs on macOS with sockets blocked for the core tests.
 
-### v0.3: HTML report and Homebrew tap. HTML report DONE 2026-10-12; Homebrew tap pending
+### v0.3: HTML report and Homebrew tap. DONE 2026-10-12 (HTML report in 0.3.0, packaging fix in 0.3.1, Homebrew tap `rathodlaxman/tap` published)
 
 Done when:
 - `report --html` writes one file that opens offline in Safari and Chrome and reads well at phone width.
 - Snapshot tests of the HTML pass against the fixture.
-- `brew install rathodlaxman/tap/tidyline` works on a clean Mac (tap repository `homebrew-tap`, decisions log 2026-10-12).
+- `brew install rathodlaxman/tap/tidyline` works (tap repository `homebrew-tap`, decisions log 2026-10-12). Tested on one Mac only: macOS 27.0.1, Apple silicon, Homebrew 7.0.9, Python 3.14; not on Intel Macs or other macOS versions.
 - Screenshots use only fixture data.
 
 ### v0.4: opt-in LLM levels 1 and 2
