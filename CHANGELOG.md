@@ -1,6 +1,32 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 - unreleased
+
+- `report --html --out FILE` writes the report as one HTML file to open in a
+  browser. Unlike the text report, it shows your task titles and the names of
+  your projects and areas, so it is personal data; tidyline says so on stderr
+  after writing it. `--out` is required with `--html`, and an existing file is
+  never overwritten. `--include-completed` adds a table of closed items.
+- The HTML file is self-contained: inline styles only, no script, no fonts, no
+  images and nothing loaded from the network, with a Content-Security-Policy
+  that blocks anything else. It follows the system light or dark setting,
+  shows tables as cards on screens up to 600px wide, and has a print
+  stylesheet. Each check with findings links to its section in the fixing
+  guide.
+- A "Want a deeper review?" box at the end of the HTML report shows the
+  example commands `tidyline prompt --anonymise strict --copy` and
+  `tidyline decode answer.md`. tidyline itself does not write
+  recommendations.
+- The report counts and the check grouping now live in core modules
+  (`report_data.py` and `checks/groups.py`) shared by the text and HTML
+  reports. The text output of `report` and `check`, `check --json` and the
+  JSON export are unchanged.
+- Help screen: the title line is bold, the headings are underlined, only the
+  words "New here?" are bold, and the "Your task titles" lines say that
+  `report --html` shows titles. On a terminal, `tidyline check` in the last
+  line of `report` is bold.
+- The README and the getting-started guide describe the HTML report, with
+  light and dark screenshots made from the synthetic test fixture.
 
 ## 0.2.2 - 2026-10-11
 
