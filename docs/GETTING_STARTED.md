@@ -144,6 +144,19 @@ AI answers vary between assistants and between runs, and they can be wrong. tidy
 - tidyline will not overwrite an existing file. If it refuses, pick a new name or folder.
 - Do not put exports, the HTML report, the text output of `check` or `recurrence`, or decoded answers into any public place. They contain personal data. The text `report` and `check --json` show no titles.
 
+## Commands at a glance
+
+| Command | What it does | Shows your titles? |
+|---|---|---|
+| `tidyline doctor` | Checks that tidyline can find and read your Things database. | No |
+| `tidyline report` | Prints a text summary of counts. | No |
+| `tidyline report --html --out FILE` | Writes the same report as one HTML file to open in a browser. | **Yes** |
+| `tidyline check` | Runs the health checks. | **Yes** on screen. `check --json` shows none. |
+| `tidyline recurrence` | Lists your repeating to-dos in plain English. | **Yes** |
+| `tidyline export --out FILE` | Writes all your data as a JSON file. | **Yes**, unless you add `--anonymise strict`. `--anonymise light` keeps titles. |
+| `tidyline prompt --out FOLDER` | Prepares an anonymised prompt and payload for an AI assistant. | No at the default `strict`. Yes with `--anonymise light`. |
+| `tidyline decode ANSWER_FILE` | Puts your real titles back into an assistant's answer. | **Yes**, so keep the result private. |
+
 ## 7. If something goes wrong
 
 - Run `tidyline doctor` and read the message.
