@@ -1,6 +1,6 @@
 [project]
 name = "tidyline"
-version = "0.3.0"
+version = "0.3.1"
 description = "Offline, read-only audit of a Things 3 database on macOS."
 readme = "README.md"
 license = "MIT"
@@ -33,8 +33,14 @@ Issues = "https://github.com/rathodlaxman/tidyline/issues"
 tidyline = "tidyline.cli:main"
 
 [build-system]
-requires = ["uv_build>=0.13.0,<0.14.0"]
-build-backend = "uv_build"
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tidyline"]
+
+[tool.hatch.build.targets.sdist]
+only-include = ["src", "README.md", "LICENSE", "pyproject.toml"]
 
 [dependency-groups]
 dev = [

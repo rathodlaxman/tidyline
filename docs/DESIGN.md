@@ -61,6 +61,8 @@ Similar tools already exist (things.py, things-cli, several Things MCP servers).
 | 2026-10-11 | `report --html` has no `--anonymise` option in 0.3.0. |
 | 2026-10-11 | HTML templating (left open in the 2026-10-10 dependencies row): the HTML is built with the standard library only, by string building plus `html.escape`; no template dependency. The optional inline script of the 2026-10-10 HTML row is not part of 0.3.0: the file has no `<script>`. A title filter box is deferred to 0.3.1; it would need an inline script and a CSP hash for it (`script-src 'sha256-…'`), so it needs its own decision. |
 | 2026-10-11 | Homebrew tap: `rathodlaxman/tidyline` (repository `homebrew-tidyline`). A later stage of v0.3, not built yet. |
+| 2026-10-12 | Build backend: **hatchling** (replaces `uv_build`, from 0.3.1). `uv_build` is written in Rust, and an installer that builds every package from source (Homebrew's Python formulas do) then needs a Rust compiler and its toolchain just to build tidyline. Hatchling and its dependencies are pure Python. Packaging only: the wheel holds the same files, and no runtime dependency, CLI, JSON or report behaviour changes. The sdist holds `src`, `README.md`, `LICENSE` and `pyproject.toml`, plus the `.gitignore` and `PKG-INFO` that hatchling always adds. |
+| 2026-10-12 | Homebrew tap (supersedes the 2026-10-11 Homebrew tap row): the existing repository `rathodlaxman/homebrew-tap`, installed with `brew install rathodlaxman/tap/tidyline`. No separate `homebrew-tidyline` repository. |
 
 ## 4. Tested environment
 
@@ -401,7 +403,7 @@ Done when:
 Done when:
 - `report --html` writes one file that opens offline in Safari and Chrome and reads well at phone width.
 - Snapshot tests of the HTML pass against the fixture.
-- `brew install rathodlaxman/tidyline/tidyline` works on a clean Mac (tap repository `homebrew-tidyline`, decisions log 2026-10-11).
+- `brew install rathodlaxman/tap/tidyline` works on a clean Mac (tap repository `homebrew-tap`, decisions log 2026-10-12).
 - Screenshots use only fixture data.
 
 ### v0.4: opt-in LLM levels 1 and 2

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1 - 2026-10-12
+
+- The build backend changed from uv_build to hatchling, so installing tidyline
+  from source no longer needs a Rust compiler. The installed files and the
+  behaviour of every command are unchanged.
+
 ## 0.3.0 - 2026-10-12
 
 - `report --html --out FILE` writes the report as one HTML file to open in a
