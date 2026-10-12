@@ -123,7 +123,7 @@ tidyline report --html --out ~/tidyline-out/report.html
 tidyline check
 tidyline recurrence
 tidyline export --out ~/tidyline-out/export.json
-tidyline prompt --out ~/tidyline-out/prompt
+tidyline prompt --out ~/tidyline-out
 tidyline decode ~/tidyline-out/answer.md --out ~/tidyline-out/answer-decoded.md
 ```
 
@@ -230,7 +230,7 @@ tidyline never sends your data anywhere. `prompt` prepares two files, and you
 decide whether to attach or paste them into an assistant yourself.
 
 ```
-tidyline prompt --context my-context.txt --out ~/tidyline-out/prompt
+tidyline prompt --context my-context.txt --out ~/tidyline-out
 ```
 
 - The default is `--anonymise strict`. There is no `none` option for `prompt`.
