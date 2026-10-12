@@ -28,6 +28,14 @@ or, if you use pipx:
 pipx install tidyline
 ```
 
+or, if you already use [Homebrew](https://brew.sh):
+
+```
+brew install rathodlaxman/tap/tidyline
+```
+
+Typing the full name like this trusts only tidyline, not everything in that tap ([Tap Trust](https://docs.brew.sh/Tap-Trust)). The Homebrew install has been tested on one Mac only (macOS 27.0.1, Apple silicon); Intel Macs and other macOS versions have not been tested.
+
 Check that it worked:
 
 ```

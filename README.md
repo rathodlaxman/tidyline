@@ -69,6 +69,32 @@ To upgrade:
 uv tool upgrade tidyline
 ```
 
+### With Homebrew
+
+If you use [Homebrew](https://brew.sh), you can install tidyline from the
+`rathodlaxman/tap` tap instead. Homebrew installs its own Python for it.
+
+```
+brew install rathodlaxman/tap/tidyline
+```
+
+Installing by the full name trusts only the tidyline formula, not the whole tap
+(Homebrew 6.0.0 trust rules; see [Tap Trust](https://docs.brew.sh/Tap-Trust)).
+To upgrade:
+
+```
+brew update
+brew upgrade tidyline
+```
+
+If you also have a uv or pipx copy installed, whichever comes first on your
+`PATH` runs. `which -a tidyline` lists them in that order.
+
+The Homebrew install was tested on 2026-10-12 on one Mac only: macOS 27.0.1,
+Apple silicon, Homebrew 7.0.9, Python 3.14, from the published tap and from a
+local copy of it. It took about 7 seconds and needed no Rust compiler. Intel
+Macs and other macOS versions have not been tested.
+
 ### From source (for development)
 
 ```
