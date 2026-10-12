@@ -40,6 +40,19 @@ automated tests, and no real data is stored in the repository.
   `tidyline doctor` reported schema ok, database version 29, tested yes, on the
   maintainer's Mac.
 
+## Homebrew
+
+The tap `rathodlaxman/tap` has a tidyline formula
+(`brew install rathodlaxman/tap/tidyline`). It installs tidyline and things.py
+from their PyPI source releases into a private Python 3.14 environment. Its
+test runs only `tidyline --version` and `tidyline --help`.
+
+Tested once, on 2026-10-12, with tidyline 0.3.1 on the maintainer's Mac: macOS
+27.0.1, Apple silicon, Homebrew 7.0.9, Python 3.14. It was installed from the
+published GitHub tap and from a local clone. The install took about 7 seconds
+and needed no Rust compiler; Homebrew also upgraded its `sqlite` package as a
+dependency. Intel Macs and other macOS versions have not been tested.
+
 ## Not checked
 
 - A day offset of -1 in a monthly rule (read as the last day of the month).
