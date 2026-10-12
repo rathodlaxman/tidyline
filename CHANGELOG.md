@@ -1,10 +1,17 @@
 # Changelog
 
-## Unreleased
+## 0.3.2 - 2026-10-12
+
+A documentation release. There is no change in behaviour.
 
 - The Homebrew tap `rathodlaxman/tap` is published:
   `brew install rathodlaxman/tap/tidyline`. Tested on one Mac (macOS 27.0.1,
   Apple silicon, Homebrew 7.0.9, Python 3.14).
+- The README examples for `prompt` now use `--out ~/tidyline-out`. The old
+  `--out ~/tidyline-out/prompt` failed when `~/tidyline-out` did not exist yet,
+  because tidyline creates only the last folder level.
+- The getting-started guide has a "Commands at a glance" table: one row per
+  command, with whether it shows your task titles.
 
 ## 0.3.1 - 2026-10-12
 
