@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- The Homebrew tap `rathodlaxman/tap` is published:
+  `brew install rathodlaxman/tap/tidyline`. Tested on one Mac (macOS 27.0.1,
+  Apple silicon, Homebrew 7.0.9, Python 3.14).
+
 ## 0.3.1 - 2026-10-12
 
 - The build backend changed from uv_build to hatchling, so installing tidyline
