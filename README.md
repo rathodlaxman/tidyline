@@ -8,11 +8,11 @@ An offline, read-only command-line tool that audits a Things 3 database on macOS
 
 ## Your data is personal
 
-The Things database, the JSON export, the text output of `check` and
-`recurrence`, and any decoded file contain your personal data: task titles,
-notes, checklists and dates. Never commit them to a repository, and never post
-them in a public issue. `report` prints counts only, and `check --json` prints
-ids and fixed messages only; neither shows titles.
+The Things database, the JSON export, the HTML report, the text output of
+`check` and `recurrence`, and any decoded file contain your personal data: task
+titles, notes, checklists and dates. Never commit them to a repository, and
+never post them in a public issue. The text `report` prints counts only, and
+`check --json` prints ids and fixed messages only; neither shows titles.
 
 Anonymised exports reduce the risk. They cannot remove all of it.
 
@@ -29,8 +29,9 @@ Anonymised exports reduce the risk. They cannot remove all of it.
 ## What it does
 
 tidyline reads your Things database and reports on it: counts, health checks,
-a decoded view of your repeating tasks, a JSON export, and an anonymised
-prompt you can give to an AI assistant yourself.
+an HTML report you open in your browser, a decoded view of your repeating
+tasks, a JSON export, and an anonymised prompt you can give to an AI assistant
+yourself.
 
 What it does not do:
 
@@ -92,6 +93,7 @@ only by you:
 ```
 tidyline doctor
 tidyline report
+tidyline report --html --out ~/tidyline-out/report.html
 tidyline check
 tidyline recurrence
 tidyline export --out ~/tidyline-out/export.json
@@ -102,6 +104,8 @@ tidyline decode ~/tidyline-out/answer.md --out ~/tidyline-out/answer-decoded.md
 - `doctor` finds the database and checks permissions, the schema and versions.
 - `report` prints a text summary. It shows counts only, including counts of
   repeating templates. No title appears in it; `recurrence` shows the titles.
+- `report --html --out FILE` writes the same report as one HTML file, with
+  your task titles. See [The HTML report](https://github.com/rathodlaxman/tidyline#the-html-report).
 - `check` runs the health checks.
 - `recurrence` lists every repeating template with its readable rule.
 - `export` writes a JSON export. Add `--anonymise light` or `--anonymise strict`
@@ -124,7 +128,8 @@ command for more detail when something fails.
 | Command | What it does | Options |
 |---|---|---|
 | `doctor` | Finds the database and checks permissions, schema and versions. | `--db` |
-| `report` | Prints a text summary, or writes it to a new file. | `--out PATH`, `--include-completed`, `--no-color`, `--db` |
+| `report` | Prints a text summary with counts only, or writes it to a new file. It shows no titles and is safe to paste. | `--out PATH`, `--include-completed`, `--no-color`, `--db` |
+| `report --html --out FILE` | Writes the report as one HTML file to open in a browser. **It contains your task titles: do not commit or share it.** | `--include-completed`, `--db` |
 | `check` | Runs the health checks. The text output has a heading per check, and the items are grouped by project or area, with a count. | `--only ID [ID ...]`, `--pattern REGEX [REGEX ...]`, `--json`, `--db` |
 | `export` | Writes a JSON export to a new file. | `--out PATH` (required), `--anonymise {none,light,strict}`, `--db` |
 | `recurrence` | Lists every repeating template with its readable rule. | `--raw`, `--db` |
@@ -155,6 +160,44 @@ Exit codes:
 | 2 | Usage error, such as a bad option, a bad regular expression, an output file that already exists, or an output folder that cannot be used (its parent is missing, or something that is not a folder is in the way). |
 | 3 | The run failed: the database could not be found or read, or a file could not be written. |
 
+## The HTML report
+
+```
+tidyline report --html --out ~/tidyline-out/report.html
+open ~/tidyline-out/report.html
+```
+
+`report --html` writes the file but does not open it; `open` shows it in your
+default browser. Unlike the text report, it shows your task titles and the
+names of your projects and areas, so it is personal data. Keep it private, do
+not commit or share it, and delete it when you are done:
+
+```
+rm ~/tidyline-out/report.html
+```
+
+- It has the counts, where your open to-dos sit, every health check with the
+  items it found grouped by project or area, your repeating to-dos, and any
+  values tidyline could not read cleanly. `--include-completed` adds a table of
+  closed items.
+- It is a single file with inline styles only: no script, no fonts, no images
+  and nothing loaded from the network. A Content-Security-Policy in the file
+  blocks anything else. It follows your system's light or dark setting, shows
+  tables as cards on a phone-width screen, and prints cleanly.
+- Each check with findings links to its section in
+  [Fixing the problems tidyline finds](https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md).
+- A "Want a deeper review?" box at the end points to `tidyline prompt` and
+  `tidyline decode`. tidyline itself does not write recommendations.
+- `--out FILE` is required with `--html`, and an existing file is never
+  overwritten.
+
+![The HTML report in light mode](https://raw.githubusercontent.com/rathodlaxman/tidyline/main/docs/images/report-light.png)
+
+![The HTML report in dark mode](https://raw.githubusercontent.com/rathodlaxman/tidyline/main/docs/images/report-dark.png)
+
+*The HTML report in light and dark mode. Both screenshots use the synthetic
+test fixture, not a real Things database.*
+
 ## Using an AI assistant without sending anything automatically
 
 tidyline never sends your data anywhere. `prompt` prepares two files, and you
@@ -178,7 +221,7 @@ tidyline prompt --context my-context.txt --out ~/tidyline-out/prompt
 - `prompt` always prints a preview first: the level, the counts, what was
   removed or replaced, what was left out, and your context text. The last line says nothing has
   been sent anywhere.
-- The text report is never part of the output.
+- Neither the text report nor the HTML report is part of the output.
 - Use a private chat (in Claude, an incognito chat) with memory switched off,
   and also check the assistant's profile and personal-preference settings.
   Claude's help says incognito chats do not use memory but can still use
@@ -213,7 +256,7 @@ output needs no decoding.
 - When two open items share a title, each gets its project or area:
   `"Sort the mail (in Household)"`.
 - It reports how many labels and codes it replaced, and how many it left
-  because they were ambiguous or matched nothing. The report never shows
+  because they were ambiguous or matched nothing. That summary never shows
   titles.
 
 The decoded text contains real titles, so treat it as personal data.
@@ -262,7 +305,7 @@ it was tested with, and what to do next. See
 [docs/COMPATIBILITY.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/COMPATIBILITY.md) for what has been tested and
 what has not.
 
-Not yet built: the HTML report and the opt-in model integration.
+Not yet built: the opt-in model integration.
 
 ## Development
 

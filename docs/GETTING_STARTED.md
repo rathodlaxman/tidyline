@@ -52,7 +52,7 @@ If it says something failed, the message tells you what went wrong and what to t
 tidyline report
 ```
 
-This prints a summary: how many open to-dos you have, how many are in Inbox, Today, This Evening, Upcoming, Anytime and Someday, how many repeating templates, any values tidyline could not read cleanly, and how many findings each health check has. It shows **counts only**, never the titles of your to-dos, so it is safe to paste into a message or a bug report.
+This prints a summary: how many open to-dos you have, how many are in Inbox, Today, This Evening, Upcoming, Anytime and Someday, how many repeating templates, any values tidyline could not read cleanly, and how many findings each health check has. This text summary shows **counts only**, never the titles of your to-dos, so it is safe to paste into a message or a bug report. (The HTML version below is different: it shows your titles.)
 
 ```
 tidyline check
@@ -60,13 +60,32 @@ tidyline check
 
 This runs ten health checks. Each check has a heading with its name, severity and number of findings, and the items it found are listed under it, grouped by project or area where that helps. The guide [FIXING_PROBLEMS.md](https://github.com/rathodlaxman/tidyline/blob/main/docs/FIXING_PROBLEMS.md) explains each one and how to fix it in Things.
 
-Unlike `report`, the text output of `check` shows the **real titles** of the items, on your own screen only. Do not paste it into a public place. `tidyline check --json` prints ids and fixed messages only, with no titles.
+Unlike the text `report`, the text output of `check` shows the **real titles** of the items, on your own screen only. Do not paste it into a public place. `tidyline check --json` prints ids and fixed messages only, with no titles.
 
 ```
 tidyline recurrence
 ```
 
-This lists your repeating to-dos with a plain-English description of each one ("Every 2 weeks on Sun"). Unlike `report`, this command shows your real titles, so do not paste its output into a public place.
+This lists your repeating to-dos with a plain-English description of each one ("Every 2 weeks on Sun"). Unlike the text `report`, this command shows your real titles, so do not paste its output into a public place.
+
+### See it in your browser
+
+`report` can also write an HTML page that is easier to read, with every health check and the items it found. This needs tidyline 0.3.0 or later.
+
+```
+tidyline report --html --out ~/tidyline-out/report.html
+open ~/tidyline-out/report.html
+```
+
+The first command writes the file. The second opens it in your web browser. The page works offline and loads nothing from the internet.
+
+**This file contains your task titles** and the names of your projects and areas. Keep it private. Do not commit it, attach it to a bug report or share it. tidyline will not overwrite it, so delete it when you have finished reading, before you make a new one:
+
+```
+rm ~/tidyline-out/report.html
+```
+
+At the end of the page, "Want a deeper review?" shows the commands for step 5 below. tidyline itself does not write recommendations.
 
 ## 5. Optional: ask an AI assistant to review your system
 
@@ -115,7 +134,7 @@ AI answers vary between assistants and between runs, and they can be wrong. tidy
 - Output files are readable only by you. If the `--out` folder does not exist, tidyline creates the last level of it, also readable only by you, and tells you. It never creates more than one level; if the parent is missing it stops and says so. It does not change a folder that already exists, but warns if other users can read it.
 - Do not use a folder that is synced or backed up to a cloud service (iCloud Drive, Dropbox and similar) for these files.
 - tidyline will not overwrite an existing file. If it refuses, pick a new name or folder.
-- Do not put exports, the text output of `check` or `recurrence`, or decoded answers into any public place. They contain personal data. `report` and `check --json` show no titles.
+- Do not put exports, the HTML report, the text output of `check` or `recurrence`, or decoded answers into any public place. They contain personal data. The text `report` and `check --json` show no titles.
 
 ## 7. If something goes wrong
 
