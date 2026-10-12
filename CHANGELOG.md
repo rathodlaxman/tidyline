@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 - unreleased
+## 0.3.0 - 2026-10-12
 
 - `report --html --out FILE` writes the report as one HTML file to open in a
   browser. Unlike the text report, it shows your task titles and the names of

@@ -295,7 +295,7 @@ The file:
 - Every dynamic string (titles, project and area names, pattern text, messages, versions, paths) passes through `html.escape(quote=True)`. Control characters in titles are replaced as in the text output, and titles are wrapped in `<bdi>` so right-to-left or override characters cannot reorder the text around them.
 - `<html lang="en">`, `<title>tidyline report, DATE</title>`, a viewport meta tag, UTF-8.
 - Follows the system light or dark setting with CSS variables and `prefers-color-scheme`. System font stack. Text contrast is at least 4.5:1 in both themes (a test computes it from the CSS variables). Colour is never the only signal: severities and statuses are written in words. A small print stylesheet removes backgrounds and shadows.
-- Works at phone width: wrapping flex rows, tables inside a horizontally scrolling box.
+- Works at phone width: wrapping flex rows. At 600px and below, the repeating to-dos table and the "Closed items" table are shown as stacked cards (see the 2026-10-11 narrow-screens row); wider screens keep the table.
 - Check cards are native `<details>`: warning checks open by default, info checks closed.
 
 Sections, in order:
@@ -396,7 +396,7 @@ Done when:
 - The README states the limitations, non-affiliation and personal-data warning. COMPATIBILITY.md lists tested versions.
 - CI runs on macOS with sockets blocked for the core tests.
 
-### v0.3: HTML report and Homebrew tap
+### v0.3: HTML report and Homebrew tap. HTML report DONE 2026-10-12; Homebrew tap pending
 
 Done when:
 - `report --html` writes one file that opens offline in Safari and Chrome and reads well at phone width.
@@ -445,4 +445,4 @@ Later, only after v0.4: Raycast extension, MCP server, menu-bar app.
 - Whether `ts` 0 can mean a deadline on the same day, and whether `ed` ordinary values correspond to "ends on date" in the dialog.
 - Whether an evening task can carry a past date or sit in a Someday project.
 - Rule 5 also applies to Someday tasks (7.1 order): a Someday task with no start date and an overdue deadline is Today. Not seen on real data.
-- In the export, a task's `area` is its own column and is not inherited from its project. Deferred to v0.3: decide when building the HTML report whether consumers need an inherited area.
+- In the export, a task's `area` is its own column and is not inherited from its project. The HTML report does not need an inherited area (it groups by project or area as the text `check` output does), so this stays open only for consumers of the JSON export.
